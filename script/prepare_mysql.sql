@@ -1,4 +1,4 @@
-CREATE TABLE mysql_async_tests;
+CREATE DATABASE mysql_async_tests;
 CREATE TABLE mysql_async_tests.transaction_test (id VARCHAR(255) NOT NULL, PRIMARY KEY (id));
 CREATE USER 'mysql_async'@'localhost' IDENTIFIED BY 'root' WITH GRANT OPTION;
 CREATE USER 'mysql_async_old'@'localhost' WITH GRANT OPTION;

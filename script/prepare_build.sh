@@ -4,6 +4,7 @@ SCRIPTDIR=`dirname $0`
 
 echo "Preparing MySQL configs"
 mysql -u root < ./script/prepare_mysql.sql
+mysql -u root -e "CREATE DATABASE codegen_test;"
 
 echo "preparing postgresql configs"
 
