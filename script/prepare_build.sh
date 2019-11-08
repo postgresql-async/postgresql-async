@@ -2,6 +2,9 @@
 
 SCRIPTDIR=`dirname $0`
 
+echo "Current Hosts"
+cat /etc/hosts
+
 echo "Preparing MySQL configs"
 mysql -u root < ./script/prepare_mysql.sql
 mysql -u root -e "CREATE DATABASE codegen_test;"
