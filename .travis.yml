@@ -7,14 +7,14 @@ jdk:
   - openjdk11
 
 services:
-  - postgresql
   - mysql
+
 cache:
   directories:
-    - vendor/bundle
     - $HOME/.m2
     - $HOME/.ivy2
     - $HOME/.sbt
+
 before_script:
   - ./script/prepare_build.sh
 
