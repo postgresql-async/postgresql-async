@@ -2,6 +2,11 @@ language: scala
 
 dist: trusty
 
+scala:
+  - 2.12.10
+  - 2.13.1
+  - 2.11.12
+
 jdk:
   - openjdk8
   - openjdk11
