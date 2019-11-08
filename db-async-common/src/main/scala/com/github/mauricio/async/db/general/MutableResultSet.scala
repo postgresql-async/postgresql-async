@@ -19,7 +19,6 @@ package com.github.mauricio.async.db.general
 import collection.mutable.ArrayBuffer
 import com.github.mauricio.async.db.{RowData, ResultSet}
 import com.github.mauricio.async.db.util.Log
-import scala.collection.IndexedSeq
 
 object MutableResultSet {
   val log = Log.get[MutableResultSet[Nothing]]
@@ -28,7 +27,7 @@ object MutableResultSet {
 class MutableResultSet[T <: ColumnData](val columnTypes: IndexedSeq[T])
     extends ResultSet {
 
-  private val rows = new ArrayBuffer[RowData]()
+  private var rows = Vector.empty[RowData]
   private val columnMapping: Map[String, Int] = this.columnTypes.indices
     .map(index => (this.columnTypes(index).name, index))
     .toMap
@@ -42,7 +41,11 @@ class MutableResultSet[T <: ColumnData](val columnTypes: IndexedSeq[T])
   override def apply(idx: Int): RowData = this.rows(idx)
 
   def addRow(row: Array[Any]): Unit = {
-    this.rows += new ArrayRowData(this.rows.size, this.columnMapping, row)
+    this.rows = this.rows :+ new ArrayRowData(
+      this.rows.size,
+      this.columnMapping,
+      row
+    )
   }
 
 }

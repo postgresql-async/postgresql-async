@@ -28,7 +28,7 @@ class ChannelUtilsSpec extends Specification {
 
     "correctly write and read a string" in {
       val content = "some text"
-      val buffer = Unpooled.buffer()
+      val buffer  = Unpooled.buffer()
 
       ByteBufferUtils.writeCString(content, buffer, charset)
 
@@ -38,7 +38,7 @@ class ChannelUtilsSpec extends Specification {
 
     "correctly read the buggy MySQL EOF string when there is an EOF" in {
       val content = "some text"
-      val buffer = Unpooled.buffer()
+      val buffer  = Unpooled.buffer()
 
       ByteBufferUtils.writeCString(content, buffer, charset)
 
@@ -49,7 +49,7 @@ class ChannelUtilsSpec extends Specification {
     "correctly read the buggy MySQL EOF string when there is no EOF" in {
 
       val content = "some text"
-      val buffer = Unpooled.buffer()
+      val buffer  = Unpooled.buffer()
 
       buffer.writeBytes(content.getBytes(charset))
 

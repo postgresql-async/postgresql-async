@@ -31,22 +31,25 @@ object DatabaseTestHelper {
 
 trait DatabaseTestHelper {
 
-
   def databaseName = Some("netty_driver_test")
 
   def timeTestDatabase = Some("netty_driver_time_test")
 
   def databasePort = 5432
 
-  def defaultConfiguration = new Configuration(
-    port = databasePort,
-    username = "postgres",
-    database = databaseName)
+  def defaultConfiguration =
+    new Configuration(
+      port = databasePort,
+      username = "postgres",
+      database = databaseName
+    )
 
-  def timeTestConfiguration = new Configuration(
-    port = databasePort,
-    username = "postgres",
-    database = timeTestDatabase)
+  def timeTestConfiguration =
+    new Configuration(
+      port = databasePort,
+      username = "postgres",
+      database = timeTestDatabase
+    )
 
   def withHandler[T](fn: (PostgreSQLConnection) => T): T = {
     withHandler(this.defaultConfiguration, fn)
@@ -56,17 +59,25 @@ trait DatabaseTestHelper {
     withHandler(this.timeTestConfiguration, fn)
   }
 
-  def withSSLHandler[T](mode: SSLConfiguration.Mode.Value, host: String = "localhost", rootCert: Option[File] = Some(new File("script/server.crt")))(fn: (PostgreSQLConnection) => T): T = {
+  def withSSLHandler[T](
+    mode: SSLConfiguration.Mode.Value,
+    host: String = "localhost",
+    rootCert: Option[File] = Some(new File("script/server.crt"))
+  )(fn: (PostgreSQLConnection) => T): T = {
     val config = new Configuration(
-    host = host,
-    port = databasePort,
-    username = "postgres",
-    database = databaseName,
-    ssl = SSLConfiguration(mode = mode, rootCert = rootCert))
+      host = host,
+      port = databasePort,
+      username = "postgres",
+      database = databaseName,
+      ssl = SSLConfiguration(mode = mode, rootCert = rootCert)
+    )
     withHandler(config, fn)
   }
 
-  def withHandler[T](configuration: Configuration, fn: (PostgreSQLConnection) => T): T = {
+  def withHandler[T](
+    configuration: Configuration,
+    fn: (PostgreSQLConnection) => T
+  ): T = {
 
     val handler = new PostgreSQLConnection(configuration)
 
@@ -85,40 +96,47 @@ trait DatabaseTestHelper {
     })
 
     if (rows != count) {
-      throw new IllegalStateException("We expected %s rows but there were %s".format(count, rows))
+      throw new IllegalStateException(
+        "We expected %s rows but there were %s".format(count, rows)
+      )
     }
 
     rows
   }
 
-  private def handleTimeout[R]( handler : Connection, fn : => R ) = {
+  private def handleTimeout[R](handler: Connection, fn: => R) = {
     try {
       fn
     } catch {
-      case e : TimeoutException => {
-        throw new IllegalStateException("Timeout executing call from handler -> %s".format( handler))
+      case e: TimeoutException => {
+        throw new IllegalStateException(
+          "Timeout executing call from handler -> %s".format(handler)
+        )
       }
     }
   }
 
   def executeQuery(handler: Connection, data: String) = {
-    handleTimeout( handler, {
+    handleTimeout(handler, {
       Await.result(handler.sendQuery(data), Duration(5, SECONDS))
-    } )
+    })
   }
 
   def executePreparedStatement(
-                                handler: Connection,
-                                statement: String,
-                                values: Array[Any] = Array.empty[Any]) = {
-    handleTimeout( handler, {
-      Await.result(handler.sendPreparedStatement(statement, values), Duration(5, SECONDS))
-    } )
+    handler: Connection,
+    statement: String,
+    values: Array[Any] = Array.empty[Any]
+  ) = {
+    handleTimeout(handler, {
+      Await.result(
+        handler.sendPreparedStatement(statement, values),
+        Duration(5, SECONDS)
+      )
+    })
   }
 
   def await[T](future: Future[T]): T = {
     Await.result(future, Duration(5, TimeUnit.SECONDS))
   }
-
 
 }

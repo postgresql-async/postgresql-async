@@ -27,9 +27,9 @@ class TimeDecoderSpec extends Specification {
     "handle a time" in {
 
       val time = "120:10:07"
-      val duration = Duration( 120, TimeUnit.HOURS ) +
-        Duration( 10, TimeUnit.MINUTES ) +
-        Duration( 7, TimeUnit.SECONDS )
+      val duration = Duration(120, TimeUnit.HOURS) +
+        Duration(10, TimeUnit.MINUTES) +
+        Duration(7, TimeUnit.SECONDS)
 
       TimeDecoder.decode(time) === duration
     }
@@ -37,10 +37,10 @@ class TimeDecoderSpec extends Specification {
     "handle a time with millis" in {
 
       val time = "120:10:07.00098"
-      val duration = Duration( 120, TimeUnit.HOURS ) +
-        Duration( 10, TimeUnit.MINUTES ) +
-        Duration( 7, TimeUnit.SECONDS ) +
-        Duration( 98, TimeUnit.MILLISECONDS )
+      val duration = Duration(120, TimeUnit.HOURS) +
+        Duration(10, TimeUnit.MINUTES) +
+        Duration(7, TimeUnit.SECONDS) +
+        Duration(98, TimeUnit.MILLISECONDS)
 
       TimeDecoder.decode(time) === duration
 

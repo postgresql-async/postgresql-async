@@ -16,7 +16,10 @@
 
 package com.github.mauricio.async.db.postgresql
 
-import com.github.mauricio.async.db.column.{TimestampWithTimezoneEncoderDecoder, InetAddressEncoderDecoder}
+import com.github.mauricio.async.db.column.{
+  TimestampWithTimezoneEncoderDecoder,
+  InetAddressEncoderDecoder
+}
 import org.specs2.mutable.Specification
 import java.net.InetAddress
 
@@ -52,7 +55,8 @@ class ArrayTypesSpec extends Specification with DatabaseTestHelper {
       '{"2013-04-06 01:15:10.528-03","2013-04-06 01:15:08.528-03"}'
       )"""
 
-  val insertPreparedStatement = """insert into type_test_table_csaups
+  val insertPreparedStatement =
+    """insert into type_test_table_csaups
                                                  (smallint_column, text_column, inet_column, direction_column, endpoint_column, timestamp_column)
                                                  values (?,?,?,?,?,?)"""
 
@@ -60,21 +64,33 @@ class ArrayTypesSpec extends Specification with DatabaseTestHelper {
 
     "correctly parse the array type" in {
 
-      withHandler {
-        handler =>
-          try {
-            executeDdl(handler, simpleCreate("cptat"))
-            executeDdl(handler, insert, 1)
-            val result = executeQuery(handler, "select * from type_test_table_cptat").rows.get
-            result(0)("smallint_column") === List(1,2,3,4)
-            result(0)("text_column") === List("some,\"comma,separated,text", "another line of text", "fake,backslash", "real\\,backslash\\", null )
-            result(0)("timestamp_column") === List(
-              TimestampWithTimezoneEncoderDecoder.decode("2013-04-06 01:15:10.528-03"),
-              TimestampWithTimezoneEncoderDecoder.decode("2013-04-06 01:15:08.528-03")
+      withHandler { handler =>
+        try {
+          executeDdl(handler, simpleCreate("cptat"))
+          executeDdl(handler, insert, 1)
+          val result = executeQuery(
+            handler,
+            "select * from type_test_table_cptat"
+          ).rows.get
+          result(0)("smallint_column") === List(1, 2, 3, 4)
+          result(0)("text_column") === List(
+            "some,\"comma,separated,text",
+            "another line of text",
+            "fake,backslash",
+            "real\\,backslash\\",
+            null
+          )
+          result(0)("timestamp_column") === List(
+            TimestampWithTimezoneEncoderDecoder.decode(
+              "2013-04-06 01:15:10.528-03"
+            ),
+            TimestampWithTimezoneEncoderDecoder.decode(
+              "2013-04-06 01:15:08.528-03"
             )
-          } finally {
-            executeDdl(handler, simpleDrop("cptat"))
-          }
+          )
+        } finally {
+          executeDdl(handler, simpleDrop("cptat"))
+        }
       }
 
     }
@@ -83,7 +99,9 @@ class ArrayTypesSpec extends Specification with DatabaseTestHelper {
       case class Endpoint(ip: InetAddress, port: Int)
 
       val timestamps = List(
-        TimestampWithTimezoneEncoderDecoder.decode("2013-04-06 01:15:10.528-03"),
+        TimestampWithTimezoneEncoderDecoder.decode(
+          "2013-04-06 01:15:10.528-03"
+        ),
         TimestampWithTimezoneEncoderDecoder.decode("2013-04-06 01:15:08.528-03")
       )
       val inets = List(
@@ -92,32 +110,41 @@ class ArrayTypesSpec extends Specification with DatabaseTestHelper {
       )
       val directions = List("in", "out")
       val endpoints = List(
-        Endpoint(InetAddress.getByName("127.0.0.1"),  80),  // case class
-                (InetAddress.getByName("2002:15::1"), 443)  // tuple
+        Endpoint(InetAddress.getByName("127.0.0.1"), 80), // case class
+        (InetAddress.getByName("2002:15::1"), 443)        // tuple
       )
-      val numbers = List(1,2,3,4)
-      val texts = List("some,\"comma,separated,text", "another line of text", "fake,backslash", "real\\,backslash\\", null )
+      val numbers = List(1, 2, 3, 4)
+      val texts = List(
+        "some,\"comma,separated,text",
+        "another line of text",
+        "fake,backslash",
+        "real\\,backslash\\",
+        null
+      )
 
-      withHandler {
-        handler =>
-          try {
-            executeDdl(handler, simpleCreate("csaups"))
-            executePreparedStatement(
-              handler,
-              this.insertPreparedStatement,
-              Array( numbers, texts, inets, directions, endpoints, timestamps ) )
+      withHandler { handler =>
+        try {
+          executeDdl(handler, simpleCreate("csaups"))
+          executePreparedStatement(
+            handler,
+            this.insertPreparedStatement,
+            Array(numbers, texts, inets, directions, endpoints, timestamps)
+          )
 
-            val result = executeQuery(handler, "select * from type_test_table_csaups").rows.get
+          val result = executeQuery(
+            handler,
+            "select * from type_test_table_csaups"
+          ).rows.get
 
-            result(0)("smallint_column") === numbers
-            result(0)("text_column") === texts
-            result(0)("inet_column") === inets
-            result(0)("direction_column") === "{in,out}"                                 // user type decoding not supported
-            result(0)("endpoint_column") === """{"(127.0.0.1,80)","(2002:15::1,443)"}""" // user type decoding not supported
-            result(0)("timestamp_column") === timestamps
-          } finally {
-            executeDdl(handler, simpleDrop("csaups"))
-          }
+          result(0)("smallint_column") === numbers
+          result(0)("text_column") === texts
+          result(0)("inet_column") === inets
+          result(0)("direction_column") === "{in,out}"                                 // user type decoding not supported
+          result(0)("endpoint_column") === """{"(127.0.0.1,80)","(2002:15::1,443)"}""" // user type decoding not supported
+          result(0)("timestamp_column") === timestamps
+        } finally {
+          executeDdl(handler, simpleDrop("csaups"))
+        }
       }
 
     }

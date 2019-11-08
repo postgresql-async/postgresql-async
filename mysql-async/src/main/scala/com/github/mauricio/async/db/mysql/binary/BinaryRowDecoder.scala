@@ -21,7 +21,6 @@ import com.github.mauricio.async.db.exceptions.BufferNotFullyConsumedException
 import com.github.mauricio.async.db.mysql.message.server.ColumnDefinitionMessage
 import com.github.mauricio.async.db.util._
 import scala.collection.mutable.ArrayBuffer
-import scala.collection.Seq
 
 object BinaryRowDecoder {
   final val log          = Log.get[BinaryRowDecoder]

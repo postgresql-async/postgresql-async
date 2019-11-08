@@ -28,29 +28,32 @@ object BasicExample {
 
   def main(args: Array[String]) {
 
-    val configuration = URLParser.parse("jdbc:postgresql://localhost:5233/my_database?username=postgres&password=somepassword")
+    val configuration = URLParser.parse(
+      "jdbc:postgresql://localhost:5233/my_database?username=postgres&password=somepassword"
+    )
     val connection: Connection = new PostgreSQLConnection(configuration)
 
     Await.result(connection.connect, 5 seconds)
 
     val future: Future[QueryResult] = connection.sendQuery("SELECT 0")
 
-    val mapResult: Future[Any] = future.map(queryResult => queryResult.rows match {
-      case Some(resultSet) => {
-        val row : RowData = resultSet.head
-        row(0)
-      }
-      case None => -1
-    }
+    val mapResult: Future[Any] = future.map(
+      queryResult =>
+        queryResult.rows match {
+          case Some(resultSet) => {
+            val row: RowData = resultSet.head
+            row(0)
+          }
+          case None => -1
+        }
     )
 
-    val result = Await.result( mapResult, 5 seconds )
+    val result = Await.result(mapResult, 5 seconds)
 
     println(result)
 
     connection.disconnect
 
   }
-
 
 }

@@ -16,7 +16,10 @@
 
 package com.github.mauricio.async.db.postgresql.parsers
 
-import com.github.mauricio.async.db.postgresql.messages.backend.{ServerMessage, ProcessData}
+import com.github.mauricio.async.db.postgresql.messages.backend.{
+  ServerMessage,
+  ProcessData
+}
 import org.specs2.mutable.Specification
 import io.netty.buffer.Unpooled
 

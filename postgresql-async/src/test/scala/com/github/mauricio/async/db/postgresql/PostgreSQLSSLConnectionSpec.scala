@@ -4,7 +4,9 @@ import org.specs2.mutable.Specification
 import com.github.mauricio.async.db.SSLConfiguration.Mode
 import javax.net.ssl.SSLHandshakeException
 
-class PostgreSQLSSLConnectionSpec extends Specification with DatabaseTestHelper {
+class PostgreSQLSSLConnectionSpec
+    extends Specification
+    with DatabaseTestHelper {
 
   "ssl handler" should {
 

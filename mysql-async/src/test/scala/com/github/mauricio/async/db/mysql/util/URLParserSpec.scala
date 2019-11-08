@@ -30,7 +30,6 @@ class URLParserSpec extends Specification {
   "mysql URLParser" should {
     import URLParser.{DEFAULT, parse, parseOrDie}
 
-
     "have a reasonable default" in {
       // This is a deliberate extra step, protecting the DEFAULT from frivilous changes.
       // Any change to DEFAULT should require a change to this test.
@@ -44,12 +43,12 @@ class URLParserSpec extends Specification {
       )
     }
 
-
     // Divided into sections
     // =========== jdbc:mysql ===========
 
     "create a jdbc:mysql connection with the available fields" in {
-      val connectionUri = "jdbc:mysql://128.167.54.90:9987/my_database?user=john&password=doe"
+      val connectionUri =
+        "jdbc:mysql://128.167.54.90:9987/my_database?user=john&password=doe"
 
       parse(connectionUri) === DEFAULT.copy(
         username = "john",
@@ -61,7 +60,8 @@ class URLParserSpec extends Specification {
     }
 
     "create a connection without port" in {
-      val connectionUri = "jdbc:mysql://128.167.54.90/my_database?user=john&password=doe"
+      val connectionUri =
+        "jdbc:mysql://128.167.54.90/my_database?user=john&password=doe"
 
       parse(connectionUri) === DEFAULT.copy(
         username = "john",
@@ -70,7 +70,6 @@ class URLParserSpec extends Specification {
         host = "128.167.54.90"
       )
     }
-
 
     "create a connection without username and password" in {
       val connectionUri = "jdbc:mysql://128.167.54.90:9987/my_database"
@@ -95,7 +94,8 @@ class URLParserSpec extends Specification {
     }
 
     "create a connection with the available fields and named server" in {
-      val connectionUri = "jdbc:mysql://localhost:9987/my_database?user=john&password=doe"
+      val connectionUri =
+        "jdbc:mysql://localhost:9987/my_database?user=john&password=doe"
 
       parse(connectionUri) === DEFAULT.copy(
         username = "john",
@@ -118,7 +118,8 @@ class URLParserSpec extends Specification {
     }
 
     "create a connection with the available fields and ipv6" in {
-      val connectionUri = "jdbc:mysql://[::1]:9987/my_database?user=john&password=doe"
+      val connectionUri =
+        "jdbc:mysql://[::1]:9987/my_database?user=john&password=doe"
 
       val configuration = parse(connectionUri)
 
@@ -186,7 +187,6 @@ class URLParserSpec extends Specification {
       configuration.port === 3306
     }
 
-
     "recognise a mysql:// uri" in {
       parse("mysql://localhost:425/dbname") mustEqual DEFAULT.copy(
         username = "root",
@@ -206,28 +206,32 @@ class URLParserSpec extends Specification {
     }
 
     "pull the username and password from URI credentials" in {
-      parse("jdbc:mysql://user:password@localhost:425/dbname") mustEqual DEFAULT.copy(
-        username = "user",
-        password = Some("password"),
-        database = Some("dbname"),
-        port = 425,
-        host = "localhost"
-      )
+      parse("jdbc:mysql://user:password@localhost:425/dbname") mustEqual DEFAULT
+        .copy(
+          username = "user",
+          password = Some("password"),
+          database = Some("dbname"),
+          port = 425,
+          host = "localhost"
+        )
     }
 
     "pull the username and password from query string" in {
-      parse("jdbc:mysql://localhost:425/dbname?user=user&password=password") mustEqual DEFAULT.copy(
-        username = "user",
-        password = Some("password"),
-        database = Some("dbname"),
-        port = 425,
-        host = "localhost"
-      )
+      parse("jdbc:mysql://localhost:425/dbname?user=user&password=password") mustEqual DEFAULT
+        .copy(
+          username = "user",
+          password = Some("password"),
+          database = Some("dbname"),
+          port = 425,
+          host = "localhost"
+        )
     }
 
     // Included for consistency, so later changes aren't allowed to change behavior
     "use the query string parameters to override URI credentials" in {
-      parse("jdbc:mysql://baduser:badpass@localhost:425/dbname?user=user&password=password") mustEqual DEFAULT.copy(
+      parse(
+        "jdbc:mysql://baduser:badpass@localhost:425/dbname?user=user&password=password"
+      ) mustEqual DEFAULT.copy(
         username = "user",
         password = Some("password"),
         database = Some("dbname"),
@@ -237,7 +241,9 @@ class URLParserSpec extends Specification {
     }
 
     "successfully default the port to the mysql port" in {
-      parse("jdbc:mysql://baduser:badpass@localhost/dbname?user=user&password=password") mustEqual DEFAULT.copy(
+      parse(
+        "jdbc:mysql://baduser:badpass@localhost/dbname?user=user&password=password"
+      ) mustEqual DEFAULT.copy(
         username = "user",
         password = Some("password"),
         database = Some("dbname"),

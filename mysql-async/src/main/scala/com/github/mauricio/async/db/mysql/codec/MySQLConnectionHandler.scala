@@ -59,9 +59,7 @@ class MySQLConnectionHandler(
   private final val encoder =
     new MySQLOneToOneEncoder(configuration.charset, charsetMapper)
   private final val sendLongDataEncoder = new SendLongDataEncoder()
-  private final val currentParameters =
-    new ArrayBuffer[ColumnDefinitionMessage]()
-  private final val currentColumns = new ArrayBuffer[ColumnDefinitionMessage]
+  private var currentColumns            = Vector.empty[ColumnDefinitionMessage]
   private final val parsedStatements =
     new HashMap[String, PreparedStatementHolder]()
   private final val binaryRowDecoder = new BinaryRowDecoder()
@@ -130,7 +128,7 @@ class MySQLConnectionHandler(
               this.currentPreparedStatementHolder.add(message)
             }
 
-            this.currentColumns += message
+            this.currentColumns = this.currentColumns :+ message
           }
           case ServerMessage.ColumnDefinitionFinished => {
             this.onColumnDefinitionFinished()
@@ -220,8 +218,7 @@ class MySQLConnectionHandler(
   ): Future[ChannelFuture] = {
     val preparedStatement = new PreparedStatement(query, values)
 
-    this.currentColumns.clear()
-    this.currentParameters.clear()
+    this.currentColumns = Vector.empty
 
     this.currentPreparedStatement = preparedStatement
 
@@ -258,8 +255,7 @@ class MySQLConnectionHandler(
   def disconnect: ChannelFuture = this.currentContext.close()
 
   def clearQueryState: Unit = {
-    this.currentColumns.clear()
-    this.currentParameters.clear()
+    this.currentColumns = Vector.empty
     this.currentQuery = null
   }
 
@@ -278,8 +274,7 @@ class MySQLConnectionHandler(
     parameters: MSeq[ColumnDefinitionMessage]
   ): Future[ChannelFuture] = {
     decoder.preparedStatementExecuteStarted(columnsCount, parameters.size)
-    this.currentColumns.clear()
-    this.currentParameters.clear()
+    this.currentColumns = Vector.empty
 
     val (nonLongIndicesOpt, longValuesOpt) = values.zipWithIndex.map {
       case (Some(value), index) if isLong(value) => (None, Some(index, value))

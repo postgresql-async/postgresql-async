@@ -48,6 +48,7 @@ import io.netty.channel.EventLoopGroup
 import java.util.concurrent.CopyOnWriteArrayList
 
 import com.github.mauricio.async.db.postgresql.util.URLParser
+import scala.collection.immutable.ArraySeq
 
 object PostgreSQLConnection {
   final val Counter          = new AtomicLong()
@@ -156,7 +157,9 @@ class PostgreSQLConnection(
     }
 
     this.currentPreparedStatement = Some(holder)
-    this.currentQuery = Some(new MutableResultSet(holder.columnDatas))
+    this.currentQuery = Some(
+      new MutableResultSet(ArraySeq.unsafeWrapArray(holder.columnDatas))
+    )
     write(
       if (holder.prepared)
         new PreparedStatementExecuteMessage(
@@ -254,7 +257,9 @@ class PostgreSQLConnection(
   }
 
   override def onRowDescription(m: RowDescriptionMessage): Unit = {
-    this.currentQuery = Option(new MutableResultSet(m.columnDatas))
+    this.currentQuery = Option(
+      new MutableResultSet(ArraySeq.unsafeWrapArray(m.columnDatas))
+    )
     this.setColumnDatas(m.columnDatas)
   }
 

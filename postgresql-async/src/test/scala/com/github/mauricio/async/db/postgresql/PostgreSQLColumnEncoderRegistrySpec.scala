@@ -10,37 +10,37 @@ class PostgreSQLColumnEncoderRegistrySpec extends Specification {
   "column encoder registry" should {
 
     "encode Some(value) like value" in {
-      
-      val actual = encoder.encode(Some(1l))
-      val expected = encoder.encode(1l)
+
+      val actual   = encoder.encode(Some(1L))
+      val expected = encoder.encode(1L)
 
       actual mustEqual expected
     }
 
     "encode Some(value) in list like value in list" in {
-      
-      val actual = encoder.encode(List(Some(1l), Some("foo")))
-      val expected = encoder.encode(List(1l, "foo"))
+
+      val actual   = encoder.encode(List(Some(1L), Some("foo")))
+      val expected = encoder.encode(List(1L, "foo"))
 
       actual mustEqual expected
     }
 
     "encode None as null" in {
-      val actual = encoder.encode(None)
+      val actual   = encoder.encode(None)
       val expected = encoder.encode(null)
 
       actual mustEqual expected
     }
 
     "determine kindOf Some(value) like kindOf value" in {
-      val actual = encoder.kindOf(Some(1l))
-      val expected = encoder.kindOf(1l)
+      val actual   = encoder.kindOf(Some(1L))
+      val expected = encoder.kindOf(1L)
 
       actual mustEqual expected
     }
 
     "determine kindOf None like kindOf null" in {
-      val actual = encoder.kindOf(None)
+      val actual   = encoder.kindOf(None)
       val expected = encoder.kindOf(null)
 
       actual mustEqual expected

@@ -27,7 +27,7 @@ class PreparedStatementHolder(
   val message: PreparedStatementPrepareResponse
 ) {
 
-  val columns    = new ArrayBuffer[ColumnDefinitionMessage]
+  var columns    = Vector.empty[ColumnDefinitionMessage]
   val parameters = new ArrayBuffer[ColumnDefinitionMessage]
 
   def statementId: Array[Byte] = message.statementId
@@ -43,7 +43,7 @@ class PreparedStatementHolder(
       this.parameters += column
     } else {
       if (this.needsColumns) {
-        this.columns += column
+        this.columns = this.columns :+ column
       }
     }
   }
