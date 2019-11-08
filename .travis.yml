@@ -1,6 +1,6 @@
 language: scala
 
-dist: xenial
+dist: trusty
 
 jdk:
   - openjdk8
@@ -8,9 +8,8 @@ jdk:
 
 services:
   - mysql
+  - postgresql
 
-addons:
-  postgresql: "9.4"
 
 
 cache:
