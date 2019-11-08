@@ -21,5 +21,6 @@ before_script:
 notifications:
   email:
     - jilen.zhang@gmail.com
+
 addons:
-  postgresql: "9.1"
+  postgresql: "9.2"
