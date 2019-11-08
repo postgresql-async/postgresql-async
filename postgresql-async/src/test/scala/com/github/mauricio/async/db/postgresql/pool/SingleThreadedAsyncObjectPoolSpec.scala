@@ -28,7 +28,10 @@ import scala.concurrent.duration._
 import scala.language.postfixOps
 import com.github.mauricio.async.db.exceptions.ConnectionStillRunningQueryException
 
-class SingleThreadedAsyncObjectPoolSpec extends Specification with DatabaseTestHelper {
+/**
+ * Pending
+ */
+abstract class SingleThreadedAsyncObjectPoolSpec extends Specification with DatabaseTestHelper {
 
   "pool" should {
 
