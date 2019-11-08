@@ -34,7 +34,7 @@ sudo echo "local    all             all                                     trus
 sudo echo "host     all             postgres           127.0.0.1/32         trust"    >> $PGCONF/pg_hba.conf
 sudo echo "host     all             postgres_md5       127.0.0.1/32         md5"      >> $PGCONF/pg_hba.conf
 sudo echo "host     all             postgres_cleartext 127.0.0.1/32         password" >> $PGCONF/pg_hba.conf
-sudo echo "host     all             postgres_kerberos  127.0.0.1/32         krb5"     >> $PGCONF/pg_hba.conf
+sudo echo "host     all             postgres_kerberos  127.0.0.1/32         kerberos" >> $PGCONF/pg_hba.conf
 
 echo "pg_hba.conf is now like"
 cat "$PGCONF/pg_hba.conf"

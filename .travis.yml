@@ -1,6 +1,6 @@
 language: scala
 
-dist: trusty
+dist: bionic
 
 jdk:
   - openjdk8
@@ -21,3 +21,5 @@ before_script:
 notifications:
   email:
     - jilen.zhang@gmail.com
+addons:
+  postgresql: "9.1"
