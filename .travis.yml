@@ -15,7 +15,7 @@ services:
   - mysql
 
 addons:
-  postgresql: "9.2"
+  postgresql: "9.3"
 
 
 cache:

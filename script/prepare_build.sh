@@ -9,8 +9,8 @@ mysql -u root -e "CREATE DATABASE codegen_test;"
 echo "preparing postgresql configs"
 
 PGUSER=postgres
-PGCONF=/etc/postgresql/9.2/main
-PGDATA=/var/ramfs/postgresql/9.2/main
+PGCONF=/etc/postgresql/9.3/main
+PGDATA=/var/ramfs/postgresql/9.3/main
 
 psql -d "postgres" -c 'create database netty_driver_test;' -U $PGUSER
 psql -d "postgres" -c 'create database netty_driver_time_test;' -U $PGUSER
@@ -39,4 +39,4 @@ sudo chmod 600 $PGCONF/pg_hba.conf
 
 sudo cp -f $SCRIPTDIR/server.crt $SCRIPTDIR/server.key $PGDATA
 
-sudo /etc/init.d/postgresql restart 9.2
+sudo /etc/init.d/postgresql restart 9.3
