@@ -1,6 +1,6 @@
 language: scala
 
-dist: bionic
+dist: xenial
 
 jdk:
   - openjdk8
