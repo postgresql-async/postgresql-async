@@ -39,4 +39,4 @@ sudo chmod 600 $PGCONF/pg_hba.conf
 
 sudo cp -f $SCRIPTDIR/server.crt $SCRIPTDIR/server.key $PGDATA
 
-sudo /etc/init.d/postgresql restart 9.3
+sudo /etc/init.d/postgresql restart 9.2
