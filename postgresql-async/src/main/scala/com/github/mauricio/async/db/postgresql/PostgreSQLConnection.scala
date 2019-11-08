@@ -48,7 +48,7 @@ import io.netty.channel.EventLoopGroup
 import java.util.concurrent.CopyOnWriteArrayList
 
 import com.github.mauricio.async.db.postgresql.util.URLParser
-import scala.collection.immutable.ArraySeq
+import scala.collection.compat.immutable.ArraySeq
 
 object PostgreSQLConnection {
   final val Counter          = new AtomicLong()

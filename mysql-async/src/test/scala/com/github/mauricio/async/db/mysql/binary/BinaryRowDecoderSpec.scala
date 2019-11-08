@@ -23,7 +23,7 @@ import com.github.mauricio.async.db.mysql.message.server.ColumnDefinitionMessage
 import org.specs2.mutable.Specification
 import java.nio.ByteOrder
 import com.github.mauricio.async.db.mysql.codec.DecoderRegistry
-import scala.collection.immutable.ArraySeq
+import scala.collection.compat.immutable.ArraySeq
 
 class BinaryRowDecoderSpec extends Specification {
 
