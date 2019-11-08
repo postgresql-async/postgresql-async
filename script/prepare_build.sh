@@ -3,12 +3,7 @@
 SCRIPTDIR=`dirname $0`
 
 echo "Preparing MySQL configs"
-mysql -u root -e 'create database mysql_async_tests;'
-mysql -u root -e "create table mysql_async_tests.transaction_test (id varchar(255) not null, primary key (id))"
-mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'mysql_async'@'localhost' IDENTIFIED BY 'root' WITH GRANT OPTION";
-mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'mysql_async_old'@'localhost' WITH GRANT OPTION";
-mysql -u root -e "UPDATE mysql.user SET Password = OLD_PASSWORD('do_not_use_this'), plugin = 'mysql_old_password' where User = 'mysql_async_old'; flush privileges;";
-mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'mysql_async_nopw'@'localhost' WITH GRANT OPTION";
+mysql -u root < ./script/prepare_mysql.sql
 
 echo "preparing postgresql configs"
 
