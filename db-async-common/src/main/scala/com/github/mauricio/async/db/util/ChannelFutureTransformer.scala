@@ -27,11 +27,11 @@ object ChannelFutureTransformer {
     val promise = Promise[ChannelFuture]
 
     channelFuture.addListener(new ChannelFutureListener {
-      def operationComplete(future: ChannelFuture) {
-        if ( future.isSuccess ) {
+      def operationComplete(future: ChannelFuture): Unit = {
+        if (future.isSuccess) {
           promise.success(future)
         } else {
-          val exception = if ( future.cause == null ) {
+          val exception = if (future.cause == null) {
             new CanceledChannelFutureException(future)
               .fillInStackTrace()
           } else {

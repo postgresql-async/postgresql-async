@@ -18,8 +18,8 @@ package com.github.mauricio.async.db.general
 
 trait ColumnData {
 
-  def name : String
-  def dataType : Int
-  def dataTypeSize : Long
+  def name: String
+  def dataType: Int
+  def dataTypeSize: Long
 
 }

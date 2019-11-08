@@ -19,29 +19,29 @@ package com.github.mauricio.async.db.general
 import collection.mutable.ArrayBuffer
 import com.github.mauricio.async.db.{RowData, ResultSet}
 import com.github.mauricio.async.db.util.Log
+import scala.collection.IndexedSeq
 
 object MutableResultSet {
   val log = Log.get[MutableResultSet[Nothing]]
 }
 
-class MutableResultSet[T <: ColumnData](
-                        val columnTypes: IndexedSeq[T]) extends ResultSet {
+class MutableResultSet[T <: ColumnData](val columnTypes: IndexedSeq[T])
+    extends ResultSet {
 
   private val rows = new ArrayBuffer[RowData]()
-  private val columnMapping: Map[String, Int] = this.columnTypes.indices.map(
-    index =>
-      ( this.columnTypes(index).name, index ) ).toMap
+  private val columnMapping: Map[String, Int] = this.columnTypes.indices
+    .map(index => (this.columnTypes(index).name, index))
+    .toMap
 
+  val columnNames: IndexedSeq[String] = this.columnTypes.map(c => c.name)
 
-  val columnNames : IndexedSeq[String] = this.columnTypes.map(c => c.name)
-
-  val types : IndexedSeq[Int] = this.columnTypes.map(c => c.dataType)
+  val types: IndexedSeq[Int] = this.columnTypes.map(c => c.dataType)
 
   override def length: Int = this.rows.length
 
   override def apply(idx: Int): RowData = this.rows(idx)
 
-  def addRow(row : Array[Any] ) {
+  def addRow(row: Array[Any]): Unit = {
     this.rows += new ArrayRowData(this.rows.size, this.columnMapping, row)
   }
 

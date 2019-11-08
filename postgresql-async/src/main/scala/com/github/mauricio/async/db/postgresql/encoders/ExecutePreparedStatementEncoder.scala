@@ -19,22 +19,24 @@ package com.github.mauricio.async.db.postgresql.encoders
 import java.nio.charset.Charset
 
 import com.github.mauricio.async.db.column.ColumnEncoderRegistry
-import com.github.mauricio.async.db.postgresql.messages.frontend.{ClientMessage, PreparedStatementExecuteMessage}
+import com.github.mauricio.async.db.postgresql.messages.frontend.{
+  ClientMessage,
+  PreparedStatementExecuteMessage
+}
 import io.netty.buffer.ByteBuf
 
 class ExecutePreparedStatementEncoder(
-                                       charset: Charset,
-                                       encoder : ColumnEncoderRegistry)
-  extends Encoder
-  with PreparedStatementEncoderHelper
-{
+  charset: Charset,
+  encoder: ColumnEncoderRegistry
+) extends Encoder
+    with PreparedStatementEncoderHelper {
 
   def encode(message: ClientMessage): ByteBuf = {
 
-    val m = message.asInstanceOf[PreparedStatementExecuteMessage]
+    val m                = message.asInstanceOf[PreparedStatementExecuteMessage]
     val statementIdBytes = m.statementId.toString.getBytes(charset)
 
-    writeExecutePortal( statementIdBytes, m.query, m.values, encoder, charset )
+    writeExecutePortal(statementIdBytes, m.query, m.values, encoder, charset)
   }
 
 }

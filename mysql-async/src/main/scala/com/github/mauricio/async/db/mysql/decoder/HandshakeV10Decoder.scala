@@ -19,18 +19,21 @@ package com.github.mauricio.async.db.mysql.decoder
 import java.nio.charset.Charset
 
 import com.github.mauricio.async.db.mysql.encoder.auth.AuthenticationMethod
-import com.github.mauricio.async.db.mysql.message.server.{HandshakeMessage, ServerMessage}
+import com.github.mauricio.async.db.mysql.message.server.{
+  HandshakeMessage,
+  ServerMessage
+}
 import com.github.mauricio.async.db.util.ChannelWrapper.bufferToWrapper
 import com.github.mauricio.async.db.util.Log
 import io.netty.buffer.ByteBuf
 import io.netty.util.CharsetUtil
 
 object HandshakeV10Decoder {
-  final val log = Log.get[HandshakeV10Decoder]
-  final val SeedSize = 8
+  final val log                = Log.get[HandshakeV10Decoder]
+  final val SeedSize           = 8
   final val SeedComplementSize = 12
-  final val Padding = 10
-  final val ASCII = CharsetUtil.US_ASCII
+  final val Padding            = 10
+  final val ASCII              = CharsetUtil.US_ASCII
 }
 
 class HandshakeV10Decoder(charset: Charset) extends MessageDecoder {
@@ -41,7 +44,7 @@ class HandshakeV10Decoder(charset: Charset) extends MessageDecoder {
   def decode(buffer: ByteBuf): ServerMessage = {
 
     val serverVersion = buffer.readCString(ASCII)
-    val connectionId = buffer.readUnsignedInt()
+    val connectionId  = buffer.readUnsignedInt()
 
     var seed = new Array[Byte](SeedSize + SeedComplementSize)
     buffer.readBytes(seed, 0, SeedSize)
@@ -77,7 +80,7 @@ class HandshakeV10Decoder(charset: Charset) extends MessageDecoder {
     log.debug(s"Auth plugin data length was ${authPluginDataLength}")
 
     if ((serverCapabilityFlags & CLIENT_SECURE_CONNECTION) != 0) {
-      val complement = if ( authPluginDataLength > 0 ) {
+      val complement = if (authPluginDataLength > 0) {
         authPluginDataLength - 1 - SeedSize
       } else {
         SeedComplementSize

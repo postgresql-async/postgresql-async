@@ -22,25 +22,26 @@ import scala.concurrent.{ExecutionContextExecutorService, ExecutionContext}
 object Worker {
   val log = Log.get[Worker]
 
-  def apply() : Worker = apply(ExecutorServiceUtils.newFixedPool(1, "db-async-worker"))
+  def apply(): Worker =
+    apply(ExecutorServiceUtils.newFixedPool(1, "db-async-worker"))
 
-  def apply( executorService : ExecutorService ) : Worker = {
-    new Worker(ExecutionContext.fromExecutorService( executorService ))
+  def apply(executorService: ExecutorService): Worker = {
+    new Worker(ExecutionContext.fromExecutorService(executorService))
   }
 
 }
 
-class Worker( val executionContext : ExecutionContextExecutorService ) {
+class Worker(val executionContext: ExecutionContextExecutorService) {
 
   import Worker.log
 
-  def action(f: => Unit) {
+  def action(f: => Unit): Unit = {
     this.executionContext.execute(new Runnable {
-      def run() {
+      def run(): Unit = {
         try {
           f
         } catch {
-          case e : Exception => {
+          case e: Exception => {
             log.error("Failed to execute task %s".format(f), e)
           }
         }
@@ -48,7 +49,7 @@ class Worker( val executionContext : ExecutionContextExecutorService ) {
     })
   }
 
-  def shutdown {
+  def shutdown: Unit = {
     this.executionContext.shutdown()
   }
 

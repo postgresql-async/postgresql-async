@@ -16,8 +16,14 @@
 
 package com.github.mauricio.async.db.postgresql.encoders
 
-import com.github.mauricio.async.db.postgresql.messages.backend.{ServerMessage, AuthenticationResponseType}
-import com.github.mauricio.async.db.postgresql.messages.frontend.{CredentialMessage, ClientMessage}
+import com.github.mauricio.async.db.postgresql.messages.backend.{
+  ServerMessage,
+  AuthenticationResponseType
+}
+import com.github.mauricio.async.db.postgresql.messages.frontend.{
+  CredentialMessage,
+  ClientMessage
+}
 import com.github.mauricio.async.db.postgresql.util.PasswordHelper
 import com.github.mauricio.async.db.util.ByteBufferUtils
 import java.nio.charset.Charset
@@ -38,7 +44,8 @@ class CredentialEncoder(charset: Charset) extends Encoder {
           credentialMessage.username,
           credentialMessage.password,
           credentialMessage.salt.get,
-          charset)
+          charset
+        )
       }
     }
 

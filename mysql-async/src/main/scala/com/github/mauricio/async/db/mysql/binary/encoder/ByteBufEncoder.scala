@@ -5,7 +5,7 @@ import com.github.mauricio.async.db.util.ChannelWrapper.bufferToWrapper
 import io.netty.buffer.ByteBuf
 
 object ByteBufEncoder extends BinaryEncoder {
-  def encode(value: Any, buffer: ByteBuf) {
+  def encode(value: Any, buffer: ByteBuf): Unit = {
     val bytes = value.asInstanceOf[ByteBuf]
 
     buffer.writeLength(bytes.readableBytes())

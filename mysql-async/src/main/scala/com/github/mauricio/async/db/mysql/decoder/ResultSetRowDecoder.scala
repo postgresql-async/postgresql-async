@@ -18,7 +18,10 @@ package com.github.mauricio.async.db.mysql.decoder
 
 import java.nio.charset.Charset
 
-import com.github.mauricio.async.db.mysql.message.server.{ResultSetRowMessage, ServerMessage}
+import com.github.mauricio.async.db.mysql.message.server.{
+  ResultSetRowMessage,
+  ServerMessage
+}
 import com.github.mauricio.async.db.util.ChannelWrapper.bufferToWrapper
 import io.netty.buffer.ByteBuf
 

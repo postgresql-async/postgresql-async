@@ -16,7 +16,7 @@
 
 package com.github.mauricio.async.db.util
 
-import java.util.concurrent.{ Executors, ThreadFactory }
+import java.util.concurrent.{Executors, ThreadFactory}
 import java.util.concurrent.atomic.AtomicInteger
 
 case class DaemonThreadsFactory(name: String) extends ThreadFactory {

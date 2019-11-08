@@ -21,6 +21,6 @@ import com.github.mauricio.async.db.mysql.message.server.ServerMessage
 
 trait MessageDecoder {
 
-  def decode( buffer : ByteBuf ) : ServerMessage
+  def decode(buffer: ByteBuf): ServerMessage
 
 }

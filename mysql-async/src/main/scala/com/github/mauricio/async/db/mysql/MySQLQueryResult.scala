@@ -24,4 +24,5 @@ class MySQLQueryResult(
   val lastInsertId: Long,
   val statusFlags: Int,
   val warnings: Int,
-  rows: Option[ResultSet] = None) extends QueryResult(rowsAffected, message, rows)
+  rows: Option[ResultSet] = None
+) extends QueryResult(rowsAffected, message, rows)

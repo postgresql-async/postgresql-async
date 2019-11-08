@@ -16,27 +16,33 @@
 
 package com.github.mauricio.async.db.mysql.codec
 
-import com.github.mauricio.async.db.mysql.message.server.{ColumnDefinitionMessage, PreparedStatementPrepareResponse}
+import com.github.mauricio.async.db.mysql.message.server.{
+  ColumnDefinitionMessage,
+  PreparedStatementPrepareResponse
+}
 import scala.collection.mutable.ArrayBuffer
 
-class PreparedStatementHolder( val statement : String, val message : PreparedStatementPrepareResponse ) {
+class PreparedStatementHolder(
+  val statement: String,
+  val message: PreparedStatementPrepareResponse
+) {
 
-  val columns = new ArrayBuffer[ColumnDefinitionMessage]
+  val columns    = new ArrayBuffer[ColumnDefinitionMessage]
   val parameters = new ArrayBuffer[ColumnDefinitionMessage]
 
-  def statementId : Array[Byte] = message.statementId
+  def statementId: Array[Byte] = message.statementId
 
-  def needsParameters : Boolean = message.paramsCount != this.parameters.length
+  def needsParameters: Boolean = message.paramsCount != this.parameters.length
 
-  def needsColumns : Boolean = message.columnsCount != this.columns.length
+  def needsColumns: Boolean = message.columnsCount != this.columns.length
 
-  def needsAny : Boolean = this.needsParameters || this.needsColumns
+  def needsAny: Boolean = this.needsParameters || this.needsColumns
 
-  def add( column : ColumnDefinitionMessage ) {
-    if ( this.needsParameters ) {
+  def add(column: ColumnDefinitionMessage): Unit = {
+    if (this.needsParameters) {
       this.parameters += column
     } else {
-      if ( this.needsColumns ) {
+      if (this.needsColumns) {
         this.columns += column
       }
     }

@@ -16,5 +16,5 @@
 
 package com.github.mauricio.async.db.mysql.message.server
 
-case class ErrorMessage( errorCode : Int, sqlState : String, errorMessage : String )
-  extends ServerMessage( ServerMessage.Error )
+case class ErrorMessage(errorCode: Int, sqlState: String, errorMessage: String)
+    extends ServerMessage(ServerMessage.Error)

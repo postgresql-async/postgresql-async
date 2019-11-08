@@ -19,10 +19,11 @@ package com.github.mauricio.async.db.postgresql.messages.backend
 import com.github.mauricio.async.db.general.ColumnData
 
 case class PostgreSQLColumnData(
-                  name: String,
-                  tableObjectId: Int,
-                  columnNumber: Int,
-                  dataType: Int,
-                  dataTypeSize: Long,
-                  dataTypeModifier: Int,
-                  fieldFormat: Int) extends ColumnData
+  name: String,
+  tableObjectId: Int,
+  columnNumber: Int,
+  dataType: Int,
+  dataTypeSize: Long,
+  dataTypeModifier: Int,
+  fieldFormat: Int
+) extends ColumnData

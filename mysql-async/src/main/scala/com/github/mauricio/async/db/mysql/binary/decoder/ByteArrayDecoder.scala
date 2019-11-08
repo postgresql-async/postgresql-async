@@ -22,7 +22,7 @@ import com.github.mauricio.async.db.util.ChannelWrapper.bufferToWrapper
 object ByteArrayDecoder extends BinaryDecoder {
   def decode(buffer: ByteBuf): Any = {
     val length = buffer.readBinaryLength
-    val bytes = new Array[Byte](length.toInt)
+    val bytes  = new Array[Byte](length.toInt)
     buffer.readBytes(bytes)
 
     bytes

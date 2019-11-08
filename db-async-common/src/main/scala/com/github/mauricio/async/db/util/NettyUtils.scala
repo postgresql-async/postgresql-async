@@ -1,7 +1,10 @@
 package com.github.mauricio.async.db.util
 
 import io.netty.channel.nio.NioEventLoopGroup
-import io.netty.util.internal.logging.{InternalLoggerFactory, Slf4JLoggerFactory}
+import io.netty.util.internal.logging.{
+  InternalLoggerFactory,
+  Slf4JLoggerFactory
+}
 
 /*
  * Copyright 2013 Maurício Linhares
@@ -21,6 +24,7 @@ import io.netty.util.internal.logging.{InternalLoggerFactory, Slf4JLoggerFactory
 object NettyUtils {
 
   InternalLoggerFactory.setDefaultFactory(Slf4JLoggerFactory.INSTANCE)
-  lazy val DefaultEventLoopGroup = new NioEventLoopGroup(0, DaemonThreadsFactory("db-async-netty"))
+  lazy val DefaultEventLoopGroup =
+    new NioEventLoopGroup(0, DaemonThreadsFactory("db-async-netty"))
 
 }

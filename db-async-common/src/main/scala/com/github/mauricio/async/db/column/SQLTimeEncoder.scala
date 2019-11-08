@@ -28,6 +28,6 @@ object SQLTimeEncoder extends ColumnEncoder {
   override def encode(value: Any): String = {
     val time = value.asInstanceOf[java.sql.Time]
 
-    format.print( new LocalTime(time.getTime) )
+    format.print(new LocalTime(time.getTime))
   }
 }

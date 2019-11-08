@@ -16,7 +16,10 @@
 
 package com.github.mauricio.async.db.postgresql.parsers
 
-import com.github.mauricio.async.db.postgresql.messages.backend.{DataRowMessage, ServerMessage}
+import com.github.mauricio.async.db.postgresql.messages.backend.{
+  DataRowMessage,
+  ServerMessage
+}
 import io.netty.buffer.ByteBuf
 
 object DataRowParser extends MessageParser {
@@ -25,15 +28,14 @@ object DataRowParser extends MessageParser {
 
     val row = new Array[ByteBuf](buffer.readShort())
 
-    0.until(row.length).foreach {
-      column =>
-        val length = buffer.readInt()
+    0.until(row.length).foreach { column =>
+      val length = buffer.readInt()
 
-        row(column) = if (length == -1) {
-          null
-        } else {
-          buffer.readBytes(length)
-        }
+      row(column) = if (length == -1) {
+        null
+      } else {
+        buffer.readBytes(length)
+      }
     }
 
     new DataRowMessage(row)

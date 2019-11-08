@@ -19,13 +19,13 @@ import com.github.mauricio.async.db.util.AbstractURIParser
 import com.github.mauricio.async.db.Configuration
 
 /**
- * The MySQL URL parser.
- */
+  * The MySQL URL parser.
+  */
 object URLParser extends AbstractURIParser {
 
   /**
-   * The default configuration for MySQL.
-   */
+    * The default configuration for MySQL.
+    */
   override val DEFAULT = Configuration(
     username = "root",
     host = "127.0.0.1", //Matched JDBC default

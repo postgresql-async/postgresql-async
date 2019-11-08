@@ -16,5 +16,7 @@
 
 package com.github.mauricio.async.db.postgresql.messages.backend
 
-case class CommandCompleteMessage(val rowsAffected: Int, val statusMessage: String)
-  extends ServerMessage(ServerMessage.CommandComplete)
+case class CommandCompleteMessage(
+  val rowsAffected: Int,
+  val statusMessage: String
+) extends ServerMessage(ServerMessage.CommandComplete)

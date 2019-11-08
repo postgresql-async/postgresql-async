@@ -23,13 +23,19 @@ import com.github.mauricio.async.db.general.ColumnData
 
 object ByteArrayColumnDecoder extends ColumnDecoder {
 
-  override def decode(kind: ColumnData , value: ByteBuf, charset: Charset): Any = {
+  override def decode(
+    kind: ColumnData,
+    value: ByteBuf,
+    charset: Charset
+  ): Any = {
     val bytes = new Array[Byte](value.readableBytes())
     value.readBytes(bytes)
     bytes
   }
 
   def decode(value: String): Any = {
-    throw new UnsupportedOperationException("This method should never be called for byte arrays")
+    throw new UnsupportedOperationException(
+      "This method should never be called for byte arrays"
+    )
   }
 }
