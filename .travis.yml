@@ -8,8 +8,9 @@ jdk:
 
 services:
   - mysql
-  - postgresql
 
+addons:
+  postgresql: "9.1"
 
 
 cache:
