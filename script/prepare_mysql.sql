@@ -6,6 +6,6 @@ CREATE USER 'mysql_async_old'@'localhost';
 CREATE USER 'mysql_async_nopw'@'localhost';
 GRANT ALL PRIVILEGES ON *.* TO 'mysql_async'@'localhost';
 GRANT ALL PRIVILEGES ON *.* TO 'mysql_async_old'@'localhost';
-UPDATE mysql.user SET password = OLD_PASSWORD('do_not_use_this'), plugin = 'mysql_old_password' where User = 'mysql_async_old';
+UPDATE mysql.user SET Password = OLD_PASSWORD('do_not_use_this'), plugin = 'mysql_old_password' where User = 'mysql_async_old';
 FLUSH PRIVILEGES;
 GRANT ALL PRIVILEGES ON *.* TO 'mysql_async_nopw'@'localhost';
