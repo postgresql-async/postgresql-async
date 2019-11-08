@@ -9,6 +9,10 @@ jdk:
 services:
   - mysql
 
+addons:
+  postgresql: "9.4"
+
+
 cache:
   directories:
     - $HOME/.m2
@@ -21,6 +25,3 @@ before_script:
 notifications:
   email:
     - jilen.zhang@gmail.com
-
-addons:
-  postgresql: "9.2"
