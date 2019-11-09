@@ -23,9 +23,9 @@ import org.joda.time._
 import org.joda.time.format.DateTimeFormatterBuilder
 
 object TimestampEncoderDecoder {
-  val BaseFormat = "yyyy-MM-dd HH:mm:ss"
+  val BaseFormat   = "yyyy-MM-dd HH:mm:ss"
   val MillisFormat = ".SSSSSS"
-  val Instance = new TimestampEncoderDecoder()
+  val Instance     = new TimestampEncoderDecoder()
 }
 
 class TimestampEncoderDecoder extends ColumnEncoderDecoder {
@@ -33,9 +33,11 @@ class TimestampEncoderDecoder extends ColumnEncoderDecoder {
   import TimestampEncoderDecoder._
 
   private val optional = new DateTimeFormatterBuilder()
-    .appendPattern(MillisFormat).toParser
+    .appendPattern(MillisFormat)
+    .toParser
   private val optionalTimeZone = new DateTimeFormatterBuilder()
-    .appendPattern("Z").toParser
+    .appendPattern("Z")
+    .toParser
 
   private val builder = new DateTimeFormatterBuilder()
     .appendPattern(BaseFormat)
@@ -43,10 +45,12 @@ class TimestampEncoderDecoder extends ColumnEncoderDecoder {
     .appendOptional(optionalTimeZone)
 
   private val timezonedPrinter = new DateTimeFormatterBuilder()
-    .appendPattern(s"${BaseFormat}${MillisFormat}Z").toFormatter
+    .appendPattern(s"${BaseFormat}${MillisFormat}Z")
+    .toFormatter
 
   private val nonTimezonedPrinter = new DateTimeFormatterBuilder()
-    .appendPattern(s"${BaseFormat}${MillisFormat}").toFormatter
+    .appendPattern(s"${BaseFormat}${MillisFormat}")
+    .toFormatter
 
   private val format = builder.toFormatter
 
@@ -58,12 +62,12 @@ class TimestampEncoderDecoder extends ColumnEncoderDecoder {
 
   override def encode(value: Any): String = {
     value match {
-      case t: Timestamp => this.timezonedPrinter.print(new DateTime(t))
-      case t: Date => this.timezonedPrinter.print(new DateTime(t))
-      case t: Calendar => this.timezonedPrinter.print(new DateTime(t))
-      case t: LocalDateTime => this.nonTimezonedPrinter.print(t)
+      case t: Timestamp        => this.timezonedPrinter.print(new DateTime(t))
+      case t: Date             => this.timezonedPrinter.print(new DateTime(t))
+      case t: Calendar         => this.timezonedPrinter.print(new DateTime(t))
+      case t: LocalDateTime    => this.nonTimezonedPrinter.print(t)
       case t: ReadableDateTime => this.timezonedPrinter.print(t)
-      case _ => throw new DateEncoderNotAvailableException(value)
+      case _                   => throw new DateEncoderNotAvailableException(value)
     }
   }
 

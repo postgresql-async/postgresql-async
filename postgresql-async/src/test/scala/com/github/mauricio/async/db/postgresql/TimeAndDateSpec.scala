@@ -25,51 +25,59 @@ class TimeAndDateSpec extends Specification with DatabaseTestHelper {
 
     "support a time object" in {
 
-      withHandler {
-        handler =>
-          val create = """CREATE TEMP TABLE messages
+      withHandler { handler =>
+        val create = """CREATE TEMP TABLE messages
                          (
                            id bigserial NOT NULL,
                            moment time NOT NULL,
                            CONSTRAINT bigserial_column_pkey PRIMARY KEY (id )
                          )"""
 
-          executeDdl(handler, create)
-          executePreparedStatement(handler, "INSERT INTO messages (moment) VALUES (?)", Array[Any](new LocalTime(4, 5, 6)))
+        executeDdl(handler, create)
+        executePreparedStatement(
+          handler,
+          "INSERT INTO messages (moment) VALUES (?)",
+          Array[Any](new LocalTime(4, 5, 6))
+        )
 
-          val rows = executePreparedStatement(handler, "select * from messages").rows.get
+        val rows =
+          executePreparedStatement(handler, "select * from messages").rows.get
 
-          val time = rows(0)("moment").asInstanceOf[LocalTime]
+        val time = rows(0)("moment").asInstanceOf[LocalTime]
 
-          time.getHourOfDay === 4
-          time.getMinuteOfHour === 5
-          time.getSecondOfMinute === 6
+        time.getHourOfDay === 4
+        time.getMinuteOfHour === 5
+        time.getSecondOfMinute === 6
       }
 
     }
 
     "support a time object with microseconds" in {
 
-      withHandler {
-        handler =>
-          val create = """CREATE TEMP TABLE messages
+      withHandler { handler =>
+        val create = """CREATE TEMP TABLE messages
                          (
                            id bigserial NOT NULL,
                            moment time(6) NOT NULL,
                            CONSTRAINT bigserial_column_pkey PRIMARY KEY (id )
                          )"""
 
-          executeDdl(handler, create)
-          executePreparedStatement(handler, "INSERT INTO messages (moment) VALUES (?)", Array[Any](new LocalTime(4, 5, 6, 134)))
+        executeDdl(handler, create)
+        executePreparedStatement(
+          handler,
+          "INSERT INTO messages (moment) VALUES (?)",
+          Array[Any](new LocalTime(4, 5, 6, 134))
+        )
 
-          val rows = executePreparedStatement(handler, "select * from messages").rows.get
+        val rows =
+          executePreparedStatement(handler, "select * from messages").rows.get
 
-          val time = rows(0)("moment").asInstanceOf[LocalTime]
+        val time = rows(0)("moment").asInstanceOf[LocalTime]
 
-          time.getHourOfDay === 4
-          time.getMinuteOfHour === 5
-          time.getSecondOfMinute === 6
-          time.getMillisOfSecond === 134
+        time.getHourOfDay === 4
+        time.getMinuteOfHour === 5
+        time.getSecondOfMinute === 6
+        time.getMillisOfSecond === 134
       }
 
     }
@@ -78,43 +86,81 @@ class TimeAndDateSpec extends Specification with DatabaseTestHelper {
 
       pending("need to find a way to implement this")
 
-      withHandler {
-        handler =>
-          val create = """CREATE TEMP TABLE messages
+      withHandler { handler =>
+        val create = """CREATE TEMP TABLE messages
                          (
                            id bigserial NOT NULL,
                            moment time with time zone NOT NULL,
                            CONSTRAINT bigserial_column_pkey PRIMARY KEY (id )
                          )"""
 
-          executeDdl(handler, create)
-          executeQuery(handler, "INSERT INTO messages (moment) VALUES ('04:05:06 -3:00')")
+        executeDdl(handler, create)
+        executeQuery(
+          handler,
+          "INSERT INTO messages (moment) VALUES ('04:05:06 -3:00')"
+        )
 
-          val rows = executePreparedStatement(handler, "select * from messages").rows.get
+        val rows =
+          executePreparedStatement(handler, "select * from messages").rows.get
 
-          val time = rows(0)("moment").asInstanceOf[LocalTime]
+        val time = rows(0)("moment").asInstanceOf[LocalTime]
 
-          time.getHourOfDay === 4
-          time.getMinuteOfHour === 5
-          time.getSecondOfMinute === 6
+        time.getHourOfDay === 4
+        time.getMinuteOfHour === 5
+        time.getSecondOfMinute === 6
       }
 
     }
 
     "support timestamp with timezone" in {
-      withHandler {
-        handler =>
-
-          val create = """CREATE TEMP TABLE messages
+      withHandler { handler =>
+        val create = """CREATE TEMP TABLE messages
                          (
                            id bigserial NOT NULL,
                            moment timestamp with time zone NOT NULL,
                            CONSTRAINT bigserial_column_pkey PRIMARY KEY (id )
                          )"""
 
+        executeDdl(handler, create)
+        executeQuery(
+          handler,
+          "INSERT INTO messages (moment) VALUES ('1999-01-08 04:05:06 -3:00')"
+        )
+        val rows =
+          executePreparedStatement(handler, "SELECT * FROM messages").rows.get
+
+        rows.length === 1
+
+        val dateTime = rows(0)("moment").asInstanceOf[DateTime]
+
+        // Note: Since this assertion depends on Brazil locale, I think epoch time assertion is preferred
+        // dateTime.getZone.toTimeZone.getRawOffset === -10800000
+        dateTime.getMillis === 915779106000L
+      }
+    }
+
+    "support timestamp with timezone and microseconds" in {
+
+      foreach(1.until(6)) { index =>
+        withHandler { handler =>
+          val create = """CREATE TEMP TABLE messages
+                         (
+                           id bigserial NOT NULL,
+                           moment timestamp(%d) with time zone NOT NULL,
+                           CONSTRAINT bigserial_column_pkey PRIMARY KEY (id )
+                         )""".format(index)
+
           executeDdl(handler, create)
-          executeQuery(handler, "INSERT INTO messages (moment) VALUES ('1999-01-08 04:05:06 -3:00')")
-          val rows = executePreparedStatement(handler, "SELECT * FROM messages").rows.get
+
+          val seconds = (index.toString * index).toLong
+
+          executeQuery(
+            handler,
+            "INSERT INTO messages (moment) VALUES ('1999-01-08 04:05:06.%d -3:00')"
+              .format(seconds)
+          )
+          val rows =
+            executePreparedStatement(handler, "SELECT * FROM messages").rows.get
 
           rows.length === 1
 
@@ -122,141 +168,140 @@ class TimeAndDateSpec extends Specification with DatabaseTestHelper {
 
           // Note: Since this assertion depends on Brazil locale, I think epoch time assertion is preferred
           // dateTime.getZone.toTimeZone.getRawOffset === -10800000
-          dateTime.getMillis === 915779106000L
-      }
-    }
-
-    "support timestamp with timezone and microseconds" in {
-
-      foreach(1.until(6)) {
-        index =>
-          withHandler {
-            handler =>
-
-              val create = """CREATE TEMP TABLE messages
-                         (
-                           id bigserial NOT NULL,
-                           moment timestamp(%d) with time zone NOT NULL,
-                           CONSTRAINT bigserial_column_pkey PRIMARY KEY (id )
-                         )""".format(index)
-
-              executeDdl(handler, create)
-
-              val seconds = (index.toString * index).toLong
-
-              executeQuery(handler, "INSERT INTO messages (moment) VALUES ('1999-01-08 04:05:06.%d -3:00')".format(seconds))
-              val rows = executePreparedStatement(handler, "SELECT * FROM messages").rows.get
-
-              rows.length === 1
-
-              val dateTime = rows(0)("moment").asInstanceOf[DateTime]
-
-              // Note: Since this assertion depends on Brazil locale, I think epoch time assertion is preferred
-              // dateTime.getZone.toTimeZone.getRawOffset === -10800000
-              dateTime.getMillis must be_>=(915779106000L)
-              dateTime.getMillis must be_<(915779107000L)
-          }
+          dateTime.getMillis must be_>=(915779106000L)
+          dateTime.getMillis must be_<(915779107000L)
+        }
       }
     }
 
     "support current_timestamp with timezone" in {
-      withHandler {
-        handler =>
- 
-          val millis = System.currentTimeMillis
+      withHandler { handler =>
+        val millis = System.currentTimeMillis
 
-          val create = """CREATE TEMP TABLE messages
+        val create = """CREATE TEMP TABLE messages
                          (
                            id bigserial NOT NULL,
                            moment timestamp with time zone NOT NULL,
                            CONSTRAINT bigserial_column_pkey PRIMARY KEY (id )
                          )"""
 
-          executeDdl(handler, create)
-          executeQuery(handler, "INSERT INTO messages (moment) VALUES (current_timestamp)")
-          val rows = executePreparedStatement(handler, "SELECT * FROM messages").rows.get
+        executeDdl(handler, create)
+        executeQuery(
+          handler,
+          "INSERT INTO messages (moment) VALUES (current_timestamp)"
+        )
+        val rows =
+          executePreparedStatement(handler, "SELECT * FROM messages").rows.get
 
-          rows.length === 1
+        rows.length === 1
 
-          val dateTime = rows(0)("moment").asInstanceOf[DateTime]
+        val dateTime = rows(0)("moment").asInstanceOf[DateTime]
 
-          dateTime.getMillis must beCloseTo(millis, 500)
+        dateTime.getMillis must beCloseTo(millis, 500)
       }
     }
 
     "handle sending a time with timezone and return a LocalDateTime for a timestamp without timezone column" in {
 
-      withTimeHandler {
-        conn =>
-          val date = new DateTime(2190319)
+      withTimeHandler { conn =>
+        val date = new DateTime(2190319)
 
-          executePreparedStatement(conn, "CREATE TEMP TABLE TEST(T TIMESTAMP)")
-          executePreparedStatement(conn, "INSERT INTO TEST(T) VALUES(?)", Array(date))
-          val result = executePreparedStatement(conn, "SELECT T FROM TEST")
-          val date2 = result.rows.get.head(0)
-          date2 === date.toDateTime(DateTimeZone.UTC).toLocalDateTime
+        executePreparedStatement(conn, "CREATE TEMP TABLE TEST(T TIMESTAMP)")
+        executePreparedStatement(
+          conn,
+          "INSERT INTO TEST(T) VALUES(?)",
+          Array(date)
+        )
+        val result = executePreparedStatement(conn, "SELECT T FROM TEST")
+        val date2  = result.rows.get.head(0)
+        date2 === date.toDateTime(DateTimeZone.UTC).toLocalDateTime
       }
 
     }
 
     "supports sending a local date and later a date time object for the same field" in {
 
-      withTimeHandler {
-        conn =>
-          val date = new LocalDate(2016, 3, 5)
+      withTimeHandler { conn =>
+        val date = new LocalDate(2016, 3, 5)
 
-          executePreparedStatement(conn, "CREATE TEMP TABLE TEST(T TIMESTAMP)")
-          executePreparedStatement(conn, "INSERT INTO TEST(T) VALUES(?)", Array(date))
-          val result = executePreparedStatement(conn, "SELECT T FROM TEST WHERE T  = ?", Array(date))
-          result.rows.get.size === 1
+        executePreparedStatement(conn, "CREATE TEMP TABLE TEST(T TIMESTAMP)")
+        executePreparedStatement(
+          conn,
+          "INSERT INTO TEST(T) VALUES(?)",
+          Array(date)
+        )
+        val result = executePreparedStatement(
+          conn,
+          "SELECT T FROM TEST WHERE T  = ?",
+          Array(date)
+        )
+        result.rows.get.size === 1
 
-          val dateTime = new LocalDateTime(2016, 3, 5, 0, 0, 0, 0)
-          val dateTimeResult = executePreparedStatement(conn, "SELECT T FROM TEST WHERE T  = ?", Array(dateTime))
-          dateTimeResult.rows.get.size === 1
+        val dateTime = new LocalDateTime(2016, 3, 5, 0, 0, 0, 0)
+        val dateTimeResult = executePreparedStatement(
+          conn,
+          "SELECT T FROM TEST WHERE T  = ?",
+          Array(dateTime)
+        )
+        dateTimeResult.rows.get.size === 1
       }
 
     }
 
     "handle sending a LocalDateTime and return a LocalDateTime for a timestamp without timezone column" in {
 
-      withTimeHandler {
-        conn =>
-          val date1 = new LocalDateTime(2190319)
+      withTimeHandler { conn =>
+        val date1 = new LocalDateTime(2190319)
 
-          await(conn.sendPreparedStatement("CREATE TEMP TABLE TEST(T TIMESTAMP)"))
-          await(conn.sendPreparedStatement("INSERT INTO TEST(T) VALUES(?)", Seq(date1)))
-          val result = await(conn.sendPreparedStatement("SELECT T FROM TEST"))
-          val date2 = result.rows.get.head(0)
+        await(conn.sendPreparedStatement("CREATE TEMP TABLE TEST(T TIMESTAMP)"))
+        await(
+          conn
+            .sendPreparedStatement("INSERT INTO TEST(T) VALUES(?)", Seq(date1))
+        )
+        val result = await(conn.sendPreparedStatement("SELECT T FROM TEST"))
+        val date2  = result.rows.get.head(0)
 
-          date2 === date1
+        date2 === date1
       }
 
     }
 
     "handle sending a date with timezone and retrieving the date with the same time zone" in {
 
-      withTimeHandler {
-        conn =>
-          val date1 = new DateTime(2190319)
+      withTimeHandler { conn =>
+        val date1 = new DateTime(2190319)
 
-          await(conn.sendPreparedStatement("CREATE TEMP TABLE TEST(T TIMESTAMP WITH TIME ZONE)"))
-          await(conn.sendPreparedStatement("INSERT INTO TEST(T) VALUES(?)", Seq(date1)))
-          val result = await(conn.sendPreparedStatement("SELECT T FROM TEST"))
-          val date2 = result.rows.get.head(0)
+        await(
+          conn.sendPreparedStatement(
+            "CREATE TEMP TABLE TEST(T TIMESTAMP WITH TIME ZONE)"
+          )
+        )
+        await(
+          conn
+            .sendPreparedStatement("INSERT INTO TEST(T) VALUES(?)", Seq(date1))
+        )
+        val result = await(conn.sendPreparedStatement("SELECT T FROM TEST"))
+        val date2  = result.rows.get.head(0)
 
-          date2 === date1
+        date2 === date1
       }
     }
 
     "support intervals" in {
-      withHandler {
-        handler =>
+      withHandler { handler =>
+        executeDdl(
+          handler,
+          "CREATE TEMP TABLE intervals (duration interval NOT NULL)"
+        )
 
-        executeDdl(handler, "CREATE TEMP TABLE intervals (duration interval NOT NULL)")
-
-        val p = new Period(1,2,0,4,5,6,7,8) /* postgres normalizes weeks */
-        executePreparedStatement(handler, "INSERT INTO intervals (duration) VALUES (?)", Array(p))
-        val rows = executeQuery(handler, "SELECT duration FROM intervals").rows.get
+        val p = new Period(1, 2, 0, 4, 5, 6, 7, 8) /* postgres normalizes weeks */
+        executePreparedStatement(
+          handler,
+          "INSERT INTO intervals (duration) VALUES (?)",
+          Array(p)
+        )
+        val rows =
+          executeQuery(handler, "SELECT duration FROM intervals").rows.get
 
         rows.length === 1
 

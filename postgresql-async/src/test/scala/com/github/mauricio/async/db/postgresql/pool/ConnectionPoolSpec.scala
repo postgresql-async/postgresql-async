@@ -20,7 +20,10 @@ import java.util.UUID
 
 import com.github.mauricio.async.db.pool.{ConnectionPool, PoolConfiguration}
 import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException
-import com.github.mauricio.async.db.postgresql.{PostgreSQLConnection, DatabaseTestHelper}
+import com.github.mauricio.async.db.postgresql.{
+  PostgreSQLConnection,
+  DatabaseTestHelper
+}
 import org.specs2.mutable.Specification
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -36,28 +39,25 @@ class ConnectionPoolSpec extends Specification with DatabaseTestHelper {
 
     "give you a connection when sending statements" in {
 
-      withPool{
-        pool =>
-          executeQuery(pool, "SELECT 8").rows.get(0)(0) === 8
-          Thread.sleep(1000)
-          pool.availables.size === 1
+      withPool { pool =>
+        executeQuery(pool, "SELECT 8").rows.get(0)(0) === 8
+        Thread.sleep(1000)
+        pool.availables.size === 1
       }
 
     }
 
     "give you a connection for prepared statements" in {
-      withPool{
-        pool =>
-          executePreparedStatement(pool, "SELECT 8").rows.get(0)(0) === 8
-          Thread.sleep(1000)
-          pool.availables.size === 1
+      withPool { pool =>
+        executePreparedStatement(pool, "SELECT 8").rows.get(0)(0) === 8
+        Thread.sleep(1000)
+        pool.availables.size === 1
       }
     }
 
     "return an empty map when connect is called" in {
-      withPool {
-        pool =>
-          await(pool.connect) === pool
+      withPool { pool =>
+        await(pool.connect) === pool
       }
     }
 
@@ -65,20 +65,16 @@ class ConnectionPoolSpec extends Specification with DatabaseTestHelper {
 
       val id = UUID.randomUUID().toString
 
-      withPool {
-        pool =>
-          val operations = pool.inTransaction {
-            connection =>
-              connection.sendPreparedStatement(Insert, List(id)).flatMap {
-                result =>
-                  connection.sendPreparedStatement(Insert, List(id)).map {
-                    failure =>
-                      List(result, failure)
-                  }
-              }
+      withPool { pool =>
+        val operations = pool.inTransaction { connection =>
+          connection.sendPreparedStatement(Insert, List(id)).flatMap { result =>
+            connection.sendPreparedStatement(Insert, List(id)).map { failure =>
+              List(result, failure)
+            }
           }
+        }
 
-          await(operations) must throwA[GenericDatabaseException]
+        await(operations) must throwA[GenericDatabaseException]
 
       }
 
@@ -86,9 +82,12 @@ class ConnectionPoolSpec extends Specification with DatabaseTestHelper {
 
   }
 
-  def withPool[R]( fn : (ConnectionPool[PostgreSQLConnection]) => R ) : R = {
+  def withPool[R](fn: (ConnectionPool[PostgreSQLConnection]) => R): R = {
 
-    val pool = new ConnectionPool( new PostgreSQLConnectionFactory(defaultConfiguration), PoolConfiguration.Default )
+    val pool = new ConnectionPool(
+      new PostgreSQLConnectionFactory(defaultConfiguration),
+      PoolConfiguration.Default
+    )
     try {
       fn(pool)
     } finally {

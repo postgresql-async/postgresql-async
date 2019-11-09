@@ -91,8 +91,8 @@ trait ConnectionHelper {
                               id INT NOT NULL AUTO_INCREMENT ,
                               name VARCHAR(255) CHARACTER SET 'utf8' NOT NULL ,
                               PRIMARY KEY (id) );"""
-  final val insert = """INSERT INTO users (name) VALUES ('Maurício Aragão')"""
-  final val select = """SELECT * FROM users"""
+  final val insert      = """INSERT INTO users (name) VALUES ('Maurício Aragão')"""
+  final val select      = """SELECT * FROM users"""
 
   def defaultConfiguration = new Configuration(
     "mysql_async",
@@ -102,53 +102,63 @@ trait ConnectionHelper {
     database = Some("mysql_async_tests")
   )
 
-  def withPool[T]( fn : (ConnectionPool[MySQLConnection]) => T ) : T = {
+  def withPool[T](fn: (ConnectionPool[MySQLConnection]) => T): T = {
 
     val factory = new MySQLConnectionFactory(this.defaultConfiguration)
-    val pool = new ConnectionPool[MySQLConnection](factory, PoolConfiguration.Default)
+    val pool =
+      new ConnectionPool[MySQLConnection](factory, PoolConfiguration.Default)
 
     try {
       fn(pool)
     } finally {
-      awaitFuture( pool.close )
+      awaitFuture(pool.close)
     }
 
   }
 
-  def withConfigurablePool[T]( configuration : Configuration )( fn : (ConnectionPool[MySQLConnection]) => T ) : T = {
+  def withConfigurablePool[T](
+    configuration: Configuration
+  )(fn: (ConnectionPool[MySQLConnection]) => T): T = {
 
     val factory = new MySQLConnectionFactory(configuration)
-    val pool = new ConnectionPool[MySQLConnection](factory, PoolConfiguration.Default)
+    val pool =
+      new ConnectionPool[MySQLConnection](factory, PoolConfiguration.Default)
 
     try {
       fn(pool)
     } finally {
-      awaitFuture( pool.close )
+      awaitFuture(pool.close)
     }
 
   }
 
-  def withConnection[T]( fn : (MySQLConnection) => T ) : T =
+  def withConnection[T](fn: (MySQLConnection) => T): T =
     withConfigurableConnection(this.defaultConfiguration)(fn)
 
-  def withConfigurableConnection[T]( configuration : Configuration )(fn : (MySQLConnection) => T) : T = {
+  def withConfigurableConnection[T](
+    configuration: Configuration
+  )(fn: (MySQLConnection) => T): T = {
     val connection = new MySQLConnection(configuration)
 
     try {
-      awaitFuture( connection.connect )
+      awaitFuture(connection.connect)
       fn(connection)
     } finally {
-      awaitFuture( connection.close )
+      awaitFuture(connection.close)
     }
 
   }
 
-  def executeQuery( connection : Connection, query : String  ) : QueryResult = {
-    awaitFuture( connection.sendQuery(query) )
+  def executeQuery(connection: Connection, query: String): QueryResult = {
+    awaitFuture(connection.sendQuery(query))
   }
 
-  def executePreparedStatement( connection : Connection, query : String, values : Any * ) : QueryResult = {
-    awaitFuture( connection.sendPreparedStatement(query, values) )
+  def executePreparedStatement(
+    connection: Connection,
+    query: String,
+    values: Any*
+  ): QueryResult = {
+    awaitFuture(connection.sendPreparedStatement(query, values))
   }
 
 }

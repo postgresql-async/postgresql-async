@@ -21,15 +21,19 @@ import java.security.MessageDigest
 
 object PasswordHelper {
 
-  private final val Lookup = Array[Byte]('0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-    'a', 'b', 'c', 'd', 'e', 'f')
+  private final val Lookup = Array[Byte]('0', '1', '2', '3', '4', '5', '6', '7',
+    '8', '9', 'a', 'b', 'c', 'd', 'e', 'f')
 
-  private def bytesToHex( bytes : Array[Byte], hex : Array[Byte], offset : Int ) {
+  private def bytesToHex(
+    bytes: Array[Byte],
+    hex: Array[Byte],
+    offset: Int
+  ): Unit = {
 
     var pos = offset
-    var i = 0
+    var i   = 0
 
-    while ( i < 16 ) {
+    while (i < 16) {
       val c = bytes(i) & 0xff
       var j = c >> 4
       hex(pos) = Lookup(j)
@@ -44,8 +48,13 @@ object PasswordHelper {
 
   }
 
-  def encode( userText : String, passwordText : String, salt : Array[Byte], charset : Charset ) : Array[Byte] = {
-    val user = userText.getBytes(charset)
+  def encode(
+    userText: String,
+    passwordText: String,
+    salt: Array[Byte],
+    charset: Charset
+  ): Array[Byte] = {
+    val user     = userText.getBytes(charset)
     val password = passwordText.getBytes(charset)
 
     val md = MessageDigest.getInstance("MD5")

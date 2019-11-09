@@ -20,7 +20,7 @@ class ZeroDatesSpec extends Specification with ConnectionHelper {
   val insertStatement = "INSERT INTO dates (name) values ('Joe')"
   val selectStatement = "SELECT * FROM dates"
 
-  def matchValues( result : RowData ) = {
+  def matchValues(result: RowData) = {
     result("name") === "Joe"
     result("timestamp_column") must beNull
     result("datetime_column") must beNull
@@ -33,23 +33,23 @@ class ZeroDatesSpec extends Specification with ConnectionHelper {
 
     "correctly parse the MySQL zeroed dates as NULL values in text protocol" in {
 
-      withConnection {
-        connection =>
-          executeQuery(connection, createStatement)
-          executeQuery(connection, insertStatement)
+      withConnection { connection =>
+        executeQuery(connection, createStatement)
+        executeQuery(connection, insertStatement)
 
-          matchValues(executeQuery(connection, selectStatement).rows.get(0))
+        matchValues(executeQuery(connection, selectStatement).rows.get(0))
       }
     }
 
     "correctly parse the MySQL zeroed dates as NULL values in binary protocol" in {
 
-      withConnection {
-        connection =>
-          executeQuery(connection, createStatement)
-          executeQuery(connection, insertStatement)
+      withConnection { connection =>
+        executeQuery(connection, createStatement)
+        executeQuery(connection, insertStatement)
 
-          matchValues(executePreparedStatement(connection, selectStatement).rows.get(0))
+        matchValues(
+          executePreparedStatement(connection, selectStatement).rows.get(0)
+        )
       }
     }
 

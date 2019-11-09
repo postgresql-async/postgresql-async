@@ -1,11 +1,5 @@
-addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.5.0")
-
-addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.6.0")
-
-addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.0.0")
-
-addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.3.0")
-
-resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
-
-// pgpSigningKey := Some(0xB98761578C650D77L)
+addSbtPlugin("org.scalameta"     % "sbt-scalafmt" % "2.0.0")
+addSbtPlugin("com.github.gseitz" % "sbt-release"  % "1.0.12")
+addSbtPlugin("org.xerial.sbt"    % "sbt-sonatype" % "3.8")
+addSbtPlugin("com.jsuereth"      % "sbt-pgp"      % "2.0.0")
+addSbtPlugin("ch.epfl.scala"     % "sbt-scalafix" % "0.9.8")

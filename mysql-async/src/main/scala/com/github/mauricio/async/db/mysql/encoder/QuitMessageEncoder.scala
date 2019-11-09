@@ -24,7 +24,7 @@ object QuitMessageEncoder extends MessageEncoder {
 
   def encode(message: ClientMessage): ByteBuf = {
     val buffer = ByteBufferUtils.packetBuffer(5)
-    buffer.writeByte( ClientMessage.Quit )
+    buffer.writeByte(ClientMessage.Quit)
     buffer
   }
 

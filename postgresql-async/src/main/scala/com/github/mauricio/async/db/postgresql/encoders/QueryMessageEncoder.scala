@@ -17,7 +17,10 @@
 package com.github.mauricio.async.db.postgresql.encoders
 
 import com.github.mauricio.async.db.postgresql.messages.backend.ServerMessage
-import com.github.mauricio.async.db.postgresql.messages.frontend.{QueryMessage, ClientMessage}
+import com.github.mauricio.async.db.postgresql.messages.frontend.{
+  QueryMessage,
+  ClientMessage
+}
 import com.github.mauricio.async.db.util.{Log, ByteBufferUtils}
 import java.nio.charset.Charset
 import io.netty.buffer.{Unpooled, ByteBuf}
@@ -34,7 +37,7 @@ class QueryMessageEncoder(charset: Charset) extends Encoder {
 
     val m = message.asInstanceOf[QueryMessage]
 
-    if ( log.isDebugEnabled ) {
+    if (log.isDebugEnabled) {
       log.debug("Executing direct query ({})", m.query)
     }
 

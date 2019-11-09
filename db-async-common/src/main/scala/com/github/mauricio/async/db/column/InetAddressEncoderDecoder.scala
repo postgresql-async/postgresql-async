@@ -17,7 +17,7 @@
 package com.github.mauricio.async.db.column
 
 import java.net.InetAddress
-import sun.net.util.IPAddressUtil.{textToNumericFormatV4,textToNumericFormatV6}
+import sun.net.util.IPAddressUtil.{textToNumericFormatV4, textToNumericFormatV6}
 
 object InetAddressEncoderDecoder extends ColumnEncoderDecoder {
 

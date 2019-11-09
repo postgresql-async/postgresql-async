@@ -18,7 +18,10 @@ package com.github.mauricio.async.db.postgresql.codec
 
 import com.github.mauricio.async.db.Configuration
 import com.github.mauricio.async.db.SSLConfiguration.Mode
-import com.github.mauricio.async.db.column.{ColumnDecoderRegistry, ColumnEncoderRegistry}
+import com.github.mauricio.async.db.column.{
+  ColumnDecoderRegistry,
+  ColumnEncoderRegistry
+}
 import com.github.mauricio.async.db.postgresql.exceptions._
 import com.github.mauricio.async.db.postgresql.messages.backend._
 import com.github.mauricio.async.db.postgresql.messages.frontend._
@@ -50,34 +53,33 @@ object PostgreSQLConnectionHandler {
   final val log = Log.get[PostgreSQLConnectionHandler]
 }
 
-class PostgreSQLConnectionHandler
-(
+class PostgreSQLConnectionHandler(
   configuration: Configuration,
   encoderRegistry: ColumnEncoderRegistry,
   decoderRegistry: ColumnDecoderRegistry,
-  connectionDelegate : PostgreSQLConnectionDelegate,
-  group : EventLoopGroup,
-  executionContext : ExecutionContext
-  )
-  extends SimpleChannelInboundHandler[Object]
-{
+  connectionDelegate: PostgreSQLConnectionDelegate,
+  group: EventLoopGroup,
+  executionContext: ExecutionContext
+) extends SimpleChannelInboundHandler[Object] {
 
   import PostgreSQLConnectionHandler.log
 
   private val properties = List(
-    "user" -> configuration.username,
-    "database" -> configuration.database,
-    "client_encoding" -> configuration.charset.name(),
-    "DateStyle" -> "ISO",
-    "extra_float_digits" -> "2")
+    "user"               -> configuration.username,
+    "database"           -> configuration.database,
+    "client_encoding"    -> configuration.charset.name(),
+    "DateStyle"          -> "ISO",
+    "extra_float_digits" -> "2"
+  )
 
   private implicit final val _executionContext = executionContext
-  private final val bootstrap = new Bootstrap()
-  private final val connectionFuture = Promise[PostgreSQLConnectionHandler]()
-  private final val disconnectionPromise = Promise[PostgreSQLConnectionHandler]()
-  private var processData : ProcessData = null
+  private final val bootstrap                  = new Bootstrap()
+  private final val connectionFuture           = Promise[PostgreSQLConnectionHandler]()
+  private final val disconnectionPromise =
+    Promise[PostgreSQLConnectionHandler]()
+  private var processData: ProcessData = null
 
-  private var currentContext : ChannelHandlerContext = null
+  private var currentContext: ChannelHandlerContext = null
 
   def connect: Future[PostgreSQLConnectionHandler] = {
     this.bootstrap.group(this.group)
@@ -86,9 +88,14 @@ class PostgreSQLConnectionHandler
 
       override def initChannel(ch: channel.Channel): Unit = {
         ch.pipeline.addLast(
-          new MessageDecoder(configuration.ssl.mode != Mode.Disable, configuration.charset, configuration.maximumMessageSize),
+          new MessageDecoder(
+            configuration.ssl.mode != Mode.Disable,
+            configuration.charset,
+            configuration.maximumMessageSize
+          ),
           new MessageEncoder(configuration.charset, encoderRegistry),
-          PostgreSQLConnectionHandler.this)
+          PostgreSQLConnectionHandler.this
+        )
       }
 
     })
@@ -96,21 +103,26 @@ class PostgreSQLConnectionHandler
     this.bootstrap.option[java.lang.Boolean](ChannelOption.SO_KEEPALIVE, true)
     this.bootstrap.option(ChannelOption.ALLOCATOR, configuration.allocator)
 
-    this.bootstrap.connect(new InetSocketAddress(configuration.host, configuration.port)).onFailure {
-      case e => connectionFuture.tryFailure(e)
-    }
+    this.bootstrap
+      .connect(new InetSocketAddress(configuration.host, configuration.port))
+      .failed
+      .foreach {
+        case e => connectionFuture.tryFailure(e)
+      }
 
     this.connectionFuture.future
   }
 
   def disconnect: Future[PostgreSQLConnectionHandler] = {
 
-    if ( this.isConnected ) {
+    if (this.isConnected) {
       this.currentContext.channel.writeAndFlush(CloseMessage).onComplete {
-        case Success(writeFuture) => writeFuture.channel.close().onComplete {
-          case Success(closeFuture) => this.disconnectionPromise.trySuccess(this)
-          case Failure(e) => this.disconnectionPromise.tryFailure(e)
-        }
+        case Success(writeFuture) =>
+          writeFuture.channel.close().onComplete {
+            case Success(closeFuture) =>
+              this.disconnectionPromise.trySuccess(this)
+            case Failure(e) => this.disconnectionPromise.tryFailure(e)
+          }
         case Failure(e) => this.disconnectionPromise.tryFailure(e)
       }
     }
@@ -142,9 +154,13 @@ class PostgreSQLConnectionHandler
           val ctxBuilder = SslContextBuilder.forClient()
           if (configuration.ssl.mode >= Mode.VerifyCA) {
             configuration.ssl.rootCert.fold {
-              val tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
+              val tmf = TrustManagerFactory.getInstance(
+                TrustManagerFactory.getDefaultAlgorithm()
+              )
               val ks = KeyStore.getInstance(KeyStore.getDefaultType())
-              val cacerts = new FileInputStream(System.getProperty("java.home") + "/lib/security/cacerts")
+              val cacerts = new FileInputStream(
+                System.getProperty("java.home") + "/lib/security/cacerts"
+              )
               try {
                 ks.load(cacerts, "changeit".toCharArray)
               } finally {
@@ -159,7 +175,11 @@ class PostgreSQLConnectionHandler
             ctxBuilder.trustManager(InsecureTrustManagerFactory.INSTANCE)
           }
           val sslContext = ctxBuilder.build()
-          val sslEngine = sslContext.newEngine(ctx.alloc(), configuration.host, configuration.port)
+          val sslEngine = sslContext.newEngine(
+            ctx.alloc(),
+            configuration.host,
+            configuration.port
+          )
           if (configuration.ssl.mode >= Mode.VerifyFull) {
             val sslParams = sslEngine.getSSLParameters()
             sslParams.setEndpointIdentificationAlgorithm("HTTPS")
@@ -167,38 +187,46 @@ class PostgreSQLConnectionHandler
           }
           val handler = new SslHandler(sslEngine)
           ctx.pipeline().addFirst(handler)
-          handler.handshakeFuture.addListener(new FutureListener[channel.Channel]() {
-            def operationComplete(future: io.netty.util.concurrent.Future[channel.Channel]) {
-              if (future.isSuccess()) {
-                ctx.writeAndFlush(new StartupMessage(properties))
-              } else {
-                connectionDelegate.onError(future.cause())
+          handler.handshakeFuture.addListener(
+            new FutureListener[channel.Channel]() {
+              def operationComplete(
+                future: io.netty.util.concurrent.Future[channel.Channel]
+              ): Unit = {
+                if (future.isSuccess()) {
+                  ctx.writeAndFlush(new StartupMessage(properties))
+                } else {
+                  connectionDelegate.onError(future.cause())
+                }
               }
             }
-          })
+          )
         } else if (configuration.ssl.mode < Mode.Require) {
           ctx.writeAndFlush(new StartupMessage(properties))
         } else {
-          connectionDelegate.onError(new IllegalArgumentException("SSL is not supported on server"))
+          connectionDelegate.onError(
+            new IllegalArgumentException("SSL is not supported on server")
+          )
         }
 
       case m: ServerMessage => {
 
-        (m.kind : @switch) match {
+        (m.kind: @switch) match {
           case ServerMessage.BackendKeyData => {
             this.processData = m.asInstanceOf[ProcessData]
           }
-          case ServerMessage.BindComplete => {
-          }
+          case ServerMessage.BindComplete => {}
           case ServerMessage.Authentication => {
             log.debug("Authentication response received {}", m)
-            connectionDelegate.onAuthenticationResponse(m.asInstanceOf[AuthenticationMessage])
+            connectionDelegate.onAuthenticationResponse(
+              m.asInstanceOf[AuthenticationMessage]
+            )
           }
           case ServerMessage.CommandComplete => {
-            connectionDelegate.onCommandComplete(m.asInstanceOf[CommandCompleteMessage])
+            connectionDelegate.onCommandComplete(
+              m.asInstanceOf[CommandCompleteMessage]
+            )
           }
-          case ServerMessage.CloseComplete => {
-          }
+          case ServerMessage.CloseComplete => {}
           case ServerMessage.DataRow => {
             connectionDelegate.onDataRow(m.asInstanceOf[DataRowMessage])
           }
@@ -210,27 +238,33 @@ class PostgreSQLConnectionHandler
             exception.fillInStackTrace()
             connectionDelegate.onError(exception)
           }
-          case ServerMessage.NoData => {
-          }
+          case ServerMessage.NoData => {}
           case ServerMessage.Notice => {
             log.info("Received notice {}", m)
           }
           case ServerMessage.NotificationResponse => {
-            connectionDelegate.onNotificationResponse(m.asInstanceOf[NotificationResponse])
+            connectionDelegate.onNotificationResponse(
+              m.asInstanceOf[NotificationResponse]
+            )
           }
           case ServerMessage.ParameterStatus => {
-            connectionDelegate.onParameterStatus(m.asInstanceOf[ParameterStatusMessage])
+            connectionDelegate.onParameterStatus(
+              m.asInstanceOf[ParameterStatusMessage]
+            )
           }
-          case ServerMessage.ParseComplete => {
-          }
+          case ServerMessage.ParseComplete => {}
           case ServerMessage.ReadyForQuery => {
             connectionDelegate.onReadyForQuery()
           }
           case ServerMessage.RowDescription => {
-            connectionDelegate.onRowDescription(m.asInstanceOf[RowDescriptionMessage])
+            connectionDelegate.onRowDescription(
+              m.asInstanceOf[RowDescriptionMessage]
+            )
           }
           case _ => {
-            val exception = new IllegalStateException("Handler not implemented for message %s".format(m.kind))
+            val exception = new IllegalStateException(
+              "Handler not implemented for message %s".format(m.kind)
+            )
             exception.fillInStackTrace()
             connectionDelegate.onError(exception)
           }
@@ -239,7 +273,9 @@ class PostgreSQLConnectionHandler
       }
       case _ => {
         log.error("Unknown message type - {}", msg)
-        val exception = new IllegalArgumentException("Unknown message type - %s".format(msg))
+        val exception = new IllegalArgumentException(
+          "Unknown message type - %s".format(msg)
+        )
         exception.fillInStackTrace()
         connectionDelegate.onError(exception)
       }
@@ -248,11 +284,14 @@ class PostgreSQLConnectionHandler
 
   }
 
-  override def exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
+  override def exceptionCaught(
+    ctx: ChannelHandlerContext,
+    cause: Throwable
+  ): Unit = {
     // unwrap CodecException if needed
     cause match {
       case t: CodecException => connectionDelegate.onError(t.getCause)
-      case _ =>  connectionDelegate.onError(cause)
+      case _                 => connectionDelegate.onError(cause)
     }
   }
 
@@ -260,13 +299,13 @@ class PostgreSQLConnectionHandler
     log.info("Connection disconnected - {}", ctx.channel.remoteAddress)
   }
 
-  override def handlerAdded(ctx: ChannelHandlerContext) {
+  override def handlerAdded(ctx: ChannelHandlerContext): Unit = {
     this.currentContext = ctx
   }
 
-  def write( message : ClientMessage ) {
-    this.currentContext.writeAndFlush(message).onFailure {
-      case e : Throwable => connectionDelegate.onError(e)
+  def write(message: ClientMessage): Unit = {
+    this.currentContext.writeAndFlush(message).failed.foreach {
+      case e: Throwable => connectionDelegate.onError(e)
     }
   }
 

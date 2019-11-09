@@ -21,4 +21,7 @@ object AuthenticationChallengeCleartextMessage {
 }
 
 class AuthenticationChallengeCleartextMessage
-  extends AuthenticationChallengeMessage(AuthenticationResponseType.Cleartext, None)
+    extends AuthenticationChallengeMessage(
+      AuthenticationResponseType.Cleartext,
+      None
+    )

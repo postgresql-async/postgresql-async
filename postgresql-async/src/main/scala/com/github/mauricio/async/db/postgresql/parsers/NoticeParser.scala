@@ -16,11 +16,15 @@
 
 package com.github.mauricio.async.db.postgresql.parsers
 
-import com.github.mauricio.async.db.postgresql.messages.backend.{ServerMessage, NoticeMessage}
+import com.github.mauricio.async.db.postgresql.messages.backend.{
+  ServerMessage,
+  NoticeMessage
+}
 import java.nio.charset.Charset
 
 class NoticeParser(charset: Charset) extends InformationParser(charset) {
 
-  def createMessage(fields: Map[Char, String]): ServerMessage = new NoticeMessage(fields)
+  def createMessage(fields: Map[Char, String]): ServerMessage =
+    new NoticeMessage(fields)
 
 }

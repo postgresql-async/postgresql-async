@@ -17,8 +17,13 @@
 package com.github.mauricio.postgresql
 
 import com.github.mauricio.async.db.postgresql.codec.MessageDecoder
-import com.github.mauricio.async.db.postgresql.exceptions.{MessageTooLongException}
-import com.github.mauricio.async.db.postgresql.messages.backend.{ServerMessage, ErrorMessage}
+import com.github.mauricio.async.db.postgresql.exceptions.{
+  MessageTooLongException
+}
+import com.github.mauricio.async.db.postgresql.messages.backend.{
+  ServerMessage,
+  ErrorMessage
+}
 import org.specs2.mutable.Specification
 import com.github.mauricio.async.db.exceptions.NegativeMessageSizeException
 import io.netty.util.CharsetUtil
@@ -59,8 +64,8 @@ class MessageDecoderSpec extends Specification {
 
     "should correctly decode a message" in {
 
-      val buffer = Unpooled.buffer()
-      val text = "This is an error message"
+      val buffer    = Unpooled.buffer()
+      val text      = "This is an error message"
       val textBytes = text.getBytes(CharsetUtil.UTF_8)
 
       buffer.writeByte('E')
@@ -78,24 +83,25 @@ class MessageDecoderSpec extends Specification {
 
     "should raise an exception if the length is negative" in {
       val buffer = Unpooled.buffer()
-      buffer.writeByte( ServerMessage.Close )
-      buffer.writeInt( 2 )
+      buffer.writeByte(ServerMessage.Close)
+      buffer.writeInt(2)
       val out = new util.ArrayList[Object]()
 
-      this.decoder.decode(null, buffer, out) must throwA[NegativeMessageSizeException]
+      this.decoder
+        .decode(null, buffer, out) must throwA[NegativeMessageSizeException]
     }
 
     "should raise an exception if the length is too big" in {
 
       val buffer = Unpooled.buffer()
-      buffer.writeByte( ServerMessage.Close )
-      buffer.writeInt( MessageDecoder.DefaultMaximumSize + 10 )
+      buffer.writeByte(ServerMessage.Close)
+      buffer.writeInt(MessageDecoder.DefaultMaximumSize + 10)
       val out = new util.ArrayList[Object]()
 
-      this.decoder.decode(null, buffer, out) must throwA[MessageTooLongException]
+      this.decoder
+        .decode(null, buffer, out) must throwA[MessageTooLongException]
     }
 
   }
-
 
 }

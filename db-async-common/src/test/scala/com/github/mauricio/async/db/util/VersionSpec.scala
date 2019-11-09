@@ -54,13 +54,12 @@ class VersionSpec extends Specification {
 
     }
 
-
     "correctly compare between major different versions" in {
 
       val version1 = Version("8.2.8")
       val version2 = Version("8.2.87")
 
-      version2 must beGreaterThan( version1 )
+      version2 must beGreaterThan(version1)
 
     }
 

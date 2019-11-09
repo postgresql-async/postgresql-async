@@ -18,8 +18,8 @@ package com.github.mauricio.async.db.column
 
 trait ColumnEncoderRegistry {
 
-  def encode( value : Any ) : String
+  def encode(value: Any): String
 
-  def kindOf( value : Any ) : Int
+  def kindOf(value: Any): Int
 
 }

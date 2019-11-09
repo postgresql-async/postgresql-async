@@ -15,7 +15,12 @@
  */
 package com.github.mauricio.async.db.mysql.codec
 
-import io.netty.buffer.{CompositeByteBuf, UnpooledByteBufAllocator, ByteBuf, ByteBufAllocator}
+import io.netty.buffer.{
+  CompositeByteBuf,
+  UnpooledByteBufAllocator,
+  ByteBuf,
+  ByteBufAllocator
+}
 import java.nio.ByteOrder
 
 object LittleEndianByteBufAllocator {
@@ -23,8 +28,8 @@ object LittleEndianByteBufAllocator {
 }
 
 /**
- * Allocates ByteBuf which have LITTLE_ENDIAN order.
- */
+  * Allocates ByteBuf which have LITTLE_ENDIAN order.
+  */
 class LittleEndianByteBufAllocator extends ByteBufAllocator {
   private val allocator = new UnpooledByteBufAllocator(false)
 
@@ -32,41 +37,53 @@ class LittleEndianByteBufAllocator extends ByteBufAllocator {
 
   def buffer() = littleEndian(allocator.buffer())
 
-  def buffer(initialCapacity: Int) = littleEndian(allocator.buffer(initialCapacity))
+  def buffer(initialCapacity: Int) =
+    littleEndian(allocator.buffer(initialCapacity))
 
-  def buffer(initialCapacity: Int, maxCapacity: Int) = littleEndian(allocator.buffer(initialCapacity, maxCapacity))
+  def buffer(initialCapacity: Int, maxCapacity: Int) =
+    littleEndian(allocator.buffer(initialCapacity, maxCapacity))
 
   def ioBuffer() = littleEndian(allocator.ioBuffer())
 
-  def ioBuffer(initialCapacity: Int) = littleEndian(allocator.ioBuffer(initialCapacity))
+  def ioBuffer(initialCapacity: Int) =
+    littleEndian(allocator.ioBuffer(initialCapacity))
 
-  def ioBuffer(initialCapacity: Int, maxCapacity: Int) = littleEndian(allocator.ioBuffer(initialCapacity, maxCapacity))
+  def ioBuffer(initialCapacity: Int, maxCapacity: Int) =
+    littleEndian(allocator.ioBuffer(initialCapacity, maxCapacity))
 
   def heapBuffer() = littleEndian(allocator.heapBuffer())
 
-  def heapBuffer(initialCapacity: Int) = littleEndian(allocator.heapBuffer(initialCapacity))
+  def heapBuffer(initialCapacity: Int) =
+    littleEndian(allocator.heapBuffer(initialCapacity))
 
-  def heapBuffer(initialCapacity: Int, maxCapacity: Int) = littleEndian(allocator.heapBuffer(initialCapacity, maxCapacity))
+  def heapBuffer(initialCapacity: Int, maxCapacity: Int) =
+    littleEndian(allocator.heapBuffer(initialCapacity, maxCapacity))
 
   def directBuffer() = littleEndian(allocator.directBuffer())
 
-  def directBuffer(initialCapacity: Int) = littleEndian(allocator.directBuffer(initialCapacity))
+  def directBuffer(initialCapacity: Int) =
+    littleEndian(allocator.directBuffer(initialCapacity))
 
-  def directBuffer(initialCapacity: Int, maxCapacity: Int): ByteBuf = littleEndian(allocator.directBuffer(initialCapacity, maxCapacity))
+  def directBuffer(initialCapacity: Int, maxCapacity: Int): ByteBuf =
+    littleEndian(allocator.directBuffer(initialCapacity, maxCapacity))
 
   def compositeBuffer() = allocator.compositeBuffer()
 
-  def compositeBuffer(maxNumComponents: Int) = allocator.compositeBuffer(maxNumComponents)
+  def compositeBuffer(maxNumComponents: Int) =
+    allocator.compositeBuffer(maxNumComponents)
 
   def compositeHeapBuffer() = allocator.compositeHeapBuffer()
 
-  def compositeHeapBuffer(maxNumComponents: Int) = allocator.compositeHeapBuffer(maxNumComponents)
+  def compositeHeapBuffer(maxNumComponents: Int) =
+    allocator.compositeHeapBuffer(maxNumComponents)
 
   def compositeDirectBuffer() = allocator.compositeDirectBuffer()
 
-  def compositeDirectBuffer(maxNumComponents: Int): CompositeByteBuf = allocator.compositeDirectBuffer(maxNumComponents)
+  def compositeDirectBuffer(maxNumComponents: Int): CompositeByteBuf =
+    allocator.compositeDirectBuffer(maxNumComponents)
 
-  def calculateNewCapacity(minNewCapacity: Int, maxCapacity: Int): Int = allocator.calculateNewCapacity(minNewCapacity, maxCapacity)
+  def calculateNewCapacity(minNewCapacity: Int, maxCapacity: Int): Int =
+    allocator.calculateNewCapacity(minNewCapacity, maxCapacity)
 
   private def littleEndian(b: ByteBuf) = b.order(ByteOrder.LITTLE_ENDIAN)
 

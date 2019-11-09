@@ -23,8 +23,8 @@ import org.specs2.mutable.Specification
 
 class ArrayDecoderSpec extends Specification {
 
-  def execute( data : String ) : Any = {
-    val numbers = data.getBytes( CharsetUtil.UTF_8 )
+  def execute(data: String): Any = {
+    val numbers = data.getBytes(CharsetUtil.UTF_8)
     val encoder = new ArrayDecoder(IntegerEncoderDecoder)
     encoder.decode(null, Unpooled.wrappedBuffer(numbers), CharsetUtil.UTF_8)
   }

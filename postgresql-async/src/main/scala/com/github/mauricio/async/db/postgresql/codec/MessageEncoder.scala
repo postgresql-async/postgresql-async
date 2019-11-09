@@ -31,40 +31,51 @@ object MessageEncoder {
   val log = Log.get[MessageEncoder]
 }
 
-class MessageEncoder(charset: Charset, encoderRegistry: ColumnEncoderRegistry) extends MessageToMessageEncoder[Object] {
+class MessageEncoder(charset: Charset, encoderRegistry: ColumnEncoderRegistry)
+    extends MessageToMessageEncoder[Object] {
 
   import MessageEncoder.log
 
-  private val executeEncoder = new ExecutePreparedStatementEncoder(charset, encoderRegistry)
-  private val openEncoder = new PreparedStatementOpeningEncoder(charset, encoderRegistry)
-  private val startupEncoder = new StartupMessageEncoder(charset)
-  private val queryEncoder = new QueryMessageEncoder(charset)
+  private val executeEncoder =
+    new ExecutePreparedStatementEncoder(charset, encoderRegistry)
+  private val openEncoder =
+    new PreparedStatementOpeningEncoder(charset, encoderRegistry)
+  private val startupEncoder    = new StartupMessageEncoder(charset)
+  private val queryEncoder      = new QueryMessageEncoder(charset)
   private val credentialEncoder = new CredentialEncoder(charset)
 
-  override def encode(ctx: ChannelHandlerContext, msg: AnyRef, out: java.util.List[Object]) = {
+  override def encode(
+    ctx: ChannelHandlerContext,
+    msg: AnyRef,
+    out: java.util.List[Object]
+  ) = {
 
     val buffer = msg match {
-      case SSLRequestMessage => SSLMessageEncoder.encode()
+      case SSLRequestMessage       => SSLMessageEncoder.encode()
       case message: StartupMessage => startupEncoder.encode(message)
       case message: ClientMessage => {
         val encoder = (message.kind: @switch) match {
-          case ServerMessage.Close => CloseMessageEncoder
-          case ServerMessage.Execute => this.executeEncoder
-          case ServerMessage.Parse => this.openEncoder
-          case ServerMessage.Query => this.queryEncoder
+          case ServerMessage.Close           => CloseMessageEncoder
+          case ServerMessage.Execute         => this.executeEncoder
+          case ServerMessage.Parse           => this.openEncoder
+          case ServerMessage.Query           => this.queryEncoder
           case ServerMessage.PasswordMessage => this.credentialEncoder
-          case _ => throw new EncoderNotAvailableException(message)
+          case _                             => throw new EncoderNotAvailableException(message)
         }
 
         encoder.encode(message)
       }
       case _ => {
-        throw new IllegalArgumentException("Can not encode message %s".format(msg))
+        throw new IllegalArgumentException(
+          "Can not encode message %s".format(msg)
+        )
       }
     }
 
     if (log.isTraceEnabled) {
-      log.trace(s"Sending message ${msg.getClass.getName}\n${BufferDumper.dumpAsHex(buffer)}")
+      log.trace(
+        s"Sending message ${msg.getClass.getName}\n${BufferDumper.dumpAsHex(buffer)}"
+      )
     }
 
     out.add(buffer)

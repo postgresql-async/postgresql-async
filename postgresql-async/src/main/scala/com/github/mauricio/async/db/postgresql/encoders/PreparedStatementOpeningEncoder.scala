@@ -18,7 +18,10 @@ package com.github.mauricio.async.db.postgresql.encoders
 
 import com.github.mauricio.async.db.column.ColumnEncoderRegistry
 import com.github.mauricio.async.db.postgresql.messages.backend.ServerMessage
-import com.github.mauricio.async.db.postgresql.messages.frontend.{ClientMessage, PreparedStatementOpeningMessage}
+import com.github.mauricio.async.db.postgresql.messages.frontend.{
+  ClientMessage,
+  PreparedStatementOpeningMessage
+}
 import com.github.mauricio.async.db.util.{Log, ByteBufferUtils}
 import java.nio.charset.Charset
 import io.netty.buffer.{Unpooled, ByteBuf}
@@ -27,10 +30,11 @@ object PreparedStatementOpeningEncoder {
   val log = Log.get[PreparedStatementOpeningEncoder]
 }
 
-class PreparedStatementOpeningEncoder(charset: Charset, encoder : ColumnEncoderRegistry)
-  extends Encoder
-  with PreparedStatementEncoderHelper
-{
+class PreparedStatementOpeningEncoder(
+  charset: Charset,
+  encoder: ColumnEncoderRegistry
+) extends Encoder
+    with PreparedStatementEncoderHelper {
 
   import PreparedStatementOpeningEncoder.log
 
@@ -39,7 +43,7 @@ class PreparedStatementOpeningEncoder(charset: Charset, encoder : ColumnEncoderR
     val m = message.asInstanceOf[PreparedStatementOpeningMessage]
 
     val statementIdBytes = m.statementId.toString.getBytes(charset)
-    val columnCount = m.valueTypes.size
+    val columnCount      = m.valueTypes.size
 
     val parseBuffer = Unpooled.buffer(1024)
 
@@ -53,8 +57,10 @@ class PreparedStatementOpeningEncoder(charset: Charset, encoder : ColumnEncoderR
 
     parseBuffer.writeShort(columnCount)
 
-    if ( log.isDebugEnabled ) {
-      log.debug(s"Opening query (${m.query}) - statement id (${statementIdBytes.mkString("-")}) - selected types (${m.valueTypes.mkString(", ")}) - values (${m.values.mkString(", ")})")
+    if (log.isDebugEnabled) {
+      log.debug(s"Opening query (${m.query}) - statement id (${statementIdBytes
+        .mkString("-")}) - selected types (${m.valueTypes
+        .mkString(", ")}) - values (${m.values.mkString(", ")})")
     }
 
     for (kind <- m.valueTypes) {
@@ -63,7 +69,14 @@ class PreparedStatementOpeningEncoder(charset: Charset, encoder : ColumnEncoderR
 
     ByteBufferUtils.writeLength(parseBuffer)
 
-    val executeBuffer = writeExecutePortal(statementIdBytes, m.query, m.values, encoder, charset, true)
+    val executeBuffer = writeExecutePortal(
+      statementIdBytes,
+      m.query,
+      m.values,
+      encoder,
+      charset,
+      true
+    )
 
     Unpooled.wrappedBuffer(parseBuffer, executeBuffer)
   }

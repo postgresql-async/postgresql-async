@@ -22,20 +22,20 @@ import com.github.mauricio.async.db.KindedMessage
 object ServerMessage {
 
   final val ServerProtocolVersion = 10
-  final val Error = -1
-  final val Ok = 0
-  final val EOF = -2
+  final val Error                 = -1
+  final val Ok                    = 0
+  final val EOF                   = -2
 
   // these messages don't actually exist
   // but we use them to simplify the switch statements
-  final val ColumnDefinition = 100
-  final val ColumnDefinitionFinished = 101
-  final val ParamProcessingFinished = 102
+  final val ColumnDefinition                 = 100
+  final val ColumnDefinitionFinished         = 101
+  final val ParamProcessingFinished          = 102
   final val ParamAndColumnProcessingFinished = 103
-  final val Row = 104
-  final val BinaryRow = 105
+  final val Row                              = 104
+  final val BinaryRow                        = 105
   final val PreparedStatementPrepareResponse = 106
 
 }
 
-class ServerMessage( val kind : Int ) extends KindedMessage
+class ServerMessage(val kind: Int) extends KindedMessage

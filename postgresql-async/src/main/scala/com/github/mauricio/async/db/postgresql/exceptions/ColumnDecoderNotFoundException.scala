@@ -17,4 +17,6 @@
 package com.github.mauricio.async.db.postgresql.exceptions
 
 class ColumnDecoderNotFoundException(kind: Int)
-  extends IllegalArgumentException("There is no decoder available for kind %s".format(kind))
+    extends IllegalArgumentException(
+      "There is no decoder available for kind %s".format(kind)
+    )

@@ -24,56 +24,64 @@ class BitSpec extends Specification with ConnectionHelper {
 
     "result in binary data" in {
 
-      withConnection {
-        connection =>
-          val create = """CREATE TEMPORARY TABLE binary_test
+      withConnection { connection =>
+        val create = """CREATE TEMPORARY TABLE binary_test
                          (
                            id INT NOT NULL AUTO_INCREMENT,
                            some_bit BIT(1) NOT NULL,
                            PRIMARY KEY (id)
                          )"""
 
-          executeQuery(connection, create)
-          executePreparedStatement(connection,
-            "INSERT INTO binary_test (some_bit) VALUES (B'0'),(B'1')")
+        executeQuery(connection, create)
+        executePreparedStatement(
+          connection,
+          "INSERT INTO binary_test (some_bit) VALUES (B'0'),(B'1')"
+        )
 
-          val rows = executePreparedStatement(connection, "select * from binary_test").rows.get
+        val rows = executePreparedStatement(
+          connection,
+          "select * from binary_test"
+        ).rows.get
 
-          val bit0 = rows(0)("some_bit")
-          val bit1 = rows(1)("some_bit")
+        val bit0 = rows(0)("some_bit")
+        val bit1 = rows(1)("some_bit")
 
-          bit0 === Array(0)
-          bit1 === Array(1)
+        bit0 === Array(0)
+        bit1 === Array(1)
       }
 
     }
 
     "result in binary data in BIT(2) column" in {
 
-      withConnection {
-        connection =>
-          val create = """CREATE TEMPORARY TABLE binary_test
+      withConnection { connection =>
+        val create = """CREATE TEMPORARY TABLE binary_test
                          (
                            id INT NOT NULL AUTO_INCREMENT,
                            some_bit BIT(2) NOT NULL,
                            CONSTRAINT bigserial_column_pkey PRIMARY KEY (id)
                          )"""
 
-          executeQuery(connection, create)
-          executePreparedStatement(connection,
-            "INSERT INTO binary_test (some_bit) VALUES (B'00'),(B'01'),(B'10'),(B'11')")
+        executeQuery(connection, create)
+        executePreparedStatement(
+          connection,
+          "INSERT INTO binary_test (some_bit) VALUES (B'00'),(B'01'),(B'10'),(B'11')"
+        )
 
-          val rows = executePreparedStatement(connection, "select * from binary_test").rows.get
+        val rows = executePreparedStatement(
+          connection,
+          "select * from binary_test"
+        ).rows.get
 
-          val bit0 = rows(0)("some_bit")
-          val bit1 = rows(1)("some_bit")
-          val bit2 = rows(2)("some_bit")
-          val bit3 = rows(3)("some_bit")
+        val bit0 = rows(0)("some_bit")
+        val bit1 = rows(1)("some_bit")
+        val bit2 = rows(2)("some_bit")
+        val bit3 = rows(3)("some_bit")
 
-          bit0 === Array(0)
-          bit1 === Array(1)
-          bit2 === Array(2)
-          bit3 === Array(3)
+        bit0 === Array(0)
+        bit1 === Array(1)
+        bit2 === Array(2)
+        bit3 === Array(3)
       }
 
     }

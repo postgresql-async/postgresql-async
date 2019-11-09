@@ -29,35 +29,42 @@ import java.nio.ByteOrder
 import java.nio.charset.Charset
 import java.util.concurrent.atomic.AtomicInteger
 
+class MySQLFrameDecoder(charset: Charset, connectionId: String)
+    extends ByteToMessageDecoder {
 
-class MySQLFrameDecoder(charset: Charset, connectionId: String) extends ByteToMessageDecoder {
-
-  private final val log = Log.getByName(s"[frame-decoder]${connectionId}")
-  private final val messagesCount = new AtomicInteger()
+  private final val log              = Log.getByName(s"[frame-decoder]${connectionId}")
+  private final val messagesCount    = new AtomicInteger()
   private final val handshakeDecoder = new HandshakeV10Decoder(charset)
-  private final val errorDecoder = new ErrorDecoder(charset)
-  private final val okDecoder = new OkDecoder(charset)
-  private final val columnDecoder = new ColumnDefinitionDecoder(charset, new DecoderRegistry(charset))
+  private final val errorDecoder     = new ErrorDecoder(charset)
+  private final val okDecoder        = new OkDecoder(charset)
+  private final val columnDecoder =
+    new ColumnDefinitionDecoder(charset, new DecoderRegistry(charset))
   private final val rowDecoder = new ResultSetRowDecoder(charset)
-  private final val preparedStatementPrepareDecoder = new PreparedStatementPrepareResponseDecoder()
-  private final val authenticationSwitchDecoder = new AuthenticationSwitchRequestDecoder(charset)
+  private final val preparedStatementPrepareDecoder =
+    new PreparedStatementPrepareResponseDecoder()
+  private final val authenticationSwitchDecoder =
+    new AuthenticationSwitchRequestDecoder(charset)
 
-  private[codec] var processingColumns = false
-  private[codec] var processingParams = false
-  private[codec] var isInQuery = false
-  private[codec] var isPreparedStatementPrepare = false
-  private[codec] var isPreparedStatementExecute = false
+  private[codec] var processingColumns              = false
+  private[codec] var processingParams               = false
+  private[codec] var isInQuery                      = false
+  private[codec] var isPreparedStatementPrepare     = false
+  private[codec] var isPreparedStatementExecute     = false
   private[codec] var isPreparedStatementExecuteRows = false
-  private[codec] var hasDoneHandshake = false
+  private[codec] var hasDoneHandshake               = false
 
-  private[codec] var totalParams = 0L
-  private[codec] var processedParams = 0L
-  private[codec] var totalColumns = 0L
+  private[codec] var totalParams      = 0L
+  private[codec] var processedParams  = 0L
+  private[codec] var totalColumns     = 0L
   private[codec] var processedColumns = 0L
 
   private var hasReadColumnsCount = false
 
-  def decode(ctx: ChannelHandlerContext, buffer: ByteBuf, out: java.util.List[Object]): Unit = {
+  def decode(
+    ctx: ChannelHandlerContext,
+    buffer: ByteBuf,
+    out: java.util.List[Object]
+  ): Unit = {
     if (buffer.readableBytes() > 4) {
 
       buffer.markReaderIndex()
@@ -79,9 +86,11 @@ class MySQLFrameDecoder(charset: Charset, connectionId: String) extends ByteToMe
         val slice = buffer.readSlice(size)
 
         if (log.isTraceEnabled) {
-          log.trace(s"Reading message type $messageType - " +
-            s"(count=$messagesCount,hasDoneHandshake=$hasDoneHandshake,size=$size,isInQuery=$isInQuery,processingColumns=$processingColumns,processingParams=$processingParams,processedColumns=$processedColumns,processedParams=$processedParams)" +
-            s"\n${BufferDumper.dumpAsHex(slice)}}")
+          log.trace(
+            s"Reading message type $messageType - " +
+              s"(count=$messagesCount,hasDoneHandshake=$hasDoneHandshake,size=$size,isInQuery=$isInQuery,processingColumns=$processingColumns,processingParams=$processingParams,processedColumns=$processedColumns,processedParams=$processedParams)" +
+              s"\n${BufferDumper.dumpAsHex(slice)}}"
+          )
         }
 
         slice.readByte()
@@ -105,7 +114,11 @@ class MySQLFrameDecoder(charset: Charset, connectionId: String) extends ByteToMe
     }
   }
 
-  private def handleCommonFlow(messageType: Byte, slice: ByteBuf, out: java.util.List[Object]) {
+  private def handleCommonFlow(
+    messageType: Byte,
+    slice: ByteBuf,
+    out: java.util.List[Object]
+  ): Unit = {
     val decoder = messageType match {
       case ServerMessage.Error => {
         this.clear
@@ -157,7 +170,11 @@ class MySQLFrameDecoder(charset: Charset, connectionId: String) extends ByteToMe
     doDecoding(decoder, slice, out)
   }
 
-  private def doDecoding(decoder: MessageDecoder, slice: ByteBuf, out: java.util.List[Object]) {
+  private def doDecoding(
+    decoder: MessageDecoder,
+    slice: ByteBuf,
+    out: java.util.List[Object]
+  ): Unit = {
     if (decoder == null) {
       slice.readerIndex(slice.readerIndex() - 1)
       val result = decodeQueryResult(slice)
@@ -180,10 +197,12 @@ class MySQLFrameDecoder(charset: Charset, connectionId: String) extends ByteToMe
         case m: ParamAndColumnProcessingFinishedMessage => {
           this.clear
         }
-        case m: ColumnProcessingFinishedMessage if this.isPreparedStatementPrepare => {
+        case m: ColumnProcessingFinishedMessage
+            if this.isPreparedStatementPrepare => {
           this.clear
         }
-        case m: ColumnProcessingFinishedMessage if this.isPreparedStatementExecute => {
+        case m: ColumnProcessingFinishedMessage
+            if this.isPreparedStatementExecute => {
           this.isPreparedStatementExecuteRows = true
         }
         case _ =>
@@ -199,7 +218,11 @@ class MySQLFrameDecoder(charset: Charset, connectionId: String) extends ByteToMe
             out.add(result)
             if (m.columnsCount == 0 && m.paramsCount == 0) {
               this.clear
-              out.add(new ParamAndColumnProcessingFinishedMessage(new EOFMessage(0, 0)))
+              out.add(
+                new ParamAndColumnProcessingFinishedMessage(
+                  new EOFMessage(0, 0)
+                )
+              )
             }
           }
           case _ => out.add(result)
@@ -220,7 +243,6 @@ class MySQLFrameDecoder(charset: Charset, connectionId: String) extends ByteToMe
       return this.columnDecoder.decode(slice)
     }
 
-
     if (this.totalColumns == this.processedColumns) {
       if (this.isPreparedStatementExecute) {
         val row = slice.readBytes(slice.readableBytes())
@@ -236,7 +258,7 @@ class MySQLFrameDecoder(charset: Charset, connectionId: String) extends ByteToMe
 
   }
 
-  def preparedStatementPrepareStarted() {
+  def preparedStatementPrepareStarted(): Unit = {
     this.queryProcessStarted()
     this.hasReadColumnsCount = true
     this.processingParams = true
@@ -244,7 +266,10 @@ class MySQLFrameDecoder(charset: Charset, connectionId: String) extends ByteToMe
     this.isPreparedStatementPrepare = true
   }
 
-  def preparedStatementExecuteStarted(columnsCount: Int, paramsCount: Int) {
+  def preparedStatementExecuteStarted(
+    columnsCount: Int,
+    paramsCount: Int
+  ): Unit = {
     this.queryProcessStarted()
     this.hasReadColumnsCount = false
     this.totalColumns = columnsCount
@@ -253,13 +278,13 @@ class MySQLFrameDecoder(charset: Charset, connectionId: String) extends ByteToMe
     this.processingParams = false
   }
 
-  def queryProcessStarted() {
+  def queryProcessStarted(): Unit = {
     this.isInQuery = true
     this.processingColumns = true
     this.hasReadColumnsCount = false
   }
 
-  private def clear {
+  private def clear: Unit = {
     this.isPreparedStatementPrepare = false
     this.isPreparedStatementExecute = false
     this.isPreparedStatementExecuteRows = false

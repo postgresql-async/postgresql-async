@@ -23,29 +23,29 @@ import com.github.mauricio.async.db.mysql.binary.decoder.BinaryDecoder
 import com.github.mauricio.async.db.column.ColumnDecoder
 
 case class ColumnDefinitionMessage(
-                                    catalog: String,
-                                    schema: String,
-                                    table: String,
-                                    originalTable: String,
-                                    name: String,
-                                    originalName: String,
-                                    characterSet: Int,
-                                    columnLength: Long,
-                                    columnType: Int,
-                                    flags: Short,
-                                    decimals: Byte,
-                                    binaryDecoder: BinaryDecoder,
-                                    textDecoder: ColumnDecoder
-                                    )
-  extends ServerMessage(ServerMessage.ColumnDefinition)
-  with ColumnData {
+  catalog: String,
+  schema: String,
+  table: String,
+  originalTable: String,
+  name: String,
+  originalName: String,
+  characterSet: Int,
+  columnLength: Long,
+  columnType: Int,
+  flags: Short,
+  decimals: Byte,
+  binaryDecoder: BinaryDecoder,
+  textDecoder: ColumnDecoder
+) extends ServerMessage(ServerMessage.ColumnDefinition)
+    with ColumnData {
 
-  def dataType: Int = this.columnType
-  def dataTypeSize : Long = this.columnLength
+  def dataType: Int      = this.columnType
+  def dataTypeSize: Long = this.columnLength
 
   override def toString: String = {
     val columnTypeName = ColumnTypes.Mapping.getOrElse(columnType, columnType)
-    val charsetName = CharsetMapper.DefaultCharsetsById.getOrElse(characterSet, characterSet)
+    val charsetName =
+      CharsetMapper.DefaultCharsetsById.getOrElse(characterSet, characterSet)
 
     s"${this.getClass.getSimpleName}(name=$name,columnType=${columnTypeName},table=$table,charset=$charsetName,decimals=$decimals})"
   }

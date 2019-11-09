@@ -23,16 +23,17 @@ import scala.concurrent.duration._
 import scala.concurrent.{Future, Promise}
 
 /**
- * Tests for TimeoutScheduler
- */
-class TimeoutSchedulerSpec extends SpecificationWithJUnit  {
+  * Tests for TimeoutScheduler
+  */
+class TimeoutSchedulerSpec extends SpecificationWithJUnit {
 
   val TIMEOUT_DID_NOT_PASS = "timeout did not pass"
 
   "test timeout did not pass" in {
     val timeoutScheduler = new DummyTimeoutScheduler()
-    val promise = Promise[String]()
-    val scheduledFuture  = timeoutScheduler.addTimeout(promise,Some(Duration(1000, MILLISECONDS)))
+    val promise          = Promise[String]()
+    val scheduledFuture =
+      timeoutScheduler.addTimeout(promise, Some(Duration(1000, MILLISECONDS)))
     Thread.sleep(100);
     promise.isCompleted === false
     promise.success(TIMEOUT_DID_NOT_PASS)
@@ -43,22 +44,28 @@ class TimeoutSchedulerSpec extends SpecificationWithJUnit  {
   }
 
   "test timeout passed" in {
-    val timeoutMillis = 100
-    val promise = Promise[String]()
+    val timeoutMillis    = 100
+    val promise          = Promise[String]()
     val timeoutScheduler = new DummyTimeoutScheduler()
-    val scheduledFuture  = timeoutScheduler.addTimeout(promise,Some(Duration(timeoutMillis, MILLISECONDS)))
+    val scheduledFuture = timeoutScheduler.addTimeout(
+      promise,
+      Some(Duration(timeoutMillis, MILLISECONDS))
+    )
     Thread.sleep(1000)
     promise.isCompleted === true
     scheduledFuture.get.isCancelled === false
     promise.trySuccess(TIMEOUT_DID_NOT_PASS)
     timeoutScheduler.timeoutCount === 1
-    promise.future.value.get.get must throwA[TimeoutException](message = s"Operation is timeouted after it took too long to return \\(${timeoutMillis} milliseconds\\)")
+    promise.future.value.get.get must throwA[TimeoutException](
+      message =
+        s"Operation is timeouted after it took too long to return \\(${timeoutMillis} milliseconds\\)"
+    )
   }
 
   "test no timeout" in {
     val timeoutScheduler = new DummyTimeoutScheduler()
-    val promise = Promise[String]()
-    val scheduledFuture  = timeoutScheduler.addTimeout(promise,None)
+    val promise          = Promise[String]()
+    val scheduledFuture  = timeoutScheduler.addTimeout(promise, None)
     Thread.sleep(1000)
     scheduledFuture === None
     promise.isCompleted === false
@@ -67,4 +74,3 @@ class TimeoutSchedulerSpec extends SpecificationWithJUnit  {
     timeoutScheduler.timeoutCount === 0
   }
 }
-

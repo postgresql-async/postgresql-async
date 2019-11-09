@@ -20,7 +20,7 @@ import io.netty.buffer.ByteBuf
 import com.github.mauricio.async.db.mysql.column.ColumnTypes
 
 object DoubleEncoder extends BinaryEncoder {
-  def encode(value: Any, buffer: ByteBuf) {
+  def encode(value: Any, buffer: ByteBuf): Unit = {
     buffer.writeDouble(value.asInstanceOf[Double])
   }
 

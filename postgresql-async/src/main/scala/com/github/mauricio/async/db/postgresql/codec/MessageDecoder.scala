@@ -16,9 +16,17 @@
 
 package com.github.mauricio.async.db.postgresql.codec
 
-import com.github.mauricio.async.db.postgresql.exceptions.{MessageTooLongException}
-import com.github.mauricio.async.db.postgresql.messages.backend.{ServerMessage, SSLResponseMessage}
-import com.github.mauricio.async.db.postgresql.parsers.{AuthenticationStartupParser, MessageParsersRegistry}
+import com.github.mauricio.async.db.postgresql.exceptions.{
+  MessageTooLongException
+}
+import com.github.mauricio.async.db.postgresql.messages.backend.{
+  ServerMessage,
+  SSLResponseMessage
+}
+import com.github.mauricio.async.db.postgresql.parsers.{
+  AuthenticationStartupParser,
+  MessageParsersRegistry
+}
 import com.github.mauricio.async.db.util.{BufferDumper, Log}
 import java.nio.charset.Charset
 import com.github.mauricio.async.db.exceptions.NegativeMessageSizeException
@@ -27,11 +35,15 @@ import io.netty.channel.ChannelHandlerContext
 import io.netty.buffer.ByteBuf
 
 object MessageDecoder {
-  val log = Log.get[MessageDecoder]
+  val log                = Log.get[MessageDecoder]
   val DefaultMaximumSize = 16777216
 }
 
-class MessageDecoder(sslEnabled: Boolean, charset: Charset, maximumMessageSize : Int = MessageDecoder.DefaultMaximumSize) extends ByteToMessageDecoder {
+class MessageDecoder(
+  sslEnabled: Boolean,
+  charset: Charset,
+  maximumMessageSize: Int = MessageDecoder.DefaultMaximumSize
+) extends ByteToMessageDecoder {
 
   import MessageDecoder.log
 
@@ -39,9 +51,13 @@ class MessageDecoder(sslEnabled: Boolean, charset: Charset, maximumMessageSize :
 
   private var sslChecked = false
 
-  override def decode(ctx: ChannelHandlerContext,  b: ByteBuf, out: java.util.List[Object]): Unit = {
+  override def decode(
+    ctx: ChannelHandlerContext,
+    b: ByteBuf,
+    out: java.util.List[Object]
+  ): Unit = {
 
-    if (sslEnabled & !sslChecked)  {
+    if (sslEnabled & !sslChecked) {
       val code = b.readByte()
       sslChecked = true
       out.add(new SSLResponseMessage(code == 'S'))
@@ -49,21 +65,21 @@ class MessageDecoder(sslEnabled: Boolean, charset: Charset, maximumMessageSize :
 
       b.markReaderIndex()
 
-      val code = b.readByte()
+      val code           = b.readByte()
       val lengthWithSelf = b.readInt()
-      val length = lengthWithSelf - 4
+      val length         = lengthWithSelf - 4
 
-      if ( length < 0 ) {
+      if (length < 0) {
         throw new NegativeMessageSizeException(code, length)
       }
 
-      if ( length > maximumMessageSize ) {
+      if (length > maximumMessageSize) {
         throw new MessageTooLongException(code, length, maximumMessageSize)
       }
 
       if (b.readableBytes() >= length) {
 
-        if ( log.isTraceEnabled ) {
+        if (log.isTraceEnabled) {
           log.trace(s"Received buffer ${code}\n${BufferDumper.dumpAsHex(b)}")
         }
 

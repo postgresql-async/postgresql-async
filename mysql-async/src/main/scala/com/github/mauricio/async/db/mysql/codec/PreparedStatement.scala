@@ -16,4 +16,4 @@
 
 package com.github.mauricio.async.db.mysql.codec
 
-case class PreparedStatement ( statement : String, values : Seq[Any])
+case class PreparedStatement(statement: String, values: Seq[Any])

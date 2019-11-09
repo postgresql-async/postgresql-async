@@ -21,6 +21,6 @@ import com.github.mauricio.async.db.mysql.message.client.ClientMessage
 
 trait MessageEncoder {
 
-  def encode( message : ClientMessage ) : ByteBuf
+  def encode(message: ClientMessage): ByteBuf
 
 }

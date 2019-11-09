@@ -20,6 +20,6 @@ import io.netty.buffer.ByteBuf
 
 trait BinaryDecoder {
 
-  def decode( buffer : ByteBuf ) : Any
+  def decode(buffer: ByteBuf): Any
 
 }

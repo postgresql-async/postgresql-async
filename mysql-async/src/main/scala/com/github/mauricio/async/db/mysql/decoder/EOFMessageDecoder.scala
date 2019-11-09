@@ -22,9 +22,7 @@ import com.github.mauricio.async.db.mysql.message.server.EOFMessage
 object EOFMessageDecoder extends MessageDecoder {
 
   def decode(buffer: ByteBuf): EOFMessage = {
-    new EOFMessage(
-      buffer.readUnsignedShort(),
-      buffer.readUnsignedShort() )
+    new EOFMessage(buffer.readUnsignedShort(), buffer.readUnsignedShort())
   }
 
 }

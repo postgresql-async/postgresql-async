@@ -21,9 +21,9 @@ import org.joda.time.LocalTime
 import com.github.mauricio.async.db.mysql.column.ColumnTypes
 
 object SQLTimeEncoder extends BinaryEncoder {
-  def encode(value: Any, buffer: ByteBuf) {
+  def encode(value: Any, buffer: ByteBuf): Unit = {
     val sqlTime = value.asInstanceOf[java.sql.Time].getTime
-    val time = new LocalTime( sqlTime )
+    val time    = new LocalTime(sqlTime)
     LocalTimeEncoder.encode(time, buffer)
   }
 

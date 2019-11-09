@@ -21,3 +21,4 @@ mysql-async/target/*
 .project
 .vagrant/*
 vendor/*
+.bloop/

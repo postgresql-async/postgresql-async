@@ -19,19 +19,23 @@ import scala.concurrent.duration._
   *
   * @tparam T the AsyncObjectPool being tested.
   */
-abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](implicit tag: TypeTag[T])
-  extends Specification
+abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](
+  implicit tag: TypeTag[T]
+) extends Specification
     with Mockito {
 
   import AbstractAsyncObjectPoolSpec._
 
-  protected def pool(factory: ObjectFactory[Widget] = new TestWidgetFactory, conf: PoolConfiguration = PoolConfiguration.Default): T
+  protected def pool(
+    factory: ObjectFactory[Widget] = new TestWidgetFactory,
+    conf: PoolConfiguration = PoolConfiguration.Default
+  ): T
 
   // Evaluates to the type of AsyncObjectPool
   s"the ${tag.tpe.erasure} variant of AsyncObjectPool" should {
 
     "successfully retrieve and return a Widget" in {
-      val p = pool()
+      val p      = pool()
       val widget = Await.result(p.take, Duration.Inf)
 
       widget must not beNull
@@ -43,7 +47,9 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](implici
     "reject Widgets that did not come from it" in {
       val p = pool()
 
-      Await.result(p.giveBack(Widget(null)), Duration.Inf) must throwAn[IllegalArgumentException]
+      Await.result(p.giveBack(Widget(null)), Duration.Inf) must throwAn[
+        IllegalArgumentException
+      ]
     }
 
     "scale contents" >> {
@@ -58,13 +64,15 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](implici
           maxIdle = 2,
           maxQueueSize = 5,
           validationInterval = 2000
-        ))
-
-
+        )
+      )
 
       var taken = Seq.empty[Widget]
       "can take up to maxObjects" in {
-        taken = Await.result(Future.sequence(for (i <- 1 to 5) yield p.take), Duration.Inf)
+        taken = Await.result(
+          Future.sequence(for (i <- 1 to 5) yield p.take),
+          Duration.Inf
+        )
 
         taken must have size 5
         taken.head must not beNull;
@@ -81,7 +89,10 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](implici
 
       reset(factory) // Considered bad form, but necessary as we depend on previous state in these tests
       "takes maxObjects back" in {
-        val returns = Await.result(Future.sequence(for (widget <- taken) yield p.giveBack(widget)), Duration.Inf)
+        val returns = Await.result(
+          Future.sequence(for (widget <- taken) yield p.giveBack(widget)),
+          Duration.Inf
+        )
 
         returns must have size 5
 
@@ -95,7 +106,9 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](implici
       "protest returning an item that was already returned" in {
         val resultFuture = p.giveBack(taken.head)
 
-        Await.result(resultFuture, Duration.Inf) must throwAn[IllegalStateException]
+        Await.result(resultFuture, Duration.Inf) must throwAn[
+          IllegalStateException
+        ]
       }
 
       "destroy down to maxIdle widgets" in {
@@ -105,9 +118,14 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](implici
     }
 
     "queue requests after running out" in {
-      val p = pool(conf = PoolConfiguration.Default.copy(maxObjects = 2, maxQueueSize = 1))
+      val p = pool(
+        conf = PoolConfiguration.Default.copy(maxObjects = 2, maxQueueSize = 1)
+      )
 
-      val widgets = Await.result(Future.sequence(for (i <- 1 to 2) yield p.take), Duration.Inf)
+      val widgets = Await.result(
+        Future.sequence(for (i <- 1 to 2) yield p.take),
+        Duration.Inf
+      )
 
       val future = p.take
 
@@ -119,7 +137,9 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](implici
       // Cannot be done, would exceed maxObjects
       future.isCompleted must beFalse
 
-      Await.result(failedFuture, Duration.Inf) must throwA[PoolExhaustedException]
+      Await.result(failedFuture, Duration.Inf) must throwA[
+        PoolExhaustedException
+      ]
 
       Await.result(p.giveBack(widgets.head), Duration.Inf) must be(p)
 
@@ -131,7 +151,9 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](implici
 
       Await.result(p.close, Duration.Inf) must be(p)
 
-      Await.result(p.take, Duration.Inf) must throwA[PoolAlreadyTerminatedException]
+      Await.result(p.take, Duration.Inf) must throwA[
+        PoolAlreadyTerminatedException
+      ]
     }
 
     "allow being closed more than once" in {
@@ -142,18 +164,21 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](implici
       Await.result(p.close, Duration.Inf) must be(p)
     }
 
-
     "destroy a failed widget" in {
       val factory = spy(new TestWidgetFactory)
-      val p = pool(factory = factory)
+      val p       = pool(factory = factory)
 
       val widget = Await.result(p.take, Duration.Inf)
 
       widget must not beNull
 
-      factory.validate(widget) returns Failure(new RuntimeException("This is a bad widget!"))
+      factory.validate(widget) returns Failure(
+        new RuntimeException("This is a bad widget!")
+      )
 
-      Await.result(p.giveBack(widget), Duration.Inf) must throwA[RuntimeException](message = "This is a bad widget!")
+      Await.result(p.giveBack(widget), Duration.Inf) must throwA[
+        RuntimeException
+      ](message = "This is a bad widget!")
 
       there was atLeastOne(factory).destroy(widget)
     }
@@ -161,7 +186,11 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](implici
     "clean up widgets that die in the pool" in {
       val factory = spy(new TestWidgetFactory)
       // Deliberately make it impossible to expire (nearly)
-      val p = pool(factory = factory, conf = PoolConfiguration.Default.copy(maxIdle = Long.MaxValue, validationInterval = 2000))
+      val p = pool(
+        factory = factory,
+        conf = PoolConfiguration.Default
+          .copy(maxIdle = Long.MaxValue, validationInterval = 2000)
+      )
 
       val widget = Await.result(p.take, Duration.Inf)
 
@@ -174,7 +203,9 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](implici
 
       there was after(3.seconds).atLeastTwo(factory).validate(widget)
 
-      factory.validate(widget) returns Failure(new RuntimeException("Test Exception, Not an Error"))
+      factory.validate(widget) returns Failure(
+        new RuntimeException("Test Exception, Not an Error")
+      )
 
       there was after(3.seconds).one(factory).destroy(widget)
 
@@ -207,12 +238,15 @@ object AbstractAsyncObjectPoolSpec {
 
 }
 
-
-class SingleThreadedAsyncObjectPoolSpec extends AbstractAsyncObjectPoolSpec[SingleThreadedAsyncObjectPool[Widget]] {
+class SingleThreadedAsyncObjectPoolSpec
+    extends AbstractAsyncObjectPoolSpec[SingleThreadedAsyncObjectPool[Widget]] {
 
   import AbstractAsyncObjectPoolSpec._
 
-  override protected def pool(factory: ObjectFactory[Widget], conf: PoolConfiguration) =
+  override protected def pool(
+    factory: ObjectFactory[Widget],
+    conf: PoolConfiguration
+  ) =
     new SingleThreadedAsyncObjectPool(factory, conf)
 
   "SingleThreadedAsyncObjectPool" should {

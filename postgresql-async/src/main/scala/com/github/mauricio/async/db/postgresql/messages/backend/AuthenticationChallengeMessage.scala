@@ -17,6 +17,6 @@
 package com.github.mauricio.async.db.postgresql.messages.backend
 
 class AuthenticationChallengeMessage(
-                                      val challengeType: AuthenticationResponseType.AuthenticationResponseType,
-                                      val salt: Option[Array[Byte]])
-  extends AuthenticationMessage
+  val challengeType: AuthenticationResponseType.AuthenticationResponseType,
+  val salt: Option[Array[Byte]]
+) extends AuthenticationMessage

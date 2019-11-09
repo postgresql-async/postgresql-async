@@ -16,7 +16,10 @@
 
 package com.github.mauricio.async.db.postgresql.parsers
 
-import com.github.mauricio.async.db.postgresql.messages.backend.{ParameterStatusMessage, ServerMessage}
+import com.github.mauricio.async.db.postgresql.messages.backend.{
+  ParameterStatusMessage,
+  ServerMessage
+}
 import com.github.mauricio.async.db.util.ByteBufferUtils
 import java.nio.charset.Charset
 import io.netty.buffer.ByteBuf

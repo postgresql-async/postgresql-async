@@ -22,12 +22,12 @@ import org.joda.time._
 
 object LocalDateTimeEncoder extends BinaryEncoder {
 
-  def encode(value: Any, buffer: ByteBuf) {
+  def encode(value: Any, buffer: ByteBuf): Unit = {
     val instant = value.asInstanceOf[LocalDateTime]
 
     val hasMillis = instant.getMillisOfSecond != 0
 
-    if ( hasMillis ) {
+    if (hasMillis) {
       buffer.writeByte(11)
     } else {
       buffer.writeByte(7)
@@ -40,7 +40,7 @@ object LocalDateTimeEncoder extends BinaryEncoder {
     buffer.writeByte(instant.getMinuteOfHour)
     buffer.writeByte(instant.getSecondOfMinute)
 
-    if ( hasMillis ) {
+    if (hasMillis) {
       buffer.writeInt(instant.getMillisOfSecond * 1000)
     }
 

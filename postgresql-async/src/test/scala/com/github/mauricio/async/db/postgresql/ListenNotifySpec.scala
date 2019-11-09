@@ -22,173 +22,174 @@ import com.github.mauricio.async.db.postgresql.messages.backend.NotificationResp
 
 class ListenNotifySpec extends Specification with DatabaseTestHelper {
 
-  def generateQueueName() = "scala_pg_async_test_" + UUID.randomUUID().toString.replaceAll("-", "")
+  def generateQueueName() =
+    "scala_pg_async_test_" + UUID.randomUUID().toString.replaceAll("-", "")
 
   "connection" should {
 
     "should be able to receive a notification if listening" in {
 
-      withHandler {
-        connection =>
+      withHandler { connection =>
+        val queue = generateQueueName()
 
-          val queue = generateQueueName()
+        executeQuery(connection, s"LISTEN $queue")
 
-          executeQuery(connection, s"LISTEN $queue")
+        var payload = ""
+        var channel = ""
 
-          var payload = ""
-          var channel = ""
+        connection.registerNotifyListener((message) => {
+          payload = message.payload
+          channel = message.channel
+        })
 
-          connection.registerNotifyListener((message) => {
-            payload = message.payload
-            channel = message.channel
-          })
+        executeQuery(connection, s"NOTIFY $queue, 'this-is-some-data'")
 
-          executeQuery(connection, s"NOTIFY $queue, 'this-is-some-data'")
+        Thread.sleep(1000)
 
-          Thread.sleep(1000)
+        payload === "this-is-some-data"
+        channel === queue
 
-          payload === "this-is-some-data"
-          channel === queue
-
-          connection.hasRecentError must beFalse
+        connection.hasRecentError must beFalse
       }
 
     }
 
     "should be able to receive a notification from a pg_notify call" in {
 
-      withHandler {
-        connection =>
-          val queue = generateQueueName()
+      withHandler { connection =>
+        val queue = generateQueueName()
 
-          executeQuery(connection, s"LISTEN $queue")
+        executeQuery(connection, s"LISTEN $queue")
 
-          var payload = ""
-          var channel = ""
+        var payload = ""
+        var channel = ""
 
-          connection.registerNotifyListener((message) => {
-            payload = message.payload
-            channel = message.channel
-          })
+        connection.registerNotifyListener((message) => {
+          payload = message.payload
+          channel = message.channel
+        })
 
-          executePreparedStatement(connection, "SELECT pg_notify(?, ?)", Array(queue, "notifying-again"))
+        executePreparedStatement(
+          connection,
+          "SELECT pg_notify(?, ?)",
+          Array(queue, "notifying-again")
+        )
 
-          Thread.sleep(1000)
+        Thread.sleep(1000)
 
-          payload === "notifying-again"
-          channel === queue
+        payload === "notifying-again"
+        channel === queue
       }
 
     }
 
     "should not receive any notification if not registered to the correct channel" in {
 
-      withHandler {
-        connection =>
+      withHandler { connection =>
+        var queue      = generateQueueName()
+        var otherQueue = generateQueueName()
 
-          var queue = generateQueueName()
-          var otherQueue = generateQueueName()
+        executeQuery(connection, s"LISTEN $queue")
 
-          executeQuery(connection, s"LISTEN $queue")
+        var payload = ""
+        var channel = ""
 
-          var payload = ""
-          var channel = ""
+        connection.registerNotifyListener((message) => {
+          payload = message.payload
+          channel = message.channel
+        })
 
-          connection.registerNotifyListener((message) => {
-            payload = message.payload
-            channel = message.channel
-          })
+        executePreparedStatement(
+          connection,
+          "SELECT pg_notify(?, ?)",
+          Array(otherQueue, "notifying-again")
+        )
 
-          executePreparedStatement(connection, "SELECT pg_notify(?, ?)", Array(otherQueue, "notifying-again"))
+        Thread.sleep(1000)
 
-          Thread.sleep(1000)
-
-          payload === ""
-          channel === ""
+        payload === ""
+        channel === ""
       }
 
     }
 
     "should not receive notifications if cleared the collection" in {
 
-      withHandler {
-        connection =>
-          val queue = generateQueueName()
+      withHandler { connection =>
+        val queue = generateQueueName()
 
-          executeQuery(connection, s"LISTEN $queue")
+        executeQuery(connection, s"LISTEN $queue")
 
-          var payload = ""
-          var channel = ""
+        var payload = ""
+        var channel = ""
 
-          connection.registerNotifyListener((message) => {
-            payload = message.payload
-            channel = message.channel
-          })
+        connection.registerNotifyListener((message) => {
+          payload = message.payload
+          channel = message.channel
+        })
 
-          connection.clearNotifyListeners()
+        connection.clearNotifyListeners()
 
-          executeQuery(connection, s"NOTIFY $queue, 'this-is-some-data'")
+        executeQuery(connection, s"NOTIFY $queue, 'this-is-some-data'")
 
-          Thread.sleep(1000)
+        Thread.sleep(1000)
 
-          payload === ""
-          channel === ""
+        payload === ""
+        channel === ""
       }
 
     }
 
     "should not receive notification if listener was removed" in {
 
-      withHandler {
-        connection =>
-          val queue = generateQueueName()
+      withHandler { connection =>
+        val queue = generateQueueName()
 
-          executeQuery(connection, s"LISTEN $queue")
+        executeQuery(connection, s"LISTEN $queue")
 
-          var payload = ""
-          var channel = ""
+        var payload = ""
+        var channel = ""
 
-          val listener : NotificationResponse => Unit = (message) => {
-            payload = message.payload
-            channel = message.channel
-          }
+        val listener: NotificationResponse => Unit = (message) => {
+          payload = message.payload
+          channel = message.channel
+        }
 
-          connection.registerNotifyListener(listener)
-          connection.unregisterNotifyListener(listener)
+        connection.registerNotifyListener(listener)
+        connection.unregisterNotifyListener(listener)
 
-          executeQuery(connection, s"NOTIFY $queue, 'this-is-some-data'")
+        executeQuery(connection, s"NOTIFY $queue, 'this-is-some-data'")
 
-          Thread.sleep(1000)
+        Thread.sleep(1000)
 
-          payload === ""
-          channel === ""
+        payload === ""
+        channel === ""
       }
 
     }
 
     "should be able to receive notify without payload" in {
-      withHandler {
-        connection =>
-          val queue = generateQueueName()
+      withHandler { connection =>
+        val queue = generateQueueName()
 
-          executeQuery(connection, s"LISTEN $queue")
+        executeQuery(connection, s"LISTEN $queue")
 
-          var payload = "this is some fake payload"
-          var channel = ""
+        var payload = "this is some fake payload"
+        var channel = ""
 
-          val listener : NotificationResponse => Unit = (message) => {
-            payload = message.payload
-            channel = message.channel
-          }
+        val listener: NotificationResponse => Unit = (message) => {
+          payload = message.payload
+          channel = message.channel
+        }
 
-          connection.registerNotifyListener(listener)
+        connection.registerNotifyListener(listener)
 
-          executeQuery(connection, s"NOTIFY $queue")
+        executeQuery(connection, s"NOTIFY $queue")
 
-          Thread.sleep(1000)
+        Thread.sleep(1000)
 
-          payload === ""
-          channel === queue
+        payload === ""
+        channel === queue
       }
     }
 

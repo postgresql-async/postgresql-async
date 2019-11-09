@@ -16,5 +16,5 @@
 
 package com.github.mauricio.async.db.mysql.message.server
 
-case class EOFMessage( warningCount : Int, flags : Int  )
-  extends ServerMessage( ServerMessage.EOF )
+case class EOFMessage(warningCount: Int, flags: Int)
+    extends ServerMessage(ServerMessage.EOF)

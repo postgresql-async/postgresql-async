@@ -26,25 +26,25 @@ class BinaryColumnsSpec extends Specification with ConnectionHelper {
       val host = "127.0.0.1"
 
       val preparedInsert = "INSERT INTO t (uuid, address) VALUES (?, ?)"
-      val insert = s"INSERT INTO t (uuid, address) VALUES ('${uuid}', '${host}')"
+      val insert =
+        s"INSERT INTO t (uuid, address) VALUES ('${uuid}', '${host}')"
       val select = "SELECT * FROM t"
 
-      withConnection {
-        connection =>
-          executeQuery(connection, create)
-          executeQuery(connection, insert)
+      withConnection { connection =>
+        executeQuery(connection, create)
+        executeQuery(connection, insert)
 
-          val result = executeQuery(connection, select).rows.get
+        val result = executeQuery(connection, select).rows.get
 
-          compareBytes(result(0), "uuid", uuid )
-          compareBytes(result(0), "address", host )
+        compareBytes(result(0), "uuid", uuid)
+        compareBytes(result(0), "address", host)
 
-          executePreparedStatement( connection, preparedInsert, uuid, host)
+        executePreparedStatement(connection, preparedInsert, uuid, host)
 
-          val otherResult = executePreparedStatement(connection, select).rows.get
+        val otherResult = executePreparedStatement(connection, select).rows.get
 
-          compareBytes(otherResult(1), "uuid", uuid )
-          compareBytes(otherResult(1), "address", host )
+        compareBytes(otherResult(1), "uuid", uuid)
+        compareBytes(otherResult(1), "address", host)
       }
 
     }
@@ -58,18 +58,17 @@ class BinaryColumnsSpec extends Specification with ConnectionHelper {
           | primary key (id))
         """.stripMargin
 
-      val insert = "INSERT INTO POSTS (binary_column) VALUES (?)"
-      val select = "SELECT * FROM POSTS"
-      val bytes = (1 to 10).map(_.toByte).toArray
+      val insert  = "INSERT INTO POSTS (binary_column) VALUES (?)"
+      val select  = "SELECT * FROM POSTS"
+      val bytes   = (1 to 10).map(_.toByte).toArray
       val padding = Array.fill[Byte](10)(0)
 
-      withConnection {
-        connection =>
-          executeQuery(connection, create)
-          executePreparedStatement(connection, insert, bytes)
-          val row = executeQuery(connection, select).rows.get(0)
-          row("id") === 1
-          row("binary_column") === bytes ++ padding
+      withConnection { connection =>
+        executeQuery(connection, create)
+        executePreparedStatement(connection, insert, bytes)
+        val row = executeQuery(connection, select).rows.get(0)
+        row("id") === 1
+        row("binary_column") === bytes ++ padding
       }
 
     }
@@ -85,15 +84,14 @@ class BinaryColumnsSpec extends Specification with ConnectionHelper {
 
       val insert = "INSERT INTO POSTS (varbinary_column) VALUES (?)"
       val select = "SELECT * FROM POSTS"
-      val bytes = (1 to 10).map(_.toByte).toArray
+      val bytes  = (1 to 10).map(_.toByte).toArray
 
-      withConnection {
-        connection =>
-          executeQuery(connection, create)
-          executePreparedStatement(connection, insert, bytes)
-          val row = executeQuery(connection, select).rows.get(0)
-          row("id") === 1
-          row("varbinary_column") === bytes
+      withConnection { connection =>
+        executeQuery(connection, create)
+        executePreparedStatement(connection, insert, bytes)
+        val row = executeQuery(connection, select).rows.get(0)
+        row("id") === 1
+        row("varbinary_column") === bytes
       }
 
     }
@@ -127,26 +125,30 @@ class BinaryColumnsSpec extends Specification with ConnectionHelper {
     val insert = "INSERT INTO POSTS (id,blob_column) VALUES (?,?)"
     val select = "SELECT id,blob_column FROM POSTS ORDER BY id"
 
-    withConnection {
-      connection =>
-        executeQuery(connection, create)
-        executePreparedStatement(connection, insert, 1, Some(bytes))
-        executePreparedStatement(connection, insert, 2, ByteBuffer.wrap(bytes))
-        executePreparedStatement(connection, insert, 3, Unpooled.wrappedBuffer(bytes))
+    withConnection { connection =>
+      executeQuery(connection, create)
+      executePreparedStatement(connection, insert, 1, Some(bytes))
+      executePreparedStatement(connection, insert, 2, ByteBuffer.wrap(bytes))
+      executePreparedStatement(
+        connection,
+        insert,
+        3,
+        Unpooled.wrappedBuffer(bytes)
+      )
 
-        val Some(rows) = executeQuery(connection, select).rows
-        rows(0)("id") === 1
-        rows(0)("blob_column") === bytes
-        rows(1)("id") === 2
-        rows(1)("blob_column") === bytes
-        rows(2)("id") === 3
-        rows(2)("blob_column") === bytes
-        rows.size === 3
+      val Some(rows) = executeQuery(connection, select).rows
+      rows(0)("id") === 1
+      rows(0)("blob_column") === bytes
+      rows(1)("id") === 2
+      rows(1)("blob_column") === bytes
+      rows(2)("id") === 3
+      rows(2)("blob_column") === bytes
+      rows.size === 3
     }
 
   }
 
-  def compareBytes( row : RowData, column : String, expected : String ) =
+  def compareBytes(row: RowData, column: String, expected: String) =
     row(column) === expected.getBytes(CharsetUtil.UTF_8)
 
 }
