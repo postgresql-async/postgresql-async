@@ -43,6 +43,7 @@ echo "postgresql.conf ssl settings"
 cat "$PGCONF/postgresql.conf"|grep 'ssl'
 
 sudo cp -f $SCRIPTDIR/server.crt $SCRIPTDIR/server.key $PGDATA
+sudo chmod 0640 $PGDATA/server.{crt, key}
 sudo chmod 600 $PGCONF/pg_hba.conf
 sudo chmod 600 $PGCONF/postgresql.conf
 
