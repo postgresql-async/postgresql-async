@@ -95,8 +95,8 @@ class PostgreSQLColumnEncoderRegistry extends ColumnEncoderRegistry {
       encoder.get._1.encode(value)
     } else {
       value match {
-        case i: java.lang.Iterable[_] => encodeArray(i.toIterable)
-        case i: Iterable[_]        => encodeArray(i)
+        case i: java.lang.Iterable[_] => encodeArray(i.asScala)
+        case i: Iterable[_]           => encodeArray(i)
         case i: Array[_]              => encodeArray(i.toIterable)
         case p: Product               => encodeComposite(p)
         case _ => {
@@ -155,7 +155,7 @@ class PostgreSQLColumnEncoderRegistry extends ColumnEncoderRegistry {
       case n: Float                 => false
       case n: Double                => false
       case n: java.lang.Iterable[_] => false
-      case n: Iterable[_]        => false
+      case n: Iterable[_]           => false
       case n: Array[_]              => false
       case Some(v)                  => shouldQuote(v)
       case _                        => true
