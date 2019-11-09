@@ -31,49 +31,38 @@ object PostgreSQLColumnEncoderRegistry {
 class PostgreSQLColumnEncoderRegistry extends ColumnEncoderRegistry {
 
   private val classesSequence_ : List[(Class[_], (ColumnEncoder, Int))] = List(
-    classOf[Int] -> (IntegerEncoderDecoder -> ColumnTypes.Integer),
-    classOf[java.lang.Integer] -> (IntegerEncoderDecoder -> ColumnTypes.Integer),
-
-    classOf[java.lang.Short] -> (ShortEncoderDecoder -> ColumnTypes.Smallint),
-    classOf[Short] -> (ShortEncoderDecoder -> ColumnTypes.Smallint),
-
-    classOf[Long] -> (LongEncoderDecoder -> ColumnTypes.Bigserial),
-    classOf[java.lang.Long] -> (LongEncoderDecoder -> ColumnTypes.Bigserial),
-
-    classOf[String] -> (StringEncoderDecoder -> ColumnTypes.Varchar),
-    classOf[java.lang.String] -> (StringEncoderDecoder -> ColumnTypes.Varchar),
-
-    classOf[Float] -> (FloatEncoderDecoder -> ColumnTypes.Real),
-    classOf[java.lang.Float] -> (FloatEncoderDecoder -> ColumnTypes.Real),
-
-    classOf[Double] -> (DoubleEncoderDecoder -> ColumnTypes.Double),
-    classOf[java.lang.Double] -> (DoubleEncoderDecoder -> ColumnTypes.Double),
-
-    classOf[BigDecimal] -> (BigDecimalEncoderDecoder -> ColumnTypes.Numeric),
-    classOf[java.math.BigDecimal] -> (BigDecimalEncoderDecoder -> ColumnTypes.Numeric),
-
-    classOf[java.net.InetAddress] -> (InetAddressEncoderDecoder -> ColumnTypes.Inet),
-
-    classOf[java.util.UUID] -> (UUIDEncoderDecoder -> ColumnTypes.UUID),
-
-    classOf[LocalDate] -> ( DateEncoderDecoder -> ColumnTypes.Date ),
-    classOf[LocalDateTime] -> (TimestampEncoderDecoder.Instance -> ColumnTypes.Timestamp),
-    classOf[DateTime] -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
-    classOf[ReadableDateTime] -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
-    classOf[ReadableInstant] -> (DateEncoderDecoder -> ColumnTypes.Date),
-
-    classOf[ReadablePeriod] -> (PostgreSQLIntervalEncoderDecoder -> ColumnTypes.Interval),
-    classOf[ReadableDuration] -> (PostgreSQLIntervalEncoderDecoder -> ColumnTypes.Interval),
-
-    classOf[java.util.Date] -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
-    classOf[java.sql.Date] -> ( DateEncoderDecoder -> ColumnTypes.Date ),
-    classOf[java.sql.Time] -> ( SQLTimeEncoder -> ColumnTypes.Time ),
-    classOf[java.sql.Timestamp] -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
-    classOf[java.util.Calendar] -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
+    classOf[Int]                         -> (IntegerEncoderDecoder               -> ColumnTypes.Integer),
+    classOf[java.lang.Integer]           -> (IntegerEncoderDecoder               -> ColumnTypes.Integer),
+    classOf[java.lang.Short]             -> (ShortEncoderDecoder                 -> ColumnTypes.Smallint),
+    classOf[Short]                       -> (ShortEncoderDecoder                 -> ColumnTypes.Smallint),
+    classOf[Long]                        -> (LongEncoderDecoder                  -> ColumnTypes.Bigserial),
+    classOf[java.lang.Long]              -> (LongEncoderDecoder                  -> ColumnTypes.Bigserial),
+    classOf[String]                      -> (StringEncoderDecoder                -> ColumnTypes.Varchar),
+    classOf[java.lang.String]            -> (StringEncoderDecoder                -> ColumnTypes.Varchar),
+    classOf[Float]                       -> (FloatEncoderDecoder                 -> ColumnTypes.Real),
+    classOf[java.lang.Float]             -> (FloatEncoderDecoder                 -> ColumnTypes.Real),
+    classOf[Double]                      -> (DoubleEncoderDecoder                -> ColumnTypes.Double),
+    classOf[java.lang.Double]            -> (DoubleEncoderDecoder                -> ColumnTypes.Double),
+    classOf[BigDecimal]                  -> (BigDecimalEncoderDecoder            -> ColumnTypes.Numeric),
+    classOf[java.math.BigDecimal]        -> (BigDecimalEncoderDecoder            -> ColumnTypes.Numeric),
+    classOf[java.net.InetAddress]        -> (InetAddressEncoderDecoder           -> ColumnTypes.Inet),
+    classOf[java.util.UUID]              -> (UUIDEncoderDecoder                  -> ColumnTypes.UUID),
+    classOf[LocalDate]                   -> (DateEncoderDecoder                  -> ColumnTypes.Date),
+    classOf[LocalDateTime]               -> (TimestampEncoderDecoder.Instance    -> ColumnTypes.Timestamp),
+    classOf[DateTime]                    -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
+    classOf[ReadableDateTime]            -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
+    classOf[ReadableInstant]             -> (DateEncoderDecoder                  -> ColumnTypes.Date),
+    classOf[ReadablePeriod]              -> (PostgreSQLIntervalEncoderDecoder    -> ColumnTypes.Interval),
+    classOf[ReadableDuration]            -> (PostgreSQLIntervalEncoderDecoder    -> ColumnTypes.Interval),
+    classOf[java.util.Date]              -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
+    classOf[java.sql.Date]               -> (DateEncoderDecoder                  -> ColumnTypes.Date),
+    classOf[java.sql.Time]               -> (SQLTimeEncoder                      -> ColumnTypes.Time),
+    classOf[java.sql.Timestamp]          -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
+    classOf[java.util.Calendar]          -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
     classOf[java.util.GregorianCalendar] -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
-    classOf[Array[Byte]] -> ( ByteArrayEncoderDecoder -> ColumnTypes.ByteA ),
-    classOf[ByteBuffer] -> ( ByteArrayEncoderDecoder -> ColumnTypes.ByteA ),
-    classOf[ByteBuf] -> ( ByteArrayEncoderDecoder -> ColumnTypes.ByteA )
+    classOf[Array[Byte]]                 -> (ByteArrayEncoderDecoder             -> ColumnTypes.ByteA),
+    classOf[ByteBuffer]                  -> (ByteArrayEncoderDecoder             -> ColumnTypes.ByteA),
+    classOf[ByteBuf]                     -> (ByteArrayEncoderDecoder             -> ColumnTypes.ByteA)
   )
 
   private final val classesSequence = (classOf[LocalTime] -> (TimeEncoderDecoder.Instance -> ColumnTypes.Time)) ::
@@ -90,15 +79,15 @@ class PostgreSQLColumnEncoderRegistry extends ColumnEncoderRegistry {
 
     value match {
       case Some(v) => encode(v)
-      case None => null
-      case _ => encodeValue(value)
+      case None    => null
+      case _       => encodeValue(value)
     }
 
   }
 
   /**
-   * Used to encode a value that is not null and not an Option.
-   */
+    * Used to encode a value that is not null and not an Option.
+    */
   private def encodeValue(value: Any): String = {
 
     val encoder = this.classes.get(value.getClass)
@@ -108,13 +97,14 @@ class PostgreSQLColumnEncoderRegistry extends ColumnEncoderRegistry {
     } else {
       value match {
         case i: java.lang.Iterable[_] => encodeArray(i.toIterable)
-        case i: Traversable[_] => encodeArray(i)
-        case i: Array[_] => encodeArray(i.toIterable)
-        case p: Product => encodeComposite(p)
+        case i: Traversable[_]        => encodeArray(i)
+        case i: Array[_]              => encodeArray(i.toIterable)
+        case p: Product               => encodeComposite(p)
         case _ => {
-          this.classesSequence.find(entry => entry._1.isAssignableFrom(value.getClass)) match {
+          this.classesSequence
+            .find(entry => entry._1.isAssignableFrom(value.getClass)) match {
             case Some(parent) => parent._2._1.encode(value)
-            case None => value.toString
+            case None         => value.toString
           }
         }
       }
@@ -124,62 +114,66 @@ class PostgreSQLColumnEncoderRegistry extends ColumnEncoderRegistry {
   }
 
   private def encodeComposite(p: Product): String = {
-    p.productIterator.map {
-      item =>
-        if (item == null || item == None) {
-          "NULL"
+    p.productIterator.map { item =>
+      if (item == null || item == None) {
+        "NULL"
+      } else {
+        if (this.shouldQuote(item)) {
+          "\"" + this
+            .encode(item)
+            .replaceAllLiterally("\\", """\\""")
+            .replaceAllLiterally("\"", """\"""") + "\""
         } else {
-          if (this.shouldQuote(item)) {
-            "\"" + this.encode(item).replaceAllLiterally("\\", """\\""").replaceAllLiterally("\"", """\"""") + "\""
-          } else {
-            this.encode(item)
-          }
+          this.encode(item)
         }
+      }
     }.mkString("(", ",", ")")
   }
 
   private def encodeArray(collection: Traversable[_]): String = {
-    collection.map {
-      item =>
-        if (item == null || item == None) {
-          "NULL"
+    collection.map { item =>
+      if (item == null || item == None) {
+        "NULL"
+      } else {
+        if (this.shouldQuote(item)) {
+          "\"" + this
+            .encode(item)
+            .replaceAllLiterally("\\", """\\""")
+            .replaceAllLiterally("\"", """\"""") + "\""
         } else {
-          if (this.shouldQuote(item)) {
-            "\"" + this.encode(item).replaceAllLiterally("\\", """\\""").replaceAllLiterally("\"", """\"""") + "\""
-          } else {
-            this.encode(item)
-          }
+          this.encode(item)
         }
+      }
     }.mkString("{", ",", "}")
   }
 
   private def shouldQuote(value: Any): Boolean = {
     value match {
-      case n: java.lang.Number => false
-      case n: Int => false
-      case n: Short => false
-      case n: Long => false
-      case n: Float => false
-      case n: Double => false
+      case n: java.lang.Number      => false
+      case n: Int                   => false
+      case n: Short                 => false
+      case n: Long                  => false
+      case n: Float                 => false
+      case n: Double                => false
       case n: java.lang.Iterable[_] => false
-      case n: Traversable[_] => false
-      case n: Array[_] => false
-      case Some(v) => shouldQuote(v)
-      case _ => true
+      case n: Traversable[_]        => false
+      case n: Array[_]              => false
+      case Some(v)                  => shouldQuote(v)
+      case _                        => true
     }
   }
 
   override def kindOf(value: Any): Int = {
-    if ( value == null || value == None ) {
+    if (value == null || value == None) {
       0
     } else {
       value match {
-        case Some(v) => kindOf(v)
-        case v : String => ColumnTypes.Untyped
+        case Some(v)   => kindOf(v)
+        case v: String => ColumnTypes.Untyped
         case _ => {
           this.classes.get(value.getClass) match {
-            case Some( entry ) => entry._2
-            case None => ColumnTypes.Untyped
+            case Some(entry) => entry._2
+            case None        => ColumnTypes.Untyped
           }
         }
       }
