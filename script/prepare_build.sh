@@ -15,6 +15,7 @@ PGUSER=postgres
 PGCONF=/etc/postgresql/9.4/main
 PGDATA=/var/ramfs/postgresql/9.4/main
 
+echo "generate testing certs"
 psql -d "postgres" -c 'create database netty_driver_test;' -U $PGUSER
 psql -d "postgres" -c 'create database netty_driver_time_test;' -U $PGUSER
 psql -d "postgres" -c "alter database netty_driver_time_test set timezone to 'GMT'" -U $PGUSER
@@ -50,9 +51,8 @@ cat "$PGCONF/postgresql.conf"
 sudo cp -f $SCRIPTDIR/server.crt $SCRIPTDIR/server.key $PGDATA
 sudo chmod 600 $PGCONF/pg_hba.conf
 sudo chmod 600 $PGCONF/postgresql.conf
-
-
-
+sudo chmod 600 $PGDATA/server.crt
+sudo chmod 600 $PGDATA/server.key
 
 
 sudo /etc/init.d/postgresql restart 9.4
