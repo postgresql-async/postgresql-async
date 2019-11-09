@@ -36,8 +36,8 @@ sudo echo "host     all             postgres_cleartext 127.0.0.1/32         pass
 echo "pg_hba.conf is now like"
 cat "$PGCONF/pg_hba.conf"
 
-sed -i 's/^ssl_cert_file.*/ssl_cert_file=server.crt/' $PGCONF/pg_hba.conf
-sed -i 's/^ssl_key_file.*/ssl_key_file=server.key/' $PGCONF/pg_hba.conf
+sed -i 's/^ssl_cert_file.*/ssl_cert_file=server.crt/' $PGCONF/postgresql.conf
+sed -i 's/^ssl_key_file.*/ssl_key_file=server.key/' $PGCONF/postgresql.conf
 
 echo "postgresql.conf ssl settings"
 cat "$PGCONF/postgresql.conf"
