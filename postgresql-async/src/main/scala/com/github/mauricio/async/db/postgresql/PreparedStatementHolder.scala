@@ -18,10 +18,10 @@ package com.github.mauricio.async.db.postgresql
 
 import com.github.mauricio.async.db.postgresql.messages.backend.PostgreSQLColumnData
 
-class PreparedStatementHolder(val query : String, val statementId : Int ) {
+class PreparedStatementHolder(val query: String, val statementId: Int) {
 
   val (realQuery, paramsCount) = {
-    val result = new StringBuilder(query.length+16)
+    val result = new StringBuilder(query.length + 16)
     var offset = 0
     var params = 0
     while (offset < query.length) {
@@ -45,7 +45,7 @@ class PreparedStatementHolder(val query : String, val statementId : Int ) {
     (result.toString, params)
   }
 
-  var prepared : Boolean = false
-  var columnDatas : Array[PostgreSQLColumnData] = Array.empty
+  var prepared: Boolean                        = false
+  var columnDatas: Array[PostgreSQLColumnData] = Array.empty
 
 }

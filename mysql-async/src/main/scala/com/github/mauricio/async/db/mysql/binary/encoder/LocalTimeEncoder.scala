@@ -21,18 +21,18 @@ import org.joda.time.LocalTime
 import com.github.mauricio.async.db.mysql.column.ColumnTypes
 
 object LocalTimeEncoder extends BinaryEncoder {
-  def encode(value: Any, buffer: ByteBuf) {
+  def encode(value: Any, buffer: ByteBuf): Unit = {
     val time = value.asInstanceOf[LocalTime]
 
     val hasMillis = time.getMillisOfSecond != 0
 
-    if ( hasMillis ) {
+    if (hasMillis) {
       buffer.writeByte(12)
     } else {
       buffer.writeByte(8)
     }
 
-    if ( time.getMillisOfDay > 0 ) {
+    if (time.getMillisOfDay > 0) {
       buffer.writeByte(0)
     } else {
       buffer.writeByte(1)
@@ -44,7 +44,7 @@ object LocalTimeEncoder extends BinaryEncoder {
     buffer.writeByte(time.getMinuteOfHour)
     buffer.writeByte(time.getSecondOfMinute)
 
-    if ( hasMillis ) {
+    if (hasMillis) {
       buffer.writeInt(time.getMillisOfSecond * 1000)
     }
 

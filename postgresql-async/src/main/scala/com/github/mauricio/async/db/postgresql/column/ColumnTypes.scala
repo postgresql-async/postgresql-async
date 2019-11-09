@@ -17,57 +17,57 @@
 package com.github.mauricio.async.db.postgresql.column
 
 object ColumnTypes {
-  final val Untyped = 0
-  final val Bigserial = 20
+  final val Untyped        = 0
+  final val Bigserial      = 20
   final val BigserialArray = 1016
-  final val Char = 18
-  final val CharArray = 1002
-  final val Smallint = 21
-  final val SmallintArray = 1005
-  final val Integer = 23
-  final val IntegerArray = 1007
-  final val Numeric = 1700
+  final val Char           = 18
+  final val CharArray      = 1002
+  final val Smallint       = 21
+  final val SmallintArray  = 1005
+  final val Integer        = 23
+  final val IntegerArray   = 1007
+  final val Numeric        = 1700
   // Decimal is the same as Numeric on PostgreSQL
   final val NumericArray = 1231
-  final val Real = 700
-  final val RealArray = 1021
-  final val Double = 701
-  final val DoubleArray = 1022
-  final val Serial = 23
-  final val Bpchar = 1042
-  final val BpcharArray = 1014
-  final val Varchar = 1043
+  final val Real         = 700
+  final val RealArray    = 1021
+  final val Double       = 701
+  final val DoubleArray  = 1022
+  final val Serial       = 23
+  final val Bpchar       = 1042
+  final val BpcharArray  = 1014
+  final val Varchar      = 1043
   // Char is the same as Varchar on PostgreSQL
-  final val VarcharArray = 1015
-  final val Text = 25
-  final val TextArray = 1009
-  final val Timestamp = 1114
-  final val TimestampArray = 1115
-  final val TimestampWithTimezone = 1184
+  final val VarcharArray               = 1015
+  final val Text                       = 25
+  final val TextArray                  = 1009
+  final val Timestamp                  = 1114
+  final val TimestampArray             = 1115
+  final val TimestampWithTimezone      = 1184
   final val TimestampWithTimezoneArray = 1185
-  final val Date = 1082
-  final val DateArray = 1182
-  final val Time = 1083
-  final val TimeArray = 1183
-  final val TimeWithTimezone = 1266
-  final val TimeWithTimezoneArray = 1270
-  final val Interval = 1186
-  final val IntervalArray = 1187
-  final val Boolean = 16
-  final val BooleanArray = 1000
-  final val OID = 26
-  final val OIDArray = 1028
+  final val Date                       = 1082
+  final val DateArray                  = 1182
+  final val Time                       = 1083
+  final val TimeArray                  = 1183
+  final val TimeWithTimezone           = 1266
+  final val TimeWithTimezoneArray      = 1270
+  final val Interval                   = 1186
+  final val IntervalArray              = 1187
+  final val Boolean                    = 16
+  final val BooleanArray               = 1000
+  final val OID                        = 26
+  final val OIDArray                   = 1028
 
-  final val ByteA = 17
+  final val ByteA       = 17
   final val ByteA_Array = 1001
 
   final val MoneyArray = 791
-  final val NameArray = 1003
-  final val UUID = 2950
-  final val UUIDArray = 2951
-  final val XMLArray = 143
+  final val NameArray  = 1003
+  final val UUID       = 2950
+  final val UUIDArray  = 2951
+  final val XMLArray   = 143
 
-  final val Inet = 869
+  final val Inet      = 869
   final val InetArray = 1041
 }
 
@@ -126,4 +126,4 @@ object ColumnTypes {
     public static final int XML = 142;
     public static final int XML_ARRAY = 143;
 
-*/
+ */

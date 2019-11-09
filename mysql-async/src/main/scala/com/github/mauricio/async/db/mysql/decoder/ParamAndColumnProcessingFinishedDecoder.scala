@@ -17,10 +17,15 @@
 package com.github.mauricio.async.db.mysql.decoder
 
 import io.netty.buffer.ByteBuf
-import com.github.mauricio.async.db.mysql.message.server.{ParamAndColumnProcessingFinishedMessage, ServerMessage}
+import com.github.mauricio.async.db.mysql.message.server.{
+  ParamAndColumnProcessingFinishedMessage,
+  ServerMessage
+}
 
 object ParamAndColumnProcessingFinishedDecoder extends MessageDecoder {
   def decode(buffer: ByteBuf): ServerMessage = {
-    new ParamAndColumnProcessingFinishedMessage(EOFMessageDecoder.decode(buffer))
+    new ParamAndColumnProcessingFinishedMessage(
+      EOFMessageDecoder.decode(buffer)
+    )
   }
 }

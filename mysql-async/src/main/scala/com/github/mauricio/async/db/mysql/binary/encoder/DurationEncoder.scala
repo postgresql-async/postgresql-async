@@ -24,22 +24,22 @@ object DurationEncoder extends BinaryEncoder {
 
   private final val Zero = 0.seconds
 
-  def encode(value: Any, buffer: ByteBuf) {
+  def encode(value: Any, buffer: ByteBuf): Unit = {
     val duration = value.asInstanceOf[Duration]
 
-    val days = duration.toDays
-    val hoursDuration = duration - days.days
-    val hours = hoursDuration.toHours
+    val days            = duration.toDays
+    val hoursDuration   = duration - days.days
+    val hours           = hoursDuration.toHours
     val minutesDuration = hoursDuration - hours.hours
-    val minutes = minutesDuration.toMinutes
+    val minutes         = minutesDuration.toMinutes
     val secondsDuration = minutesDuration - minutes.minutes
-    val seconds = secondsDuration.toSeconds
-    val microsDuration = secondsDuration - seconds.seconds
-    val micros = microsDuration.toMicros
+    val seconds         = secondsDuration.toSeconds
+    val microsDuration  = secondsDuration - seconds.seconds
+    val micros          = microsDuration.toMicros
 
-    val hasMicros  = micros != 0
+    val hasMicros = micros != 0
 
-    if ( hasMicros ) {
+    if (hasMicros) {
       buffer.writeByte(12)
     } else {
       buffer.writeByte(8)
@@ -56,7 +56,7 @@ object DurationEncoder extends BinaryEncoder {
     buffer.writeByte(minutes.asInstanceOf[Int])
     buffer.writeByte(seconds.asInstanceOf[Int])
 
-    if ( hasMicros ) {
+    if (hasMicros) {
       buffer.writeInt(micros.asInstanceOf[Int])
     }
 

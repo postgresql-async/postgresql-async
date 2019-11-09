@@ -19,17 +19,15 @@ package com.github.mauricio.async.db.postgresql.messages.frontend
 import com.github.mauricio.async.db.column.ColumnEncoderRegistry
 
 class PreparedStatementMessage(
-                                val statementId: Int,
-                                kind: Byte,
-                                val query: String,
-                                val values: Seq[Any],
-                                encoderRegistry: ColumnEncoderRegistry
-                                )
-  extends ClientMessage(kind) {
+  val statementId: Int,
+  kind: Byte,
+  val query: String,
+  val values: Seq[Any],
+  encoderRegistry: ColumnEncoderRegistry
+) extends ClientMessage(kind) {
 
-  val valueTypes: Seq[Int] = values.map {
-    value =>
-      encoderRegistry.kindOf(value)
+  val valueTypes: Seq[Int] = values.map { value =>
+    encoderRegistry.kindOf(value)
   }
 
 }

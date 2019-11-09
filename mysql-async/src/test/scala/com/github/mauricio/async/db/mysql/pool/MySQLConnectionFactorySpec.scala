@@ -50,31 +50,29 @@ class MySQLConnectionFactorySpec extends Specification with ConnectionHelper {
     }
 
     "it should take a connection from the pool and the pool should not accept it back if it is broken" in {
-      withPool {
-        pool =>
-          val connection = awaitFuture(pool.take)
+      withPool { pool =>
+        val connection = awaitFuture(pool.take)
 
-          pool.inUse.size === 1
+        pool.inUse.size === 1
 
-          awaitFuture(connection.disconnect)
+        awaitFuture(connection.disconnect)
 
-          try {
-            awaitFuture(pool.giveBack(connection))
-          } catch {
-            case e: ConnectionNotConnectedException => {
-              // all good
-            }
+        try {
+          awaitFuture(pool.giveBack(connection))
+        } catch {
+          case e: ConnectionNotConnectedException => {
+            // all good
           }
+        }
 
-          pool.inUse.size === 0
+        pool.inUse.size === 0
 
       }
     }
 
     "be able to provide connections to the pool" in {
-      withPool {
-        pool =>
-          executeQuery(pool, "SELECT 0").rows.get(0)(0) === 0
+      withPool { pool =>
+        executeQuery(pool, "SELECT 0").rows.get(0)(0) === 0
       }
     }
 

@@ -20,8 +20,8 @@ import com.github.mauricio.async.db.util.ChannelWrapper.bufferToWrapper
 import java.nio.charset.Charset
 import io.netty.buffer.ByteBuf
 
-class BigDecimalDecoder( charset : Charset ) extends BinaryDecoder {
+class BigDecimalDecoder(charset: Charset) extends BinaryDecoder {
   def decode(buffer: ByteBuf): Any = {
-    BigDecimal( buffer.readLengthEncodedString(charset) )
+    BigDecimal(buffer.readLengthEncodedString(charset))
   }
 }

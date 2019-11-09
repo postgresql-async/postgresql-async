@@ -22,7 +22,7 @@ import com.github.mauricio.async.db.util.Log
 
 object ByteEncoder extends BinaryEncoder {
 
-  def encode(value: Any, buffer: ByteBuf) {
+  def encode(value: Any, buffer: ByteBuf): Unit = {
     buffer.writeByte(value.asInstanceOf[Byte])
   }
 

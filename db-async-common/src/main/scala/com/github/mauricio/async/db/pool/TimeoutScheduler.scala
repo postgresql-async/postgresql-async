@@ -11,52 +11,53 @@ trait TimeoutScheduler {
   private var isTimeoutedBool = new AtomicBoolean(false)
 
   /**
-   *
-   * The event loop group to be used for scheduling.
-   *
-   * @return
-   */
-
-  def eventLoopGroup : EventLoopGroup
-
-  /**
-   * Implementors should decide here what they want to do when a timeout occur
-   */
-
-  def onTimeout    // implementors should decide here what they want to do when a timeout occur
+    *
+    * The event loop group to be used for scheduling.
+    *
+    * @return
+    */
+  def eventLoopGroup: EventLoopGroup
 
   /**
-   *
-   * We need this property as isClosed takes time to complete and
-   * we don't want the connection to be used again.
-   *
-   * @return
-   */
+    * Implementors should decide here what they want to do when a timeout occur
+    */
+  def onTimeout
+    : Unit // implementors should decide here what they want to do when a timeout occur
 
-  def isTimeouted : Boolean =
+  /**
+    *
+    * We need this property as isClosed takes time to complete and
+    * we don't want the connection to be used again.
+    *
+    * @return
+    */
+  def isTimeouted: Boolean =
     isTimeoutedBool.get
 
-  def addTimeout[A](
-                     promise: Promise[A],
-                     durationOption: Option[Duration])
-                   (implicit executionContext : ExecutionContext) : Option[ScheduledFuture[_]] = {
-    durationOption.map {
-      duration =>
-        val scheduledFuture = schedule(
+  def addTimeout[A](promise: Promise[A], durationOption: Option[Duration])(
+    implicit executionContext: ExecutionContext
+  ): Option[ScheduledFuture[_]] = {
+    durationOption.map { duration =>
+      val scheduledFuture = schedule(
         {
-          if (promise.tryFailure(new TimeoutException(s"Operation is timeouted after it took too long to return (${duration})"))) {
+          if (promise.tryFailure(
+                new TimeoutException(
+                  s"Operation is timeouted after it took too long to return (${duration})"
+                )
+              )) {
             isTimeoutedBool.set(true)
             onTimeout
           }
         },
-        duration)
-        promise.future.onComplete(x => scheduledFuture.cancel(false))
+        duration
+      )
+      promise.future.onComplete(x => scheduledFuture.cancel(false))
 
-        scheduledFuture
+      scheduledFuture
     }
   }
 
-  def schedule(block: => Unit, duration: Duration) : ScheduledFuture[_] =
+  def schedule(block: => Unit, duration: Duration): ScheduledFuture[_] =
     eventLoopGroup.schedule(new Runnable {
       override def run(): Unit = block
     }, duration.toMillis, TimeUnit.MILLISECONDS)

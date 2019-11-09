@@ -20,7 +20,10 @@ import java.nio.charset.Charset
 
 import com.github.mauricio.async.db.exceptions.UnsupportedAuthenticationMethodException
 import com.github.mauricio.async.db.mysql.encoder.auth.AuthenticationMethod
-import com.github.mauricio.async.db.mysql.message.client.{ClientMessage, HandshakeResponseMessage}
+import com.github.mauricio.async.db.mysql.message.client.{
+  ClientMessage,
+  HandshakeResponseMessage
+}
 import com.github.mauricio.async.db.mysql.util.CharsetMapper
 import com.github.mauricio.async.db.util.{ByteBufferUtils, Log}
 import io.netty.buffer.ByteBuf
@@ -28,15 +31,18 @@ import io.netty.buffer.ByteBuf
 object HandshakeResponseEncoder {
 
   final val MAX_3_BYTES = 0x00ffffff
-  final val PADDING: Array[Byte] = List.fill(23) {
-    0.toByte
-  }.toArray
+  final val PADDING: Array[Byte] = List
+    .fill(23) {
+      0.toByte
+    }
+    .toArray
 
   final val log = Log.get[HandshakeResponseEncoder]
 
 }
 
-class HandshakeResponseEncoder(charset: Charset, charsetMapper: CharsetMapper) extends MessageEncoder {
+class HandshakeResponseEncoder(charset: Charset, charsetMapper: CharsetMapper)
+    extends MessageEncoder {
 
   import com.github.mauricio.async.db.mysql.encoder.HandshakeResponseEncoder._
   import com.github.mauricio.async.db.mysql.util.MySQLIO._
@@ -51,10 +57,10 @@ class HandshakeResponseEncoder(charset: Charset, charsetMapper: CharsetMapper) e
 
     clientCapabilities |=
       CLIENT_PLUGIN_AUTH |
-      CLIENT_PROTOCOL_41 |
-      CLIENT_TRANSACTIONS |
-      CLIENT_MULTI_RESULTS |
-      CLIENT_SECURE_CONNECTION
+        CLIENT_PROTOCOL_41 |
+        CLIENT_TRANSACTIONS |
+        CLIENT_MULTI_RESULTS |
+        CLIENT_SECURE_CONNECTION
 
     if (m.database.isDefined) {
       clientCapabilities |= CLIENT_CONNECT_WITH_DB
@@ -66,24 +72,26 @@ class HandshakeResponseEncoder(charset: Charset, charsetMapper: CharsetMapper) e
     buffer.writeInt(MAX_3_BYTES)
     buffer.writeByte(charsetMapper.toInt(charset))
     buffer.writeBytes(PADDING)
-    ByteBufferUtils.writeCString( m.username, buffer, charset )
+    ByteBufferUtils.writeCString(m.username, buffer, charset)
 
-    if ( m.password.isDefined ) {
+    if (m.password.isDefined) {
       val method = m.authenticationMethod
-      val authenticator = this.authenticationMethods.getOrElse(
-        method, { throw new UnsupportedAuthenticationMethodException(method) })
-      val bytes = authenticator.generateAuthentication(charset, m.password, m.seed)
+      val authenticator = this.authenticationMethods.getOrElse(method, {
+        throw new UnsupportedAuthenticationMethodException(method)
+      })
+      val bytes =
+        authenticator.generateAuthentication(charset, m.password, m.seed)
       buffer.writeByte(bytes.length)
       buffer.writeBytes(bytes)
     } else {
       buffer.writeByte(0)
     }
 
-    if ( m.database.isDefined ) {
-      ByteBufferUtils.writeCString( m.database.get, buffer, charset )
+    if (m.database.isDefined) {
+      ByteBufferUtils.writeCString(m.database.get, buffer, charset)
     }
 
-    ByteBufferUtils.writeCString( m.authenticationMethod, buffer, charset )
+    ByteBufferUtils.writeCString(m.authenticationMethod, buffer, charset)
 
     buffer
   }

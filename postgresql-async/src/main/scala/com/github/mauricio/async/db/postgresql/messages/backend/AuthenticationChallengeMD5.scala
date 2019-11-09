@@ -17,4 +17,7 @@
 package com.github.mauricio.async.db.postgresql.messages.backend
 
 class AuthenticationChallengeMD5(salt: Array[Byte])
-  extends AuthenticationChallengeMessage(AuthenticationResponseType.MD5, Some(salt))
+    extends AuthenticationChallengeMessage(
+      AuthenticationResponseType.MD5,
+      Some(salt)
+    )

@@ -33,15 +33,15 @@ object PostgreSQLTimestampEncoderDecoder extends ColumnEncoderDecoder {
   private val log = Log.getByName(this.getClass.getName)
 
   private val optionalTimeZone = new DateTimeFormatterBuilder()
-    .appendPattern("Z").toParser
+    .appendPattern("Z")
+    .toParser
 
-  private val internalFormatters = 1.until(6).inclusive.map {
-    index =>
-      new DateTimeFormatterBuilder()
-        .appendPattern("yyyy-MM-dd HH:mm:ss")
-        .appendPattern("." + ("S" * index ))
-        .appendOptional(optionalTimeZone)
-        .toFormatter
+  private val internalFormatters = 1.until(6).inclusive.map { index =>
+    new DateTimeFormatterBuilder()
+      .appendPattern("yyyy-MM-dd HH:mm:ss")
+      .appendPattern("." + ("S" * index))
+      .appendOptional(optionalTimeZone)
+      .toFormatter
   }
 
   private val internalFormatterWithoutSeconds = new DateTimeFormatterBuilder()
@@ -51,7 +51,11 @@ object PostgreSQLTimestampEncoderDecoder extends ColumnEncoderDecoder {
 
   def formatter = internalFormatters(5)
 
-  override def decode( kind : ColumnData, value : ByteBuf, charset : Charset ) : Any = {
+  override def decode(
+    kind: ColumnData,
+    value: ByteBuf,
+    charset: Charset
+  ): Any = {
     val bytes = new Array[Byte](value.readableBytes())
     value.readBytes(bytes)
 
@@ -67,8 +71,9 @@ object PostgreSQLTimestampEncoderDecoder extends ColumnEncoderDecoder {
         selectFormatter(text).parseDateTime(text)
       }
       case ColumnTypes.TimestampWithTimezone => {
-        if ( columnType.dataTypeModifier > 0 ) {
-          internalFormatters(columnType.dataTypeModifier - 1).parseDateTime(text)
+        if (columnType.dataTypeModifier > 0) {
+          internalFormatters(columnType.dataTypeModifier - 1)
+            .parseDateTime(text)
         } else {
           selectFormatter(text).parseDateTime(text)
         }
@@ -76,27 +81,30 @@ object PostgreSQLTimestampEncoderDecoder extends ColumnEncoderDecoder {
     }
   }
 
-  private def selectFormatter( text : String ) = {
-    if ( text.contains(".") ) {
+  private def selectFormatter(text: String) = {
+    if (text.contains(".")) {
       internalFormatters(5)
     } else {
       internalFormatterWithoutSeconds
     }
   }
 
-  override def decode(value : String) : Any = throw new UnsupportedOperationException("this method should not have been called")
+  override def decode(value: String): Any =
+    throw new UnsupportedOperationException(
+      "this method should not have been called"
+    )
 
   override def encode(value: Any): String = {
     value match {
-      case t: Timestamp => this.formatter.print(new DateTime(t))
-      case t: Date => this.formatter.print(new DateTime(t))
-      case t: Calendar => this.formatter.print(new DateTime(t))
-      case t: LocalDateTime => this.formatter.print(t)
+      case t: Timestamp        => this.formatter.print(new DateTime(t))
+      case t: Date             => this.formatter.print(new DateTime(t))
+      case t: Calendar         => this.formatter.print(new DateTime(t))
+      case t: LocalDateTime    => this.formatter.print(t)
       case t: ReadableDateTime => this.formatter.print(t)
-      case _ => throw new DateEncoderNotAvailableException(value)
+      case _                   => throw new DateEncoderNotAvailableException(value)
     }
   }
 
-  override def supportsStringDecoding : Boolean = false
+  override def supportsStringDecoding: Boolean = false
 
 }

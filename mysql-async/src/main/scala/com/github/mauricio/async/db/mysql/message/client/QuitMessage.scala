@@ -4,4 +4,4 @@ object QuitMessage {
   val Instance = new QuitMessage();
 }
 
-class QuitMessage extends ClientMessage( ClientMessage.Quit )
+class QuitMessage extends ClientMessage(ClientMessage.Quit)

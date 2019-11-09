@@ -20,8 +20,8 @@ import io.netty.buffer.ByteBuf
 
 trait BinaryEncoder {
 
-  def encode( value : Any, buffer : ByteBuf )
+  def encode(value: Any, buffer: ByteBuf): Unit
 
-  def encodesTo : Int
+  def encodesTo: Int
 
 }

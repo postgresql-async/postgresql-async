@@ -21,10 +21,12 @@ import io.netty.buffer.ByteBuf
 
 object ReturningMessageParser {
 
-  val BindCompleteMessageParser = new ReturningMessageParser(BindComplete)
+  val BindCompleteMessageParser  = new ReturningMessageParser(BindComplete)
   val CloseCompleteMessageParser = new ReturningMessageParser(CloseComplete)
-  val EmptyQueryStringMessageParser = new ReturningMessageParser(EmptyQueryString)
-  val NoDataMessageParser = new ReturningMessageParser(NoData)
+  val EmptyQueryStringMessageParser = new ReturningMessageParser(
+    EmptyQueryString
+  )
+  val NoDataMessageParser        = new ReturningMessageParser(NoData)
   val ParseCompleteMessageParser = new ReturningMessageParser(ParseComplete)
 
 }

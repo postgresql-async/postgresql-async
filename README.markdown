@@ -1,33 +1,28 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [[![Build Status](https://travis-ci.org/mauricio/postgresql-async.png)](https://travis-ci.org/mauricio/postgresql-async) postgresql-async & mysql-async - async, Netty based, database drivers for MySQL and PostgreSQL written in Scala 2.10, 2.11 and 2.12](#!build-statushttpstravis-ciorgmauriciopostgresql-asyncpnghttpstravis-ciorgmauriciopostgresql-async-postgresql-async-&-mysql-async---async-netty-based-database-drivers-for-mysql-and-postgresql-written-in-scala-210-and-211)
-	- [Abstractions and integrations](#abstractions-and-integrations)
-	- [Include them as dependencies](#include-them-as-dependencies)
-	- [Database connections and encodings](#database-connections-and-encodings)
-	- [Prepared statements gotcha](#prepared-statements-gotcha)
-	- [What are the design goals?](#what-are-the-design-goals)
-	- [What is missing?](#what-is-missing)
-	- [How can you help?](#how-can-you-help)
-	- [Main public interface](#main-public-interface)
-		- [Connection](#connection)
-		- [QueryResult](#queryresult)
-		- [ResultSet](#resultset)
-		- [Prepared statements](#prepared-statements)
-	- [Transactions](#transactions)
-	- [Example usage (for PostgreSQL, but it looks almost the same on MySQL)](#example-usage-for-postgresql-but-it-looks-almost-the-same-on-mysql)
-	- [LISTEN/NOTIFY support (PostgreSQL only)](#listennotify-support-postgresql-only)
-	- [Contributing](#contributing)
-	- [Licence](#licence)
+- This project is not being maintained anymore, feel free to fork and work on it
+    - [Abstractions and integrations](#abstractions-and-integrations)
+    - [Include them as dependencies](#include-them-as-dependencies)
+    - [Database connections and encodings](#database-connections-and-encodings)
+    - [Prepared statements gotcha](#prepared-statements-gotcha)
+    - [What are the design goals?](#what-are-the-design-goals)
+    - [What is missing?](#what-is-missing)
+    - [How can you help?](#how-can-you-help)
+    - [Main public interface](#main-public-interface)
+        - [Connection](#connection)
+        - [QueryResult](#queryresult)
+        - [ResultSet](#resultset)
+        - [Prepared statements](#prepared-statements)
+    - [Transactions](#transactions)
+    - [Example usage (for PostgreSQL, but it looks almost the same on MySQL)](#example-usage-for-postgresql-but-it-looks-almost-the-same-on-mysql)
+    - [LISTEN/NOTIFY support (PostgreSQL only)](#listennotify-support-postgresql-only)
+    - [Contributing](#contributing)
+    - [Licence](#licence)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# [![Build Status](https://travis-ci.org/mauricio/postgresql-async.png)](https://travis-ci.org/mauricio/postgresql-async) postgresql-async & mysql-async - async, Netty based, database drivers for MySQL and PostgreSQL written in Scala 2.10, 2.11 and 2.12
+# ![Build Status](https://travis-ci.com/postgresql-async/postgresql-async.svg?branch=master) 
 
-The main goal for this project is to implement simple, async, performant and reliable database drivers for
-PostgreSQL and MySQL in Scala. This is not supposed to be a JDBC replacement, these drivers aim to cover the common
-process of _send a statement, get a response_ that you usually see in applications out there. So it's unlikely
-there will be support for updating result sets live or stuff like that.
+This fork is mainly focused on bug fix and scala 2.13/dotty migrattion.
 
 This project always returns [JodaTime](http://joda-time.sourceforge.net/) when dealing with date types and not the
 `java.util.Date` class.

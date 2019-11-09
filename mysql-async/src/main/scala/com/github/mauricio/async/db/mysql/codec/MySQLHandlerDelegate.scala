@@ -22,13 +22,13 @@ import io.netty.channel.ChannelHandlerContext
 
 trait MySQLHandlerDelegate {
 
-  def onHandshake( message : HandshakeMessage )
-  def onError( message : ErrorMessage )
-  def onOk( message : OkMessage )
-  def onEOF( message : EOFMessage )
-  def exceptionCaught( exception : Throwable )
-  def connected( ctx : ChannelHandlerContext )
-  def onResultSet( resultSet : ResultSet, message : EOFMessage )
-  def switchAuthentication( message : AuthenticationSwitchRequest )
+  def onHandshake(message: HandshakeMessage): Unit
+  def onError(message: ErrorMessage): Unit
+  def onOk(message: OkMessage): Unit
+  def onEOF(message: EOFMessage): Unit
+  def exceptionCaught(exception: Throwable): Unit
+  def connected(ctx: ChannelHandlerContext): Unit
+  def onResultSet(resultSet: ResultSet, message: EOFMessage): Unit
+  def switchAuthentication(message: AuthenticationSwitchRequest): Unit
 
 }

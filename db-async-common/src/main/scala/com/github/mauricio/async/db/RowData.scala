@@ -17,40 +17,36 @@
 package com.github.mauricio.async.db
 
 /**
- *
- * Represents a row from a database, allows clients to access rows by column number or column name.
- *
- */
-
+  *
+  * Represents a row from a database, allows clients to access rows by column number or column name.
+  *
+  */
 trait RowData extends IndexedSeq[Any] {
 
   /**
-   *
-   * Returns a column value by it's position in the originating query.
-   *
-   * @param columnNumber
-   * @return
-   */
-
-  def apply( columnNumber : Int ) : Any
-
-  /**
-   *
-   * Returns a column value by it's name in the originating query.
-   *
-   * @param columnName
-   * @return
-   */
-
-  def apply( columnName : String ) : Any
+    *
+    * Returns a column value by it's position in the originating query.
+    *
+    * @param columnNumber
+    * @return
+    */
+  def apply(columnNumber: Int): Any
 
   /**
-   *
-   * Number of this row in the query results. Counts start at 0.
-   *
-   * @return
-   */
+    *
+    * Returns a column value by it's name in the originating query.
+    *
+    * @param columnName
+    * @return
+    */
+  def apply(columnName: String): Any
 
-  def rowNumber : Int
+  /**
+    *
+    * Number of this row in the query results. Counts start at 0.
+    *
+    * @return
+    */
+  def rowNumber: Int
 
 }

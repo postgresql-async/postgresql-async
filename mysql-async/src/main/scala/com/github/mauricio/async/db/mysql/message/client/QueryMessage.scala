@@ -16,4 +16,5 @@
 
 package com.github.mauricio.async.db.mysql.message.client
 
-case class QueryMessage( query : String ) extends ClientMessage( ClientMessage.Query )
+case class QueryMessage(query: String)
+    extends ClientMessage(ClientMessage.Query)

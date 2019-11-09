@@ -14,20 +14,20 @@
  * under the License.
  */
 
-
 package com.github.mauricio.async.db.postgresql.exceptions
 
 import com.github.mauricio.async.db.exceptions.DatabaseException
 import com.github.mauricio.async.db.postgresql.messages.backend.AuthenticationResponseType
 
 class MissingCredentialInformationException(
-                                             val username: String,
-                                             val password: Option[String],
-                                             val authenticationResponseType: AuthenticationResponseType.AuthenticationResponseType)
-  extends DatabaseException(
-    "Username and password were required by auth type %s but are not available (username=[%s] password=[%s]".format(
-      authenticationResponseType,
-      username,
-      password
+  val username: String,
+  val password: Option[String],
+  val authenticationResponseType: AuthenticationResponseType.AuthenticationResponseType
+) extends DatabaseException(
+      "Username and password were required by auth type %s but are not available (username=[%s] password=[%s]"
+        .format(
+          authenticationResponseType,
+          username,
+          password
+        )
     )
-  )

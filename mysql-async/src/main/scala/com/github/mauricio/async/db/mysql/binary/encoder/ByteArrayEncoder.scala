@@ -14,7 +14,6 @@
  * under the License.
  */
 
-
 package com.github.mauricio.async.db.mysql.binary.encoder
 
 import io.netty.buffer.ByteBuf
@@ -22,7 +21,7 @@ import com.github.mauricio.async.db.util.ChannelWrapper.bufferToWrapper
 import com.github.mauricio.async.db.mysql.column.ColumnTypes
 
 object ByteArrayEncoder extends BinaryEncoder {
-  def encode(value: Any, buffer: ByteBuf) {
+  def encode(value: Any, buffer: ByteBuf): Unit = {
     val bytes = value.asInstanceOf[Array[Byte]]
 
     buffer.writeLength(bytes.length)

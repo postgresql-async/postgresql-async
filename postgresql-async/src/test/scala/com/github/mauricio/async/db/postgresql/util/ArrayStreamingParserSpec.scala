@@ -34,16 +34,45 @@ class ArrayStreamingParserSpec extends Specification {
 
       delegate.starts === 3
       delegate.ends === 3
-      delegate.items === ArrayBuffer("{", "{", "1", "2", "3", "}", "{", "4", "5", "6", "}", "}")
+      delegate.items === ArrayBuffer(
+        "{",
+        "{",
+        "1",
+        "2",
+        "3",
+        "}",
+        "{",
+        "4",
+        "5",
+        "6",
+        "}",
+        "}"
+      )
     }
 
     "should parse a varchar array correctly" in {
-      val content = """{{"item","is here","but\"not there"},{"so","this is your last step"},{""}}"""
+      val content =
+        """{{"item","is here","but\"not there"},{"so","this is your last step"},{""}}"""
 
       val delegate = new LoggingDelegate()
       parser.parse(content, delegate)
 
-      delegate.items === ArrayBuffer("{", "{", "item", "is here", "but\"not there", "}", "{", "so", "this is your last step", "}", "{", "", "}", "}")
+      delegate.items === ArrayBuffer(
+        "{",
+        "{",
+        "item",
+        "is here",
+        "but\"not there",
+        "}",
+        "{",
+        "so",
+        "this is your last step",
+        "}",
+        "{",
+        "",
+        "}",
+        "}"
+      )
       delegate.starts === 4
       delegate.ends === 4
     }
@@ -54,7 +83,16 @@ class ArrayStreamingParserSpec extends Specification {
       val delegate = new LoggingDelegate()
       parser.parse(content, delegate)
 
-      delegate.items === ArrayBuffer("{", null, "first", null, "second", "NULL", null, "}")
+      delegate.items === ArrayBuffer(
+        "{",
+        null,
+        "first",
+        null,
+        "second",
+        "NULL",
+        null,
+        "}"
+      )
     }
 
   }
@@ -63,9 +101,9 @@ class ArrayStreamingParserSpec extends Specification {
 
 class LoggingDelegate extends ArrayStreamingParserDelegate {
 
-  val items = new ArrayBuffer[String]()
+  val items  = new ArrayBuffer[String]()
   var starts = 0
-  var ends = 0
+  var ends   = 0
 
   override def arrayStarted {
     items += "{"

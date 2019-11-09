@@ -24,41 +24,43 @@ class ExecuteManyQueriesSpec extends Specification with ConnectionHelper {
 
     "execute many queries one after the other" in {
 
-      withConnection {
-        connection =>
-          1.until(500).foreach {
-            index =>
-              val rows  = executeQuery(connection, "SELECT 6578, 'this is some text'").rows.get
+      withConnection { connection =>
+        1.until(500).foreach { index =>
+          val rows = executeQuery(
+            connection,
+            "SELECT 6578, 'this is some text'"
+          ).rows.get
 
-              rows.size === 1
+          rows.size === 1
 
-              val row = rows(0)
+          val row = rows(0)
 
-              row(0) === 6578
-              row(1) === "this is some text"
-          }
+          row(0) === 6578
+          row(1) === "this is some text"
+        }
 
-          success
+        success
       }
 
     }
 
     "execute many prepared statements one after the other" in {
-      withConnection {
-        connection =>
-          1.until(500).foreach {
-            index =>
-              val rows  = executePreparedStatement(connection, "SELECT 6578, 'this is some text'").rows.get
+      withConnection { connection =>
+        1.until(500).foreach { index =>
+          val rows = executePreparedStatement(
+            connection,
+            "SELECT 6578, 'this is some text'"
+          ).rows.get
 
-              rows.size === 1
+          rows.size === 1
 
-              val row = rows(0)
+          val row = rows(0)
 
-              row(0) === 6578
-              row(1) === "this is some text"
-          }
+          row(0) === 6578
+          row(1) === "this is some text"
+        }
 
-          success
+        success
       }
     }
 

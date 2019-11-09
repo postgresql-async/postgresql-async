@@ -16,13 +16,14 @@
 
 package com.github.mauricio.async.db.postgresql.messages.frontend
 
-import com.github.mauricio.async.db.postgresql.messages.backend.{ServerMessage, AuthenticationResponseType}
-
+import com.github.mauricio.async.db.postgresql.messages.backend.{
+  ServerMessage,
+  AuthenticationResponseType
+}
 
 class CredentialMessage(
-                         val username: String,
-                         val password: String,
-                         val authenticationType: AuthenticationResponseType.AuthenticationResponseType,
-                         val salt: Option[Array[Byte]]
-                         )
-  extends ClientMessage(ServerMessage.PasswordMessage)
+  val username: String,
+  val password: String,
+  val authenticationType: AuthenticationResponseType.AuthenticationResponseType,
+  val salt: Option[Array[Byte]]
+) extends ClientMessage(ServerMessage.PasswordMessage)

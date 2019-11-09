@@ -25,7 +25,7 @@ object StringDecoder {
   final val log = Log.get[StringDecoder]
 }
 
-class StringDecoder( charset : Charset ) extends BinaryDecoder {
+class StringDecoder(charset: Charset) extends BinaryDecoder {
 
   def decode(buffer: ByteBuf): Any = {
     buffer.readLengthEncodedString(charset)

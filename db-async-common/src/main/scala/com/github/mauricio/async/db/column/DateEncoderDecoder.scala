@@ -27,7 +27,7 @@ object DateEncoderDecoder extends ColumnEncoderDecoder {
   private val formatter = DateTimeFormat.forPattern("yyyy-MM-dd")
 
   override def decode(value: String): LocalDate =
-    if ( ZeroedDate == value ) {
+    if (ZeroedDate == value) {
       null
     } else {
       this.formatter.parseLocalDate(value)
@@ -35,9 +35,9 @@ object DateEncoderDecoder extends ColumnEncoderDecoder {
 
   override def encode(value: Any): String = {
     value match {
-      case d: java.sql.Date => this.formatter.print(new LocalDate(d))
+      case d: java.sql.Date   => this.formatter.print(new LocalDate(d))
       case d: ReadablePartial => this.formatter.print(d)
-      case _ => throw new DateEncoderNotAvailableException(value)
+      case _                  => throw new DateEncoderNotAvailableException(value)
     }
   }
 

@@ -38,7 +38,8 @@ class URLParserSpec extends Specification {
     }
 
     "create a jdbc:postgresql connection with the available fields" in {
-      val connectionUri = "jdbc:postgresql://128.167.54.90:9987/my_database?user=john&password=doe"
+      val connectionUri =
+        "jdbc:postgresql://128.167.54.90:9987/my_database?user=john&password=doe"
 
       val configuration = parse(connectionUri)
       configuration.username === "john"
@@ -49,7 +50,8 @@ class URLParserSpec extends Specification {
     }
 
     "create a connection without port" in {
-      val connectionUri = "jdbc:postgresql://128.167.54.90/my_database?user=john&password=doe"
+      val connectionUri =
+        "jdbc:postgresql://128.167.54.90/my_database?user=john&password=doe"
 
       val configuration = parse(connectionUri)
       configuration.username === "john"
@@ -58,7 +60,6 @@ class URLParserSpec extends Specification {
       configuration.host === "128.167.54.90"
       configuration.port === 5432
     }
-
 
     "create a connection without username and password" in {
       val connectionUri = "jdbc:postgresql://128.167.54.90:9987/my_database"
@@ -85,7 +86,8 @@ class URLParserSpec extends Specification {
     }
 
     "create a connection with SSL enabled" in {
-      val connectionUri = "jdbc:postgresql://128.167.54.90:9987/my_database?sslmode=verify-full"
+      val connectionUri =
+        "jdbc:postgresql://128.167.54.90:9987/my_database?sslmode=verify-full"
 
       val configuration = parse(connectionUri)
       configuration.username === DEFAULT.username
@@ -97,7 +99,8 @@ class URLParserSpec extends Specification {
     }
 
     "create a connection with SSL enabled and root CA from a heroku like URL using 'postgresql' protocol" in {
-      val connectionUri = "postgresql://john:doe@128.167.54.90:9987/my_database?sslmode=verify-ca&sslrootcert=server.crt"
+      val connectionUri =
+        "postgresql://john:doe@128.167.54.90:9987/my_database?sslmode=verify-ca&sslrootcert=server.crt"
 
       val configuration = parse(connectionUri)
       configuration.username === "john"
@@ -110,7 +113,8 @@ class URLParserSpec extends Specification {
     }
 
     "create a connection with the available fields and named server" in {
-      val connectionUri = "jdbc:postgresql://localhost:9987/my_database?user=john&password=doe"
+      val connectionUri =
+        "jdbc:postgresql://localhost:9987/my_database?user=john&password=doe"
 
       val configuration = parse(connectionUri)
       configuration.username === "john"
@@ -121,7 +125,8 @@ class URLParserSpec extends Specification {
     }
 
     "create a connection from a heroku like URL with named server" in {
-      val connectionUri = "postgresql://john:doe@psql.heroku.com:9987/my_database"
+      val connectionUri =
+        "postgresql://john:doe@psql.heroku.com:9987/my_database"
 
       val configuration = parse(connectionUri)
       configuration.username === "john"
@@ -132,7 +137,8 @@ class URLParserSpec extends Specification {
     }
 
     "create a connection with the available fields and ipv6" in {
-      val connectionUri = "jdbc:postgresql://[::1]:9987/my_database?user=john&password=doe"
+      val connectionUri =
+        "jdbc:postgresql://[::1]:9987/my_database?user=john&password=doe"
 
       val configuration = parse(connectionUri)
 
@@ -202,7 +208,6 @@ class URLParserSpec extends Specification {
       configuration.port === 5432
     }
 
-
     "recognise a postgresql:// uri" in {
       parse("postgresql://localhost:425/dbname") mustEqual DEFAULT.copy(
         username = "postgres",
@@ -231,17 +236,20 @@ class URLParserSpec extends Specification {
     }
 
     "pull the username and password from URI credentials" in {
-      parse("jdbc:postgresql://user:password@localhost:425/dbname") mustEqual DEFAULT.copy(
-        username = "user",
-        password = Some("password"),
-        database = Some("dbname"),
-        port = 425,
-        host = "localhost"
-      )
+      parse("jdbc:postgresql://user:password@localhost:425/dbname") mustEqual DEFAULT
+        .copy(
+          username = "user",
+          password = Some("password"),
+          database = Some("dbname"),
+          port = 425,
+          host = "localhost"
+        )
     }
 
     "pull the username and password from query string" in {
-      parse("jdbc:postgresql://localhost:425/dbname?user=user&password=password") mustEqual DEFAULT.copy(
+      parse(
+        "jdbc:postgresql://localhost:425/dbname?user=user&password=password"
+      ) mustEqual DEFAULT.copy(
         username = "user",
         password = Some("password"),
         database = Some("dbname"),
@@ -252,7 +260,9 @@ class URLParserSpec extends Specification {
 
     // Included for consistency, so later changes aren't allowed to change behavior
     "use the query string parameters to override URI credentials" in {
-      parse("jdbc:postgresql://baduser:badpass@localhost:425/dbname?user=user&password=password") mustEqual DEFAULT.copy(
+      parse(
+        "jdbc:postgresql://baduser:badpass@localhost:425/dbname?user=user&password=password"
+      ) mustEqual DEFAULT.copy(
         username = "user",
         password = Some("password"),
         database = Some("dbname"),
@@ -262,7 +272,9 @@ class URLParserSpec extends Specification {
     }
 
     "successfully default the port to the PostgreSQL port" in {
-      parse("jdbc:postgresql://baduser:badpass@localhost/dbname?user=user&password=password") mustEqual DEFAULT.copy(
+      parse(
+        "jdbc:postgresql://baduser:badpass@localhost/dbname?user=user&password=password"
+      ) mustEqual DEFAULT.copy(
         username = "user",
         password = Some("password"),
         database = Some("dbname"),

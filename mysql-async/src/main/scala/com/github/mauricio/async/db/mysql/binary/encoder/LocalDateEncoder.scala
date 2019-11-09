@@ -22,7 +22,7 @@ import com.github.mauricio.async.db.exceptions.DateEncoderNotAvailableException
 import com.github.mauricio.async.db.mysql.column.ColumnTypes
 
 object LocalDateEncoder extends BinaryEncoder {
-  def encode(value: Any, buffer: ByteBuf) {
+  def encode(value: Any, buffer: ByteBuf): Unit = {
     val date = value.asInstanceOf[LocalDate]
 
     buffer.writeByte(4)

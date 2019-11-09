@@ -1,24 +1,33 @@
+sudo: required
 language: scala
+
+dist: trusty
+
 scala:
-  - 2.10.4
-  - 2.11.7
-  - 2.12.1
+  - 2.12.10
+  - 2.13.1
+  - 2.11.12
 
 jdk:
-  - oraclejdk8
+  - openjdk8
+  - openjdk11
 
 services:
-  - postgresql
   - mysql
+
+addons:
+  postgresql: "9.4"
+
+
 cache:
   directories:
-    - vendor/bundle
     - $HOME/.m2
     - $HOME/.ivy2
     - $HOME/.sbt
+
 before_script:
   - ./script/prepare_build.sh
 
 notifications:
   email:
-    - linhares.mauricio@gmail.com
+    - jilen.zhang@gmail.com

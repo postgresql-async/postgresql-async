@@ -22,6 +22,6 @@ import com.github.mauricio.async.db.general.ColumnData
 
 trait ColumnDecoderRegistry {
 
-  def decode(kind: ColumnData, value: ByteBuf, charset : Charset) : Any
+  def decode(kind: ColumnData, value: ByteBuf, charset: Charset): Any
 
 }
