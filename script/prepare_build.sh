@@ -34,11 +34,25 @@ sudo echo "host     all             postgres           127.0.0.1/32         trus
 sudo echo "host     all             postgres_md5       127.0.0.1/32         md5"      >> $PGCONF/pg_hba.conf
 sudo echo "host     all             postgres_cleartext 127.0.0.1/32         password" >> $PGCONF/pg_hba.conf
 
-echo "pg_hba.conf is now like"
+echo "pg_hba.conf:"
 cat "$PGCONF/pg_hba.conf"
 
-sudo chmod 600 $PGCONF/pg_hba.conf
+echo "postgresql.conf as follows"
+cat "$PGCONF/postgresql.conf"
+
+sudo echo "ssl = on"                        >  $PGCONF/postgresql.conf
+sudo echo "ssl_cert_file = 'server.crt'"    >> $PGCONF/postgresql.conf
+sudo echo "ssl_key_file = 'server.key'"     >> $PGCONF/postgresql.conf
+
+echo "postgresql.conf:"
+cat "$PGCONF/postgresql.conf"
 
 sudo cp -f $SCRIPTDIR/server.crt $SCRIPTDIR/server.key $PGDATA
+sudo chmod 600 $PGCONF/pg_hba.conf
+sudo chmod 600 $PGCONF/postgresql.conf
+
+
+
+
 
 sudo /etc/init.d/postgresql restart 9.4
