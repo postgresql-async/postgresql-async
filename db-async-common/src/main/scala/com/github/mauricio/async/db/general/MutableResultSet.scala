@@ -27,7 +27,7 @@ object MutableResultSet {
 class MutableResultSet[T <: ColumnData](val columnTypes: IndexedSeq[T])
     extends ResultSet {
 
-  // ResultSet is very likely to be accessed in another thread in async environment
+  // ResultSet is very likely to be accessed in another thread.
   @volatile
   private var rows = Vector.empty[RowData]
   private val columnMapping: Map[String, Int] = this.columnTypes.indices

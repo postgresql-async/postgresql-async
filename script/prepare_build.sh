@@ -15,7 +15,6 @@ PGUSER=postgres
 PGCONF=/etc/postgresql/9.4/main
 PGDATA=/var/ramfs/postgresql/9.4/main
 
-echo "generate testing certs"
 psql -d "postgres" -c 'create database netty_driver_test;' -U $PGUSER
 psql -d "postgres" -c 'create database netty_driver_time_test;' -U $PGUSER
 psql -d "postgres" -c "alter database netty_driver_time_test set timezone to 'GMT'" -U $PGUSER
@@ -26,26 +25,25 @@ psql -d "postgres" -c "CREATE USER postgres_kerberos WITH PASSWORD 'postgres_ker
 psql -d "netty_driver_test" -c "CREATE TYPE example_mood AS ENUM ('sad', 'ok', 'happy');" -U $PGUSER
 
 sudo chmod 666 $PGCONF/pg_hba.conf
+sudo chmod 666 $PGCONF/postgresql.conf
 
-echo "pg_hba.conf goes as follows"
-cat "$PGCONF/pg_hba.conf"
 
 sudo echo "local    all             all                                     trust"    >  $PGCONF/pg_hba.conf
 sudo echo "host     all             postgres           127.0.0.1/32         trust"    >> $PGCONF/pg_hba.conf
 sudo echo "host     all             postgres_md5       127.0.0.1/32         md5"      >> $PGCONF/pg_hba.conf
 sudo echo "host     all             postgres_cleartext 127.0.0.1/32         password" >> $PGCONF/pg_hba.conf
 
-echo "pg_hba.conf:"
+echo "pg_hba.conf is now like"
 cat "$PGCONF/pg_hba.conf"
 
 echo "postgresql.conf as follows"
 cat "$PGCONF/postgresql.conf"
 
-sudo echo "ssl = on"                        >  $PGCONF/postgresql.conf
+sudo echo "ssl = true"                      >  $PGCONF/postgresql.conf
 sudo echo "ssl_cert_file = 'server.crt'"    >> $PGCONF/postgresql.conf
 sudo echo "ssl_key_file = 'server.key'"     >> $PGCONF/postgresql.conf
 
-echo "postgresql.conf:"
+echo "postgresql.conf is now like"
 cat "$PGCONF/postgresql.conf"
 
 sudo cp -f $SCRIPTDIR/server.crt $SCRIPTDIR/server.key $PGDATA
