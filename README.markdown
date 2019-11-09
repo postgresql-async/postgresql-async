@@ -1,33 +1,28 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - This project is not being maintained anymore, feel free to fork and work on it
-	- [Abstractions and integrations](#abstractions-and-integrations)
-	- [Include them as dependencies](#include-them-as-dependencies)
-	- [Database connections and encodings](#database-connections-and-encodings)
-	- [Prepared statements gotcha](#prepared-statements-gotcha)
-	- [What are the design goals?](#what-are-the-design-goals)
-	- [What is missing?](#what-is-missing)
-	- [How can you help?](#how-can-you-help)
-	- [Main public interface](#main-public-interface)
-		- [Connection](#connection)
-		- [QueryResult](#queryresult)
-		- [ResultSet](#resultset)
-		- [Prepared statements](#prepared-statements)
-	- [Transactions](#transactions)
-	- [Example usage (for PostgreSQL, but it looks almost the same on MySQL)](#example-usage-for-postgresql-but-it-looks-almost-the-same-on-mysql)
-	- [LISTEN/NOTIFY support (PostgreSQL only)](#listennotify-support-postgresql-only)
-	- [Contributing](#contributing)
-	- [Licence](#licence)
+    - [Abstractions and integrations](#abstractions-and-integrations)
+    - [Include them as dependencies](#include-them-as-dependencies)
+    - [Database connections and encodings](#database-connections-and-encodings)
+    - [Prepared statements gotcha](#prepared-statements-gotcha)
+    - [What are the design goals?](#what-are-the-design-goals)
+    - [What is missing?](#what-is-missing)
+    - [How can you help?](#how-can-you-help)
+    - [Main public interface](#main-public-interface)
+        - [Connection](#connection)
+        - [QueryResult](#queryresult)
+        - [ResultSet](#resultset)
+        - [Prepared statements](#prepared-statements)
+    - [Transactions](#transactions)
+    - [Example usage (for PostgreSQL, but it looks almost the same on MySQL)](#example-usage-for-postgresql-but-it-looks-almost-the-same-on-mysql)
+    - [LISTEN/NOTIFY support (PostgreSQL only)](#listennotify-support-postgresql-only)
+    - [Contributing](#contributing)
+    - [Licence](#licence)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# [![Build Status](https://travis-ci.org/mauricio/postgresql-async.png)](https://travis-ci.org/mauricio/postgresql-async) This project is not being maintained anymore, feel free to fork and work on it
+# [![Build Status](https://travis-ci.org/postgresql-async/postgresql-async.png)](https://travis-ci.org/postgresql-async/postgresql-async) 
 
-The main goal for this project is to implement simple, async, performant and reliable database drivers for
-PostgreSQL and MySQL in Scala. This is not supposed to be a JDBC replacement, these drivers aim to cover the common
-process of _send a statement, get a response_ that you usually see in applications out there. So it's unlikely
-there will be support for updating result sets live or stuff like that.
+This fork is mainly focused on bug fix and scala 2.13/dotty migrattion.
 
 This project always returns [JodaTime](http://joda-time.sourceforge.net/) when dealing with date types and not the
 `java.util.Date` class.
