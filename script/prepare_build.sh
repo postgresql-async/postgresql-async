@@ -40,7 +40,7 @@ sudo sed -i "s/^ssl_cert_file.*/ssl_cert_file='server.crt'/" $PGCONF/postgresql.
 sudo sed -i "s/^ssl_key_file.*/ssl_key_file='server.key'/" $PGCONF/postgresql.conf
 
 echo "postgresql.conf ssl settings"
-cat "$PGCONF/postgresql.conf"
+cat "$PGCONF/postgresql.conf"|grep 'ssl'
 
 sudo cp -f $SCRIPTDIR/server.crt $SCRIPTDIR/server.key $PGDATA
 sudo chmod 600 $PGCONF/pg_hba.conf
