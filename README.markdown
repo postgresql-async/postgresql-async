@@ -20,7 +20,7 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# [![Build Status](https://travis-ci.org/postgresql-async/postgresql-async.png)](https://travis-ci.org/postgresql-async/postgresql-async) 
+# ![Build Status](https://travis-ci.com/postgresql-async/postgresql-async.svg?branch=master) 
 
 This fork is mainly focused on bug fix and scala 2.13/dotty migrattion.
 
