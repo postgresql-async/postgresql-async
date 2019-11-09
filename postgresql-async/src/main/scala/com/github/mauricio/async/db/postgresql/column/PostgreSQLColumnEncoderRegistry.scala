@@ -21,8 +21,7 @@ import java.nio.ByteBuffer
 import com.github.mauricio.async.db.column._
 import io.netty.buffer.ByteBuf
 import org.joda.time._
-
-import scala.collection.JavaConversions._
+import scala.jdk.CollectionConverters._
 
 object PostgreSQLColumnEncoderRegistry {
   val Instance = new PostgreSQLColumnEncoderRegistry()
@@ -97,7 +96,7 @@ class PostgreSQLColumnEncoderRegistry extends ColumnEncoderRegistry {
     } else {
       value match {
         case i: java.lang.Iterable[_] => encodeArray(i.toIterable)
-        case i: Traversable[_]        => encodeArray(i)
+        case i: Iterable[_]        => encodeArray(i)
         case i: Array[_]              => encodeArray(i.toIterable)
         case p: Product               => encodeComposite(p)
         case _ => {
@@ -130,7 +129,7 @@ class PostgreSQLColumnEncoderRegistry extends ColumnEncoderRegistry {
     }.mkString("(", ",", ")")
   }
 
-  private def encodeArray(collection: Traversable[_]): String = {
+  private def encodeArray(collection: Iterable[_]): String = {
     collection.map { item =>
       if (item == null || item == None) {
         "NULL"
@@ -156,7 +155,7 @@ class PostgreSQLColumnEncoderRegistry extends ColumnEncoderRegistry {
       case n: Float                 => false
       case n: Double                => false
       case n: java.lang.Iterable[_] => false
-      case n: Traversable[_]        => false
+      case n: Iterable[_]        => false
       case n: Array[_]              => false
       case Some(v)                  => shouldQuote(v)
       case _                        => true
