@@ -45,8 +45,6 @@ cat "$PGCONF/postgresql.conf"|grep 'ssl'
 sudo cp -f $SCRIPTDIR/server.crt $SCRIPTDIR/server.key $PGDATA
 sudo chmod 600 $PGCONF/pg_hba.conf
 sudo chmod 600 $PGCONF/postgresql.conf
-sudo chmod 600 $PGDATA/server.crt
-sudo chmod 600 $PGDATA/server.key
 
 
 sudo /etc/init.d/postgresql restart 9.4
