@@ -67,7 +67,8 @@ trait DatabaseTestHelper {
     val config = new Configuration(
       host = host,
       port = databasePort,
-      username = "postgres",
+      username = "postgres_md5",
+      password = Some("postgres_md5"),
       database = databaseName,
       ssl = SSLConfiguration(mode = mode, rootCert = rootCert)
     )
