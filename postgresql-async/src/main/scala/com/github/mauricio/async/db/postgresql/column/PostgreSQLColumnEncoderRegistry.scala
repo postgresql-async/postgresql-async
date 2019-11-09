@@ -21,7 +21,6 @@ import java.nio.ByteBuffer
 import com.github.mauricio.async.db.column._
 import io.netty.buffer.ByteBuf
 import org.joda.time._
-
 import scala.jdk.CollectionConverters._
 
 object PostgreSQLColumnEncoderRegistry {
@@ -31,18 +30,18 @@ object PostgreSQLColumnEncoderRegistry {
 class PostgreSQLColumnEncoderRegistry extends ColumnEncoderRegistry {
 
   private val classesSequence_ : List[(Class[_], (ColumnEncoder, Int))] = List(
-    classOf[Int]                         -> (IntegerEncoderDecoder               -> ColumnTypes.Numeric),
-    classOf[java.lang.Integer]           -> (IntegerEncoderDecoder               -> ColumnTypes.Numeric),
-    classOf[java.lang.Short]             -> (ShortEncoderDecoder                 -> ColumnTypes.Numeric),
-    classOf[Short]                       -> (ShortEncoderDecoder                 -> ColumnTypes.Numeric),
-    classOf[Long]                        -> (LongEncoderDecoder                  -> ColumnTypes.Numeric),
-    classOf[java.lang.Long]              -> (LongEncoderDecoder                  -> ColumnTypes.Numeric),
+    classOf[Int]                         -> (IntegerEncoderDecoder               -> ColumnTypes.Integer),
+    classOf[java.lang.Integer]           -> (IntegerEncoderDecoder               -> ColumnTypes.Integer),
+    classOf[java.lang.Short]             -> (ShortEncoderDecoder                 -> ColumnTypes.Smallint),
+    classOf[Short]                       -> (ShortEncoderDecoder                 -> ColumnTypes.Smallint),
+    classOf[Long]                        -> (LongEncoderDecoder                  -> ColumnTypes.Bigserial),
+    classOf[java.lang.Long]              -> (LongEncoderDecoder                  -> ColumnTypes.Bigserial),
     classOf[String]                      -> (StringEncoderDecoder                -> ColumnTypes.Varchar),
     classOf[java.lang.String]            -> (StringEncoderDecoder                -> ColumnTypes.Varchar),
-    classOf[Float]                       -> (FloatEncoderDecoder                 -> ColumnTypes.Numeric),
-    classOf[java.lang.Float]             -> (FloatEncoderDecoder                 -> ColumnTypes.Numeric),
-    classOf[Double]                      -> (DoubleEncoderDecoder                -> ColumnTypes.Numeric),
-    classOf[java.lang.Double]            -> (DoubleEncoderDecoder                -> ColumnTypes.Numeric),
+    classOf[Float]                       -> (FloatEncoderDecoder                 -> ColumnTypes.Real),
+    classOf[java.lang.Float]             -> (FloatEncoderDecoder                 -> ColumnTypes.Real),
+    classOf[Double]                      -> (DoubleEncoderDecoder                -> ColumnTypes.Double),
+    classOf[java.lang.Double]            -> (DoubleEncoderDecoder                -> ColumnTypes.Double),
     classOf[BigDecimal]                  -> (BigDecimalEncoderDecoder            -> ColumnTypes.Numeric),
     classOf[java.math.BigDecimal]        -> (BigDecimalEncoderDecoder            -> ColumnTypes.Numeric),
     classOf[java.net.InetAddress]        -> (InetAddressEncoderDecoder           -> ColumnTypes.Inet),
@@ -156,7 +155,7 @@ class PostgreSQLColumnEncoderRegistry extends ColumnEncoderRegistry {
       case n: Float                 => false
       case n: Double                => false
       case n: java.lang.Iterable[_] => false
-      case n: Traversable[_]        => false
+      case n: Iterable[_]           => false
       case n: Array[_]              => false
       case Some(v)                  => shouldQuote(v)
       case _                        => true
