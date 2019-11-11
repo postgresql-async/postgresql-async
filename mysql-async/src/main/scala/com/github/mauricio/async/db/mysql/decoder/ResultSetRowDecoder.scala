@@ -44,7 +44,7 @@ class ResultSetRowDecoder(charset: Charset) extends MessageDecoder {
         row += null
       } else {
         val length = buffer.readBinaryLength.asInstanceOf[Int]
-        row += buffer.readBytes(length)
+        row += buffer.readRetainedSlice(length)
       }
     }
 

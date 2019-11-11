@@ -21,8 +21,8 @@ import com.github.mauricio.async.db.postgresql.util.{
   ArrayStreamingParserDelegate,
   ArrayStreamingParser
 }
-import scala.collection.IndexedSeq
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.compat.immutable.ArraySeq
 import com.github.mauricio.async.db.general.ColumnData
 import io.netty.buffer.{Unpooled, ByteBuf}
 import java.nio.charset.Charset
@@ -44,7 +44,7 @@ class ArrayDecoder(private val decoder: ColumnDecoder) extends ColumnDecoder {
     var result: IndexedSeq[Any]   = null
     val delegate = new ArrayStreamingParserDelegate {
       override def arrayEnded: Unit = {
-        result = stack.head
+        result = ArraySeq.unsafeWrapArray(stack.head.toArray)
         stack = stack.tail
       }
 
