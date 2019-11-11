@@ -88,7 +88,12 @@ class MessageDecoder(
             AuthenticationStartupParser.parseMessage(b)
           }
           case _ => {
-            parser.parse(code, b.readSlice(length))
+            val buf = b.readRetainedSlice(length)
+            try {
+              parser.parse(code, buf)
+            } finally {
+              buf.release()
+            }
           }
         }
 

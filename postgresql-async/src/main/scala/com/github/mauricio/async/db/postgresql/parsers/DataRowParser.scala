@@ -34,7 +34,7 @@ object DataRowParser extends MessageParser {
       row(column) = if (length == -1) {
         null
       } else {
-        buffer.readBytes(length)
+        buffer.readRetainedSlice(length)
       }
     }
 

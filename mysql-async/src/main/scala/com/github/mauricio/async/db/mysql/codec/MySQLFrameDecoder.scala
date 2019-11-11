@@ -83,7 +83,7 @@ class MySQLFrameDecoder(charset: Charset, connectionId: String)
           throw new NegativeMessageSizeException(messageType, size)
         }
 
-        val slice = buffer.readSlice(size)
+        val slice = buffer.readRetainedSlice(size)
 
         if (log.isTraceEnabled) {
           log.trace(

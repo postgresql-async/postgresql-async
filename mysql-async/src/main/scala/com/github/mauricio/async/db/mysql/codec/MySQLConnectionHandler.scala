@@ -147,12 +147,17 @@ class MySQLConnectionHandler(
               items(x) = if (message(x) == null) {
                 null
               } else {
-                val columnDescription = this.currentQuery.columnTypes(x)
-                columnDescription.textDecoder.decode(
-                  columnDescription,
-                  message(x),
-                  configuration.charset
-                )
+                val buf = message(x)
+                try {
+                  val columnDescription = this.currentQuery.columnTypes(x)
+                  columnDescription.textDecoder.decode(
+                    columnDescription,
+                    buf,
+                    configuration.charset
+                  )
+                } finally {
+                  buf.release()
+                }
               }
               x += 1
             }
@@ -161,9 +166,14 @@ class MySQLConnectionHandler(
           }
           case ServerMessage.BinaryRow => {
             val message = m.asInstanceOf[BinaryRowMessage]
-            this.currentQuery.addRow(
-              this.binaryRowDecoder.decode(message.buffer, this.currentColumns)
-            )
+            try {
+              this.currentQuery.addRow(
+                this.binaryRowDecoder
+                  .decode(message.buffer, this.currentColumns)
+              )
+            } finally {
+              message.buffer.release()
+            }
           }
           case ServerMessage.ParamProcessingFinished => {}
           case ServerMessage.ParamAndColumnProcessingFinished => {
