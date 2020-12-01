@@ -1,5 +1,5 @@
 
-- This project is not being maintained anymore, feel free to fork and work on it
+- This is a fork from https://github.com/mauricio/postgresql-async
     - [Abstractions and integrations](#abstractions-and-integrations)
     - [Include them as dependencies](#include-them-as-dependencies)
     - [Database connections and encodings](#database-connections-and-encodings)
@@ -20,7 +20,7 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# ![Build Status](https://travis-ci.com/postgresql-async/postgresql-async.svg?branch=master) 
+# ![Build Status](https://travis-ci.com/postgresql-async/postgresql-async.svg?branch=master) ![Maven](https://maven-badges.herokuapp.com/maven-central/com.github.postgresql-async/postgresql-async_2.13/badge.svg)
 
 This fork is mainly focused on bug fix and scala 2.13/dotty migrattion.
 
