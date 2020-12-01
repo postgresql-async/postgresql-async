@@ -49,7 +49,7 @@ You can view the project's [CHANGELOG here](CHANGELOG.md).
 And if you're in a hurry, you can include them in your build like this, if you're using PostgreSQL:
 
 ```scala
-"com.github.postgresql" %% "postgresql-async" % "0.2.21"
+"com.github.postgresql" %% "postgresql-async" % "0.3.0"
 ```
 
 Or Maven:
@@ -58,7 +58,7 @@ Or Maven:
 <dependency>
   <groupId>com.github.postgresql</groupId>
   <artifactId>postgresql-async_2.11</artifactId>
-  <version>0.2.21</version>
+  <version>0.3.0</version>
 </dependency>
 ```
 
@@ -67,14 +67,14 @@ respectively for Scala 2.12:
 <dependency>
   <groupId>com.github.postgresql</groupId>
   <artifactId>postgresql-async_2.12</artifactId>
-  <version>0.2.21</version>
+  <version>0.3.0</version>
 </dependency>
 ```
 
 And if you're into MySQL:
 
 ```scala
-"com.github.postgresql" %% "mysql-async" % "0.2.21"
+"com.github.postgresql" %% "mysql-async" % "0.3.0"
 ```
 
 Or Maven:
@@ -83,7 +83,7 @@ Or Maven:
 <dependency>
   <groupId>com.github.postgresql</groupId>
   <artifactId>mysql-async_2.11</artifactId>
-  <version>0.2.21</version>
+  <version>0.3.0</version>
 </dependency>
 ```
 respectively for Scala 2.12:
@@ -91,7 +91,7 @@ respectively for Scala 2.12:
 <dependency>
   <groupId>com.github.postgresql</groupId>
   <artifactId>mysql-async_2.12</artifactId>
-  <version>0.2.21</version>
+  <version>0.3.0</version>
 </dependency>
 ```
 
