@@ -49,14 +49,14 @@ You can view the project's [CHANGELOG here](CHANGELOG.md).
 And if you're in a hurry, you can include them in your build like this, if you're using PostgreSQL:
 
 ```scala
-"com.github.mauricio" %% "postgresql-async" % "0.2.21"
+"com.github.postgresql" %% "postgresql-async" % "0.2.21"
 ```
 
 Or Maven:
 
 ```xml
 <dependency>
-  <groupId>com.github.mauricio</groupId>
+  <groupId>com.github.postgresql</groupId>
   <artifactId>postgresql-async_2.11</artifactId>
   <version>0.2.21</version>
 </dependency>
@@ -65,7 +65,7 @@ Or Maven:
 respectively for Scala 2.12:
 ```xml
 <dependency>
-  <groupId>com.github.mauricio</groupId>
+  <groupId>com.github.postgresql</groupId>
   <artifactId>postgresql-async_2.12</artifactId>
   <version>0.2.21</version>
 </dependency>
@@ -74,14 +74,14 @@ respectively for Scala 2.12:
 And if you're into MySQL:
 
 ```scala
-"com.github.mauricio" %% "mysql-async" % "0.2.21"
+"com.github.postgresql" %% "mysql-async" % "0.2.21"
 ```
 
 Or Maven:
 
 ```xml
 <dependency>
-  <groupId>com.github.mauricio</groupId>
+  <groupId>com.github.postgresql</groupId>
   <artifactId>mysql-async_2.11</artifactId>
   <version>0.2.21</version>
 </dependency>
@@ -89,7 +89,7 @@ Or Maven:
 respectively for Scala 2.12:
 ```xml
 <dependency>
-  <groupId>com.github.mauricio</groupId>
+  <groupId>com.github.postgresql</groupId>
   <artifactId>mysql-async_2.12</artifactId>
   <version>0.2.21</version>
 </dependency>
@@ -154,7 +154,7 @@ So, prepared statements are awesome, but are not free. Use them judiciously.
 - checkout the source code
 - find bugs, find places where performance can be improved
 - check the **What is missing** piece
-- check the [issues page](https://github.com/mauricio/postgresql-async/issues) for bugs or new features
+- check the [issues page](https://github.com/postgresql/postgresql-async/issues) for bugs or new features
 - send a pull request with specs
 
 ## Main public interface
@@ -232,15 +232,15 @@ new connection to continue using it.
 
 ## Example usage (for PostgreSQL, but it looks almost the same on MySQL)
 
-You can find a small Play 2 app using it [here](https://github.com/mauricio/postgresql-async-app) and a blog post about
-it [here](http://mauricio.github.io/2013/04/29/async-database-access-with-postgresql-play-scala-and-heroku.html).
+You can find a small Play 2 app using it [here](https://github.com/postgresql/postgresql-async-app) and a blog post about
+it [here](http://postgresql.github.io/2013/04/29/async-database-access-with-postgresql-play-scala-and-heroku.html).
 
 In short, what you would usually do is:
 ```scala
-import com.github.mauricio.async.db.postgresql.PostgreSQLConnection
-import com.github.mauricio.async.db.postgresql.util.URLParser
-import com.github.mauricio.async.db.util.ExecutorServiceUtils.CachedExecutionContext
-import com.github.mauricio.async.db.{RowData, QueryResult, Connection}
+import com.github.postgresql.async.db.postgresql.PostgreSQLConnection
+import com.github.postgresql.async.db.postgresql.util.URLParser
+import com.github.postgresql.async.db.util.ExecutorServiceUtils.CachedExecutionContext
+import com.github.postgresql.async.db.{RowData, QueryResult, Connection}
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 
@@ -307,7 +307,7 @@ You should be easily able to build this project in your favorite IDE since it's 
 using a plugin that generates your IDE's project files. You can use [sbt-idea](https://github.com/mpeltonen/sbt-idea)
 for IntelliJ Idea and [sbteclipse](https://github.com/typesafehub/sbteclipse) for Eclipse integration.
 
-[Check our list of contributors!](https://github.com/mauricio/postgresql-async/graphs/contributors)
+[Check our list of contributors!](https://github.com/postgresql/postgresql-async/graphs/contributors)
 
 ## Licence
 
