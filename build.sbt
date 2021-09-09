@@ -1,22 +1,22 @@
 import ReleaseTransformations._
 
-val commonName            = "db-async-common"
-val postgresqlName        = "postgresql-async"
-val mysqlName             = "mysql-async"
-val nettyVersion          = "4.1.43.Final"
-val projectScalaVersion   = "2.11.12"
-val specs2Version         = "4.8.0"
-val specs2Dependency      = "org.specs2" %% "specs2-core" % specs2Version % Test
-val specs2JunitDependency = "org.specs2" %% "specs2-junit" % specs2Version % Test
-val specs2MockDependency  = "org.specs2" %% "specs2-mock" % specs2Version % Test
-val logbackDependency     = "ch.qos.logback" % "logback-classic" % "1.2.3" % Test
+val commonName       = "db-async-common"
+val postgresqlName   = "postgresql-async"
+val mysqlName        = "mysql-async"
+val nettyVersion     = "4.1.66.Final"
+val specs2Version    = "4.8.0"
+val specs2Dependency = "org.specs2" %% "specs2-core" % specs2Version % Test
+val specs2JunitDependency =
+  "org.specs2" %% "specs2-junit" % specs2Version % Test
+val specs2MockDependency = "org.specs2" %% "specs2-mock" % specs2Version % Test
+val logbackDependency = "ch.qos.logback" % "logback-classic" % "1.2.3" % Test
 
 lazy val root = (project in file("."))
   .settings(baseSettings: _*)
   .settings(
-    name := "db-async-base",
-    publish := {},
-    publishLocal := {},
+    name            := "db-async-base",
+    publish         := {},
+    publishLocal    := {},
     publishArtifact := false
   )
   .aggregate(common, postgresql, mysql)
@@ -45,14 +45,14 @@ lazy val mysql = (project in file("mysql-async"))
   .dependsOn(common)
 
 val commonDependencies = Seq(
-  "org.slf4j"                % "slf4j-api"                % "1.7.29",
-  "joda-time"                % "joda-time"                % "2.10.5",
-  "org.joda"                 % "joda-convert"             % "2.2.1",
-  "io.netty"                 % "netty-codec"              % nettyVersion,
-  "io.netty"                 % "netty-handler"            % nettyVersion,
-  "org.javassist"            % "javassist"                % "3.26.0-GA",
-  "org.scala-lang.modules"   %% "scala-collection-compat" % "2.1.2",
-  "com.google.code.findbugs" % "jsr305"                   % "3.0.1" % Provided,
+  "org.slf4j"                % "slf4j-api"               % "1.7.29",
+  "joda-time"                % "joda-time"               % "2.10.5",
+  "org.joda"                 % "joda-convert"            % "2.2.1",
+  "io.netty"                 % "netty-codec"             % nettyVersion,
+  "io.netty"                 % "netty-handler"           % nettyVersion,
+  "org.javassist"            % "javassist"               % "3.26.0-GA",
+  "org.scala-lang.modules"  %% "scala-collection-compat" % "2.1.2",
+  "com.google.code.findbugs" % "jsr305"                  % "3.0.1" % Provided,
   specs2Dependency,
   specs2JunitDependency,
   specs2MockDependency,
@@ -65,9 +65,9 @@ val implementationDependencies = Seq(
 )
 
 val baseSettings = Seq(
-  crossScalaVersions := Seq("2.11.12", "2.12.10", "2.13.1"),
+  crossScalaVersions := Seq("2.11.12", "2.12.14", "2.13.6"),
   testOptions in Test += Tests.Argument("sequential"),
-  scalaVersion := "2.13.1",
+  scalaVersion := "2.13.6",
   scalacOptions :=
     Opts.compile.encoding("UTF8")
       :+ Opts.compile.deprecation
@@ -80,7 +80,7 @@ val baseSettings = Seq(
   ),
   javacOptions := Seq("-source", "1.8", "-target", "1.8", "-encoding", "UTF8"),
   (javaOptions in Test) ++= Seq("-Dio.netty.leakDetection.level=paranoid"),
-  organization := "com.github.postgresql-async",
+  organization      := "com.github.postgresql-async",
   parallelExecution := false
 ) ++ publishSettings
 
@@ -92,7 +92,7 @@ lazy val publishSettings = Seq(
     else
       Opts.resolver.sonatypeStaging
   ),
-  releaseCrossBuild := true,
+  releaseCrossBuild             := true,
   releasePublishArtifactsAction := PgpKeys.publishSigned.value,
   releaseProcess := Seq[ReleaseStep](
     checkSnapshotDependencies,

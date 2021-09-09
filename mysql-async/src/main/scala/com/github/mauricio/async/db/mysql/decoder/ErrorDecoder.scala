@@ -30,7 +30,7 @@ class ErrorDecoder(charset: Charset) extends MessageDecoder {
   def decode(buffer: ByteBuf): ServerMessage = {
 
     new ErrorMessage(
-      buffer.readShort(),
+      buffer.readShortLE(),
       buffer.readFixedString(6, charset),
       buffer.readUntilEOF(charset)
     )

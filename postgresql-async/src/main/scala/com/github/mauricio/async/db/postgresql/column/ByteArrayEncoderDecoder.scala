@@ -42,7 +42,7 @@ object ByteArrayEncoderDecoder extends ColumnEncoderDecoder {
       val ci = value.iterator
 
       while (ci.hasNext) {
-        ci.next match {
+        ci.next() match {
           case '\\' =>
             getCharOrDie(ci) match {
               case '\\' => buffer.put('\\'.toByte)

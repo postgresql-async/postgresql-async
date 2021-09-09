@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit
 
 import com.github.mauricio.async.db.Configuration
 import com.github.mauricio.async.db.exceptions.DatabaseException
-import com.github.mauricio.async.db.general.MutableResultSet
+import com.github.mauricio.async.db.general.ResultSetBuilder
 import com.github.mauricio.async.db.mysql.binary.BinaryRowDecoder
 import com.github.mauricio.async.db.mysql.message.client._
 import com.github.mauricio.async.db.mysql.message.server._
@@ -53,7 +53,7 @@ class MySQLConnectionHandler(
   private implicit val internalPool   = executionContext
   private final val log               = Log.getByName(s"[connection-handler]${connectionId}")
   private final val bootstrap         = new Bootstrap().group(this.group)
-  private final val connectionPromise = Promise[MySQLConnectionHandler]
+  private final val connectionPromise = Promise[MySQLConnectionHandler]()
   private final val decoder =
     new MySQLFrameDecoder(configuration.charset, connectionId)
   private final val encoder =
@@ -66,7 +66,7 @@ class MySQLConnectionHandler(
 
   private var currentPreparedStatementHolder: PreparedStatementHolder = null
   private var currentPreparedStatement: PreparedStatement             = null
-  private var currentQuery: MutableResultSet[ColumnDefinitionMessage] = null
+  private var currentQuery: ResultSetBuilder[ColumnDefinitionMessage] = null
   private var currentContext: ChannelHandlerContext                   = null
 
   def connect: Future[MySQLConnectionHandler] = {
@@ -93,8 +93,8 @@ class MySQLConnectionHandler(
     this.bootstrap
       .connect(new InetSocketAddress(configuration.host, configuration.port))
       .failed
-      .foreach {
-        case exception => this.connectionPromise.tryFailure(exception)
+      .foreach { case exception =>
+        this.connectionPromise.tryFailure(exception)
       }
 
     this.connectionPromise.future
@@ -124,7 +124,9 @@ class MySQLConnectionHandler(
           case ServerMessage.ColumnDefinition => {
             val message = m.asInstanceOf[ColumnDefinitionMessage]
 
-            if (currentPreparedStatementHolder != null && this.currentPreparedStatementHolder.needsAny) {
+            if (
+              currentPreparedStatementHolder != null && this.currentPreparedStatementHolder.needsAny
+            ) {
               this.currentPreparedStatementHolder.add(message)
             }
 
@@ -298,11 +300,10 @@ class MySQLConnectionHandler(
       val (firstIndex, firstValue) = longValues.head
       var channelFuture: Future[ChannelFuture] =
         sendLongParameter(statementId, firstIndex, firstValue)
-      longValues.tail foreach {
-        case (index, value) =>
-          channelFuture = channelFuture.flatMap { _ =>
-            sendLongParameter(statementId, index, value)
-          }
+      longValues.tail foreach { case (index, value) =>
+        channelFuture = channelFuture.flatMap { _ =>
+          sendLongParameter(statementId, index, value)
+        }
       }
       channelFuture flatMap { _ =>
         writeAndHandleError(
@@ -378,7 +379,7 @@ class MySQLConnectionHandler(
       this.currentColumns
     }
 
-    this.currentQuery = new MutableResultSet[ColumnDefinitionMessage](columns)
+    this.currentQuery = new ResultSetBuilder[ColumnDefinitionMessage](columns)
 
     if (this.currentPreparedStatementHolder != null) {
       this.parsedStatements.put(
@@ -400,8 +401,8 @@ class MySQLConnectionHandler(
     if (this.currentContext.channel().isActive) {
       val res = this.currentContext.writeAndFlush(message)
 
-      res.failed.foreach {
-        case e: Throwable => handleException(e)
+      res.failed.foreach { case e: Throwable =>
+        handleException(e)
       }
 
       res
@@ -421,7 +422,7 @@ class MySQLConnectionHandler(
         this.clearQueryState
 
         if (resultSet != null) {
-          handlerDelegate.onResultSet(resultSet, eof)
+          handlerDelegate.onResultSet(resultSet.build(), eof)
         } else {
           handlerDelegate.onEOF(eof)
         }
@@ -436,9 +437,13 @@ class MySQLConnectionHandler(
     this.currentContext
       .channel()
       .eventLoop()
-      .schedule(new Runnable {
-        override def run(): Unit = block
-      }, duration.toMillis, TimeUnit.MILLISECONDS)
+      .schedule(
+        new Runnable {
+          override def run(): Unit = block
+        },
+        duration.toMillis,
+        TimeUnit.MILLISECONDS
+      )
   }
 
 }

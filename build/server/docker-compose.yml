@@ -1,0 +1,28 @@
+version: "3"
+services:
+  pgdb:
+    image: postgres:${PGV:-latest}
+    network_mode: "host"
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - ./scripts/:/custom/scripts:ro
+      - ./cert:/custom/cert:ro
+      - ./conf:/custom/conf:ro
+    entrypoint:
+      - bash
+      - /custom/scripts/entrypoint.sh
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=
+      - POSTGRES_DB=postgres
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - GITHUB_ACTIONS=true
+    command: >-
+      postgres
+
+  mysqldb:
+    image: mysql:${MYSQLV:-latest}
+    network_mode: "host"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'

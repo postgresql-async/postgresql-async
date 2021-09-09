@@ -21,7 +21,7 @@ class UnsupportedAuthenticationMethodException(val authenticationType: String)
       "Unknown authentication method -> '%s'".format(authenticationType)
     ) {
 
-  def this(authType: Int) {
+  def this(authType: Int) = {
     this(authType.toString)
   }
 

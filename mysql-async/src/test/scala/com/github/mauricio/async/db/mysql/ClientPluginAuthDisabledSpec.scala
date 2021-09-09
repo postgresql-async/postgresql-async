@@ -16,7 +16,7 @@ class ClientPluginAuthDisabledSpec extends Specification with ConnectionHelper {
 
     "connect and query the database without a password" in {
 
-      if (System.getenv("TRAVIS") == null) {
+      if (System.getenv("GITHUB_ACTIONS") == null) {
         withConnection { connection =>
           executeQuery(connection, "select version()")
           success("did work")
@@ -29,7 +29,7 @@ class ClientPluginAuthDisabledSpec extends Specification with ConnectionHelper {
 
     "connect and query the database with a password" in {
 
-      if (System.getenv("TRAVIS") == null) {
+      if (System.getenv("GITHUB_ACTIONS") == null) {
         withConfigurableConnection(vagrantConfiguration) { connection =>
           executeQuery(connection, "select version()")
           success("did work")
@@ -44,7 +44,7 @@ class ClientPluginAuthDisabledSpec extends Specification with ConnectionHelper {
 
   override def defaultConfiguration = new Configuration(
     "root",
-    "localhost",
+    "127.0.0.1",
     port = 3307
   )
 

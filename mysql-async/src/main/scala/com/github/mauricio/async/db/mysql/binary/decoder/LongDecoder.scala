@@ -19,5 +19,5 @@ package com.github.mauricio.async.db.mysql.binary.decoder
 import io.netty.buffer.ByteBuf
 
 object LongDecoder extends BinaryDecoder {
-  def decode(buffer: ByteBuf): Any = buffer.readLong()
+  def decode(buffer: ByteBuf): Any = buffer.readLongLE()
 }

@@ -13,8 +13,7 @@ import com.github.mauricio.async.db.util.ExecutorServiceUtils
 import scala.concurrent.ExecutionContext
 import java.util.concurrent.Executors
 
-/**
-  * This pool is buggy and error prone, currently test is not stable, skip test
+/** This pool is buggy and error prone, currently test is not stable, skip test
   */
 abstract class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
   isolated
@@ -268,7 +267,7 @@ abstract class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
 
     val takes =
       for (_ <- 0 until 30) yield {
-        Future().flatMap(_ => pool.take)
+        Future(()).flatMap(_ => pool.take)
       }
     val takesAndReturns =
       Future.sequence(takes).flatMap { items =>

@@ -25,7 +25,7 @@ import com.github.mauricio.async.db.exceptions.{
   ConnectionStillRunningQueryException,
   InsufficientParametersException
 }
-import com.github.mauricio.async.db.general.MutableResultSet
+import com.github.mauricio.async.db.general.ResultSetBuilder
 import com.github.mauricio.async.db.pool.TimeoutScheduler
 import com.github.mauricio.async.db.postgresql.codec.{
   PostgreSQLConnectionDelegate,
@@ -94,7 +94,7 @@ class PostgreSQLConnection(
   private var recentError = false
   private val queryPromiseReference =
     new AtomicReference[Option[Promise[QueryResult]]](None)
-  private var currentQuery: Option[MutableResultSet[PostgreSQLColumnData]] =
+  private var currentQuery: Option[ResultSetBuilder[PostgreSQLColumnData]] =
     None
   private var currentPreparedStatement: Option[PreparedStatementHolder] = None
   private var version                                                   = Version(0, 0, 0)
@@ -107,8 +107,8 @@ class PostgreSQLConnection(
   def isReadyForQuery: Boolean                = this.queryPromise.isEmpty
 
   def connect: Future[Connection] = {
-    this.connectionHandler.connect.failed.foreach {
-      case e => this.connectionFuture.tryFailure(e)
+    this.connectionHandler.connect.failed.foreach { case e =>
+      this.connectionFuture.tryFailure(e)
     }
 
     this.connectionFuture.future
@@ -158,7 +158,7 @@ class PostgreSQLConnection(
 
     this.currentPreparedStatement = Some(holder)
     this.currentQuery = Some(
-      new MutableResultSet(ArraySeq.unsafeWrapArray(holder.columnDatas))
+      new ResultSetBuilder(ArraySeq.unsafeWrapArray(holder.columnDatas))
     )
     write(
       if (holder.prepared)
@@ -223,7 +223,11 @@ class PostgreSQLConnection(
   override def onCommandComplete(m: CommandCompleteMessage): Unit = {
     this.currentPreparedStatement = None
     queryResult = Some(
-      new QueryResult(m.rowsAffected, m.statusMessage, this.currentQuery)
+      new QueryResult(
+        m.rowsAffected,
+        m.statusMessage,
+        this.currentQuery.map(_.build())
+      )
     )
   }
 
@@ -258,7 +262,7 @@ class PostgreSQLConnection(
 
   override def onRowDescription(m: RowDescriptionMessage): Unit = {
     this.currentQuery = Option(
-      new MutableResultSet(ArraySeq.unsafeWrapArray(m.columnDatas))
+      new ResultSetBuilder(ArraySeq.unsafeWrapArray(m.columnDatas))
     )
     this.setColumnDatas(m.columnDatas)
   }

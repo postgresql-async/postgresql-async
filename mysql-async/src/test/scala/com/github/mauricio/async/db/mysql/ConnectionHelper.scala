@@ -96,7 +96,7 @@ trait ConnectionHelper {
 
   def defaultConfiguration = new Configuration(
     "mysql_async",
-    "localhost",
+    "127.0.0.1",
     port = 3306,
     password = Some("root"),
     database = Some("mysql_async_tests")

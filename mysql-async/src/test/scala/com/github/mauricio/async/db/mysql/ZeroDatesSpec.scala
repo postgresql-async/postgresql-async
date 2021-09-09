@@ -34,6 +34,7 @@ class ZeroDatesSpec extends Specification with ConnectionHelper {
     "correctly parse the MySQL zeroed dates as NULL values in text protocol" in {
 
       withConnection { connection =>
+        executeQuery(connection, "SET sql_mode = '';")
         executeQuery(connection, createStatement)
         executeQuery(connection, insertStatement)
 
@@ -44,6 +45,7 @@ class ZeroDatesSpec extends Specification with ConnectionHelper {
     "correctly parse the MySQL zeroed dates as NULL values in binary protocol" in {
 
       withConnection { connection =>
+        executeQuery(connection, "SET sql_mode = '';")
         executeQuery(connection, createStatement)
         executeQuery(connection, insertStatement)
 

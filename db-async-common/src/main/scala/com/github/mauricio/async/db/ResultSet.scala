@@ -16,20 +16,40 @@
 
 package com.github.mauricio.async.db
 
-/**
-  *
-  * Represents the collection of rows that is returned from a statement inside a {@link QueryResult}. It's basically
+import com.github.mauricio.async.db.general.ColumnData
+import scala.collection.immutable.IndexedSeq
+
+/** Represents the collection of rows that is returned from a statement inside a {@link QueryResult}. It's basically
   * a collection of Array[Any]. Mutating fields in this array will not affect the database in any way
-  *
   */
 trait ResultSet extends IndexedSeq[RowData] {
 
-  /**
-    *
-    * The names of the columns returned by the statement.
+  /** The names of the columns returned by the statement.
     *
     * @return
     */
   def columnNames: IndexedSeq[String]
 
+}
+
+object ResultSet {
+
+  def apply[T <: ColumnData](
+    columnTypes: IndexedSeq[T],
+    rows: IndexedSeq[RowData]
+  ): ResultSet = {
+    new ResultSetImpl(columnTypes, rows)
+  }
+
+  private class ResultSetImpl[T <: ColumnData](
+    val columnTypes: IndexedSeq[T],
+    rows: IndexedSeq[RowData]
+  ) extends ResultSet {
+
+    lazy val columnNames: IndexedSeq[String] = columnTypes.map(c => c.name)
+    lazy val types: IndexedSeq[Int]          = columnTypes.map(_.dataType)
+
+    def apply(i: Int) = rows(i)
+    def length        = rows.size
+  }
 }

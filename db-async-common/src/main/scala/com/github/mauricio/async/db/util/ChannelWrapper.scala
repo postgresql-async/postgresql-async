@@ -58,9 +58,9 @@ class ChannelWrapper(val buffer: ByteBuf) extends AnyVal {
     } else {
       firstByte match {
         case MySQL_NULL => -1
-        case 252        => buffer.readUnsignedShort()
+        case 252        => buffer.readUnsignedShortLE()
         case 253        => readLongInt
-        case 254        => buffer.readLong()
+        case 254        => buffer.readLongLE()
         case _          => throw new UnknownLengthException(firstByte)
       }
     }

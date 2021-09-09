@@ -24,16 +24,14 @@ import org.slf4j.LoggerFactory
 
 import scala.util.matching.Regex
 
-/**
-  * Common parser assisting methods for PG and MySQL URI parsers.
+/** Common parser assisting methods for PG and MySQL URI parsers.
   */
 abstract class AbstractURIParser {
   import AbstractURIParser._
 
   protected val logger = LoggerFactory.getLogger(getClass)
 
-  /**
-    * Parses out userInfo into a tuple of optional username and password
+  /** Parses out userInfo into a tuple of optional username and password
     *
     * @param userInfo the optional user info string
     * @return a tuple of optional username and password
@@ -47,19 +45,16 @@ abstract class AbstractURIParser {
       case _                         => (None, None)
     }
 
-  /**
-    * A Regex that will match the base name of the driver scheme, minus jdbc:.
+  /** A Regex that will match the base name of the driver scheme, minus jdbc:.
     * Eg: postgres(?:ul)?
     */
   protected val SCHEME: Regex
 
-  /**
-    * The default for this particular URLParser, ie: appropriate and specific to PG or MySQL accordingly
+  /** The default for this particular URLParser, ie: appropriate and specific to PG or MySQL accordingly
     */
   val DEFAULT: Configuration
 
-  /**
-    * Parses the provided url and returns a Configuration based upon it.  On an error,
+  /** Parses the provided url and returns a Configuration based upon it.  On an error,
     * @param url the URL to parse.
     * @param charset the charset to use.
     * @return a Configuration.
@@ -81,8 +76,7 @@ abstract class AbstractURIParser {
     }
   }
 
-  /**
-    * Parses the provided url and returns a Configuration based upon it.  On an error,
+  /** Parses the provided url and returns a Configuration based upon it.  On an error,
     * a default configuration is returned.
     * @param url the URL to parse.
     * @param charset the charset to use.
@@ -99,8 +93,7 @@ abstract class AbstractURIParser {
     }
   }
 
-  /**
-    * Assembles a configuration out of the provided property map.  This is the generic form, subclasses may override to
+  /** Assembles a configuration out of the provided property map.  This is the generic form, subclasses may override to
     * handle additional properties.
     * @param properties the extracted properties from the URL.
     * @param charset the charset passed in to parse or parseOrDie.
@@ -134,9 +127,9 @@ abstract class AbstractURIParser {
         val builder = Map.newBuilder[String, String]
         builder ++= userInfo._1.map(USERNAME -> _)
         builder ++= userInfo._2.map(PASSWORD -> _)
-        builder ++= port.map(PORT            -> _.toString)
-        builder ++= db.map(DBNAME            -> _)
-        builder ++= host.map(HOST            -> unwrapIpv6address(_))
+        builder ++= port.map(PORT -> _.toString)
+        builder ++= db.map(DBNAME -> _)
+        builder ++= host.map(HOST -> unwrapIpv6address(_))
 
         // Parse query string parameters and just append them, overriding anything previously set
         builder ++= (for {
@@ -149,7 +142,7 @@ abstract class AbstractURIParser {
           "UTF-8"
         ))
 
-        builder.result
+        builder.result()
       case "jdbc" =>
         handleJDBC(uri)
       case _ =>
@@ -157,8 +150,7 @@ abstract class AbstractURIParser {
     }
   }
 
-  /**
-    * This method breaks out handling of the jdbc: prefixed uri's, allowing them to be handled differently
+  /** This method breaks out handling of the jdbc: prefixed uri's, allowing them to be handled differently
     * without reimplementing all of parse.
     */
   protected def handleJDBC(uri: URI): Map[String, String] =
