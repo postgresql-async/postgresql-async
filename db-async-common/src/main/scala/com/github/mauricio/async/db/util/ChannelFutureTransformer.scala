@@ -24,7 +24,7 @@ import scala.language.implicitConversions
 object ChannelFutureTransformer {
 
   implicit def toFuture(channelFuture: ChannelFuture): Future[ChannelFuture] = {
-    val promise = Promise[ChannelFuture]
+    val promise = Promise[ChannelFuture]()
 
     channelFuture.addListener(new ChannelFutureListener {
       def operationComplete(future: ChannelFuture): Unit = {

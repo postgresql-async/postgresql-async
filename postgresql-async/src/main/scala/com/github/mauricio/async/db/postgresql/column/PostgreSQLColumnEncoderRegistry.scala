@@ -30,43 +30,68 @@ object PostgreSQLColumnEncoderRegistry {
 class PostgreSQLColumnEncoderRegistry extends ColumnEncoderRegistry {
 
   private val classesSequence_ : List[(Class[_], (ColumnEncoder, Int))] = List(
-    classOf[Int]                         -> (IntegerEncoderDecoder               -> ColumnTypes.Integer),
-    classOf[java.lang.Integer]           -> (IntegerEncoderDecoder               -> ColumnTypes.Integer),
-    classOf[java.lang.Short]             -> (ShortEncoderDecoder                 -> ColumnTypes.Smallint),
-    classOf[Short]                       -> (ShortEncoderDecoder                 -> ColumnTypes.Smallint),
-    classOf[Long]                        -> (LongEncoderDecoder                  -> ColumnTypes.Bigserial),
-    classOf[java.lang.Long]              -> (LongEncoderDecoder                  -> ColumnTypes.Bigserial),
-    classOf[String]                      -> (StringEncoderDecoder                -> ColumnTypes.Varchar),
-    classOf[java.lang.String]            -> (StringEncoderDecoder                -> ColumnTypes.Varchar),
-    classOf[Float]                       -> (FloatEncoderDecoder                 -> ColumnTypes.Real),
-    classOf[java.lang.Float]             -> (FloatEncoderDecoder                 -> ColumnTypes.Real),
-    classOf[Double]                      -> (DoubleEncoderDecoder                -> ColumnTypes.Double),
-    classOf[java.lang.Double]            -> (DoubleEncoderDecoder                -> ColumnTypes.Double),
-    classOf[BigDecimal]                  -> (BigDecimalEncoderDecoder            -> ColumnTypes.Numeric),
-    classOf[java.math.BigDecimal]        -> (BigDecimalEncoderDecoder            -> ColumnTypes.Numeric),
-    classOf[java.net.InetAddress]        -> (InetAddressEncoderDecoder           -> ColumnTypes.Inet),
-    classOf[java.util.UUID]              -> (UUIDEncoderDecoder                  -> ColumnTypes.UUID),
-    classOf[LocalDate]                   -> (DateEncoderDecoder                  -> ColumnTypes.Date),
-    classOf[LocalDateTime]               -> (TimestampEncoderDecoder.Instance    -> ColumnTypes.Timestamp),
-    classOf[DateTime]                    -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
-    classOf[ReadableDateTime]            -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
-    classOf[ReadableInstant]             -> (DateEncoderDecoder                  -> ColumnTypes.Date),
-    classOf[ReadablePeriod]              -> (PostgreSQLIntervalEncoderDecoder    -> ColumnTypes.Interval),
-    classOf[ReadableDuration]            -> (PostgreSQLIntervalEncoderDecoder    -> ColumnTypes.Interval),
-    classOf[java.util.Date]              -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
-    classOf[java.sql.Date]               -> (DateEncoderDecoder                  -> ColumnTypes.Date),
-    classOf[java.sql.Time]               -> (SQLTimeEncoder                      -> ColumnTypes.Time),
-    classOf[java.sql.Timestamp]          -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
-    classOf[java.util.Calendar]          -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
-    classOf[java.util.GregorianCalendar] -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
-    classOf[Array[Byte]]                 -> (ByteArrayEncoderDecoder             -> ColumnTypes.ByteA),
-    classOf[ByteBuffer]                  -> (ByteArrayEncoderDecoder             -> ColumnTypes.ByteA),
-    classOf[ByteBuf]                     -> (ByteArrayEncoderDecoder             -> ColumnTypes.ByteA)
+    classOf[Int] -> (IntegerEncoderDecoder -> ColumnTypes.Integer),
+    classOf[
+      java.lang.Integer
+    ]                         -> (IntegerEncoderDecoder    -> ColumnTypes.Integer),
+    classOf[java.lang.Short]  -> (ShortEncoderDecoder      -> ColumnTypes.Smallint),
+    classOf[Short]            -> (ShortEncoderDecoder      -> ColumnTypes.Smallint),
+    classOf[Long]             -> (LongEncoderDecoder       -> ColumnTypes.Bigserial),
+    classOf[java.lang.Long]   -> (LongEncoderDecoder       -> ColumnTypes.Bigserial),
+    classOf[String]           -> (StringEncoderDecoder     -> ColumnTypes.Varchar),
+    classOf[java.lang.String] -> (StringEncoderDecoder     -> ColumnTypes.Varchar),
+    classOf[Float]            -> (FloatEncoderDecoder      -> ColumnTypes.Real),
+    classOf[java.lang.Float]  -> (FloatEncoderDecoder      -> ColumnTypes.Real),
+    classOf[Double]           -> (DoubleEncoderDecoder     -> ColumnTypes.Double),
+    classOf[java.lang.Double] -> (DoubleEncoderDecoder     -> ColumnTypes.Double),
+    classOf[BigDecimal]       -> (BigDecimalEncoderDecoder -> ColumnTypes.Numeric),
+    classOf[
+      java.math.BigDecimal
+    ] -> (BigDecimalEncoderDecoder -> ColumnTypes.Numeric),
+    classOf[
+      java.net.InetAddress
+    ]                       -> (InetAddressEncoderDecoder -> ColumnTypes.Inet),
+    classOf[java.util.UUID] -> (UUIDEncoderDecoder        -> ColumnTypes.UUID),
+    classOf[LocalDate]      -> (DateEncoderDecoder        -> ColumnTypes.Date),
+    classOf[
+      LocalDateTime
+    ]                 -> (TimestampEncoderDecoder.Instance    -> ColumnTypes.Timestamp),
+    classOf[DateTime] -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
+    classOf[
+      ReadableDateTime
+    ]                        -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
+    classOf[ReadableInstant] -> (DateEncoderDecoder                  -> ColumnTypes.Date),
+    classOf[
+      ReadablePeriod
+    ] -> (PostgreSQLIntervalEncoderDecoder -> ColumnTypes.Interval),
+    classOf[
+      ReadableDuration
+    ] -> (PostgreSQLIntervalEncoderDecoder -> ColumnTypes.Interval),
+    classOf[
+      java.util.Date
+    ]                      -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
+    classOf[java.sql.Date] -> (DateEncoderDecoder                  -> ColumnTypes.Date),
+    classOf[java.sql.Time] -> (SQLTimeEncoder                      -> ColumnTypes.Time),
+    classOf[
+      java.sql.Timestamp
+    ] -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
+    classOf[
+      java.util.Calendar
+    ] -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
+    classOf[
+      java.util.GregorianCalendar
+    ]                    -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
+    classOf[Array[Byte]] -> (ByteArrayEncoderDecoder             -> ColumnTypes.ByteA),
+    classOf[ByteBuffer]  -> (ByteArrayEncoderDecoder             -> ColumnTypes.ByteA),
+    classOf[ByteBuf]     -> (ByteArrayEncoderDecoder             -> ColumnTypes.ByteA)
   )
 
-  private final val classesSequence = (classOf[LocalTime] -> (TimeEncoderDecoder.Instance -> ColumnTypes.Time)) ::
-    (classOf[ReadablePartial] -> (TimeEncoderDecoder.Instance -> ColumnTypes.Time)) ::
-    classesSequence_
+  private final val classesSequence =
+    (classOf[LocalTime] -> (TimeEncoderDecoder.Instance -> ColumnTypes.Time)) ::
+      (classOf[
+        ReadablePartial
+      ] -> (TimeEncoderDecoder.Instance -> ColumnTypes.Time)) ::
+      classesSequence_
 
   private final val classes = classesSequence.toMap
 
@@ -84,8 +109,7 @@ class PostgreSQLColumnEncoderRegistry extends ColumnEncoderRegistry {
 
   }
 
-  /**
-    * Used to encode a value that is not null and not an Option.
+  /** Used to encode a value that is not null and not an Option.
     */
   private def encodeValue(value: Any): String = {
 
@@ -120,8 +144,8 @@ class PostgreSQLColumnEncoderRegistry extends ColumnEncoderRegistry {
         if (this.shouldQuote(item)) {
           "\"" + this
             .encode(item)
-            .replaceAllLiterally("\\", """\\""")
-            .replaceAllLiterally("\"", """\"""") + "\""
+            .replace("\\", """\\""")
+            .replace("\"", """\"""") + "\""
         } else {
           this.encode(item)
         }
@@ -137,8 +161,8 @@ class PostgreSQLColumnEncoderRegistry extends ColumnEncoderRegistry {
         if (this.shouldQuote(item)) {
           "\"" + this
             .encode(item)
-            .replaceAllLiterally("\\", """\\""")
-            .replaceAllLiterally("\"", """\"""") + "\""
+            .replace("\\", """\\""")
+            .replace("\"", """\"""") + "\""
         } else {
           this.encode(item)
         }

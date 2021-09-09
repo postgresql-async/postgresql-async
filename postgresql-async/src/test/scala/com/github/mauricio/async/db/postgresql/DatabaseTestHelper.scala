@@ -62,7 +62,7 @@ trait DatabaseTestHelper {
   def withSSLHandler[T](
     mode: SSLConfiguration.Mode.Value,
     host: String = "localhost",
-    rootCert: Option[File] = Some(new File("script/server.crt"))
+    rootCert: Option[File] = Some(new File("build/server/cert/server.crt"))
   )(fn: (PostgreSQLConnection) => T): T = {
     val config = new Configuration(
       host = host,

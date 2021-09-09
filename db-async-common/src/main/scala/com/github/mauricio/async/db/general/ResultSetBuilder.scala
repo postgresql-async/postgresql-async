@@ -16,38 +16,38 @@
 
 package com.github.mauricio.async.db.general
 
-import collection.mutable.ArrayBuffer
+import collection.immutable.IndexedSeq
+import collection.compat.immutable.ArraySeq
 import com.github.mauricio.async.db.{RowData, ResultSet}
 import com.github.mauricio.async.db.util.Log
 
-object MutableResultSet {
-  val log = Log.get[MutableResultSet[Nothing]]
+private[async] object ResultSetBuilder {
+  final val log = Log.get[ResultSetBuilder.type]
 }
 
-class MutableResultSet[T <: ColumnData](val columnTypes: IndexedSeq[T])
-    extends ResultSet {
+private[async] class ResultSetBuilder[T <: ColumnData](
+  val columnTypes: IndexedSeq[T]
+) {
+
+  def build(): ResultSet = {
+    ResultSet(columnTypes, rowsBuilder.result())
+  }
 
   // ResultSet is very likely to be accessed in another thread.
-  @volatile
-  private var rows = Vector.empty[RowData]
+  private final val rowsBuilder = ArraySeq.newBuilder[RowData]
+  private var currSize          = 0
+
   private val columnMapping: Map[String, Int] = this.columnTypes.indices
     .map(index => (this.columnTypes(index).name, index))
     .toMap
 
-  val columnNames: IndexedSeq[String] = this.columnTypes.map(c => c.name)
-
-  val types: IndexedSeq[Int] = this.columnTypes.map(c => c.dataType)
-
-  override def length: Int = this.rows.length
-
-  override def apply(idx: Int): RowData = this.rows(idx)
-
   def addRow(row: Array[Any]): Unit = {
-    this.rows = this.rows :+ new ArrayRowData(
-      this.rows.size,
+    rowsBuilder += new ArrayRowData(
+      currSize,
       this.columnMapping,
       row
     )
+    currSize = currSize + 1
   }
 
 }

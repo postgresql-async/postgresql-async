@@ -24,6 +24,7 @@ import com.github.mauricio.async.db.postgresql.messages.backend.PostgreSQLColumn
 import org.specs2.mutable.Specification
 import io.netty.util.CharsetUtil
 import io.netty.buffer.{Unpooled, ByteBuf}
+import scala.collection.compat.immutable.ArraySeq
 
 class MutableResultSetSpec extends Specification {
 
@@ -49,7 +50,7 @@ class MutableResultSetSpec extends Specification {
 
     "correctly map column data to fields" in {
 
-      val columns = Array(
+      val columns = ArraySeq(
         create(
           name = "id",
           dataType = ColumnTypes.Integer,
@@ -65,10 +66,12 @@ class MutableResultSetSpec extends Specification {
       val text      = "some data"
       val otherText = "some other data"
 
-      val resultSet = new MutableResultSet(columns)
+      val resultSetBuilder = new ResultSetBuilder(columns)
 
-      resultSet.addRow(Array(1, text))
-      resultSet.addRow(Array(2, otherText))
+      resultSetBuilder.addRow(Array(1, text))
+      resultSetBuilder.addRow(Array(2, otherText))
+
+      val resultSet = resultSetBuilder.build()
 
       resultSet(0)(0) === 1
       resultSet(0)("id") === 1
@@ -86,14 +89,14 @@ class MutableResultSetSpec extends Specification {
 
     "should return the same order as the one given by columns" in {
 
-      val columns = Array(
+      val columns = ArraySeq(
         create("id", ColumnTypes.Integer),
         create("name", ColumnTypes.Varchar),
         create("birthday", ColumnTypes.Date),
         create("created_at", ColumnTypes.Timestamp),
         create("updated_at", ColumnTypes.Timestamp)
       )
-      val resultSet = new MutableResultSet(columns)
+      val resultSet = new ResultSetBuilder(columns).build()
 
       resultSet.columnNames must contain(
         allOf("id", "name", "birthday", "created_at", "updated_at")
