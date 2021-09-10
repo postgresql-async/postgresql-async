@@ -20,7 +20,10 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# ![Build Status](https://travis-ci.com/postgresql-async/postgresql-async.svg?branch=master) ![Maven](https://maven-badges.herokuapp.com/maven-central/com.github.postgresql-async/postgresql-async_2.13/badge.svg)
+[![build](https://github.com/postgresql-async/postgresql-async/actions/workflows/scala.yml/badge.svg?branch=master)](https://github.com/postgresql-async/postgresql-async/actions/workflows/scala.yml)
+[![codecov](https://codecov.io/gh/postgresql-async/postgresql-async/branch/master/graph/badge.svg?token=UR9HMLK0L2)](https://codecov.io/gh/postgresql-async/postgresql-async)
+![Maven](https://maven-badges.herokuapp.com/maven-central/com.github.postgresql-async/postgresql-async_2.13/badge.svg)
+
 
 This fork is mainly focused on bug fix and scala 2.13/dotty migrattion.
 
