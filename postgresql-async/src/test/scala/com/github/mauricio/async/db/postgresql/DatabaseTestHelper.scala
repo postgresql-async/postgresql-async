@@ -92,9 +92,11 @@ trait DatabaseTestHelper {
   }
 
   def executeDdl(handler: Connection, data: String, count: Int = 0) = {
-    val rows = handleTimeout(handler, {
-      Await.result(handler.sendQuery(data), Duration(5, SECONDS)).rowsAffected
-    })
+    val rows = handleTimeout(
+      handler, {
+        Await.result(handler.sendQuery(data), Duration(5, SECONDS)).rowsAffected
+      }
+    )
 
     if (rows != count) {
       throw new IllegalStateException(
@@ -118,9 +120,11 @@ trait DatabaseTestHelper {
   }
 
   def executeQuery(handler: Connection, data: String) = {
-    handleTimeout(handler, {
-      Await.result(handler.sendQuery(data), Duration(5, SECONDS))
-    })
+    handleTimeout(
+      handler, {
+        Await.result(handler.sendQuery(data), Duration(5, SECONDS))
+      }
+    )
   }
 
   def executePreparedStatement(
@@ -128,12 +132,14 @@ trait DatabaseTestHelper {
     statement: String,
     values: Array[Any] = Array.empty[Any]
   ) = {
-    handleTimeout(handler, {
-      Await.result(
-        handler.sendPreparedStatement(statement, values),
-        Duration(5, SECONDS)
-      )
-    })
+    handleTimeout(
+      handler, {
+        Await.result(
+          handler.sendPreparedStatement(statement, values.toIndexedSeq),
+          Duration(5, SECONDS)
+        )
+      }
+    )
   }
 
   def await[T](future: Future[T]): T = {

@@ -91,8 +91,8 @@ trait ConnectionHelper {
                               id INT NOT NULL AUTO_INCREMENT ,
                               name VARCHAR(255) CHARACTER SET 'utf8' NOT NULL ,
                               PRIMARY KEY (id) );"""
-  final val insert      = """INSERT INTO users (name) VALUES ('Maurício Aragão')"""
-  final val select      = """SELECT * FROM users"""
+  final val insert = """INSERT INTO users (name) VALUES ('Maurício Aragão')"""
+  final val select = """SELECT * FROM users"""
 
   def defaultConfiguration = new Configuration(
     "mysql_async",

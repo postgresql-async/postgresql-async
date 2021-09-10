@@ -50,8 +50,8 @@ class MySQLConnectionHandler(
   connectionId: String
 ) extends SimpleChannelInboundHandler[Object] {
 
-  private implicit val internalPool   = executionContext
-  private final val log               = Log.getByName(s"[connection-handler]${connectionId}")
+  private implicit val internalPool = executionContext
+  private final val log = Log.getByName(s"[connection-handler]${connectionId}")
   private final val bootstrap         = new Bootstrap().group(this.group)
   private final val connectionPromise = Promise[MySQLConnectionHandler]()
   private final val decoder =
@@ -331,7 +331,7 @@ class MySQLConnectionHandler(
     value match {
       case v: Array[Byte] => v.length > SendLongDataEncoder.LONG_THRESHOLD
       case v: ByteBuffer  => v.remaining() > SendLongDataEncoder.LONG_THRESHOLD
-      case v: ByteBuf     => v.readableBytes() > SendLongDataEncoder.LONG_THRESHOLD
+      case v: ByteBuf => v.readableBytes() > SendLongDataEncoder.LONG_THRESHOLD
 
       case _ => false
     }

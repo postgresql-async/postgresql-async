@@ -27,8 +27,7 @@ object LittleEndianByteBufAllocator {
   val INSTANCE = new LittleEndianByteBufAllocator
 }
 
-/**
-  * Allocates ByteBuf which have LITTLE_ENDIAN order.
+/** Allocates ByteBuf which have LITTLE_ENDIAN order.
   */
 class LittleEndianByteBufAllocator extends ByteBufAllocator {
   private val allocator = new UnpooledByteBufAllocator(false)

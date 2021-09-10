@@ -32,7 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger
 class MySQLFrameDecoder(charset: Charset, connectionId: String)
     extends ByteToMessageDecoder {
 
-  private final val log              = Log.getByName(s"[frame-decoder]${connectionId}")
+  private final val log = Log.getByName(s"[frame-decoder]${connectionId}")
   private final val messagesCount    = new AtomicInteger()
   private final val handshakeDecoder = new HandshakeV10Decoder(charset)
   private final val errorDecoder     = new ErrorDecoder(charset)
@@ -85,27 +85,32 @@ class MySQLFrameDecoder(charset: Charset, connectionId: String)
 
         val slice = buffer.readRetainedSlice(size)
 
-        if (log.isTraceEnabled) {
-          log.trace(
-            s"Reading message type $messageType - " +
-              s"(count=$messagesCount,hasDoneHandshake=$hasDoneHandshake,size=$size,isInQuery=$isInQuery,processingColumns=$processingColumns,processingParams=$processingParams,processedColumns=$processedColumns,processedParams=$processedParams)" +
-              s"\n${BufferDumper.dumpAsHex(slice)}}"
-          )
-        }
+        try {
 
-        slice.readByte()
-
-        if (this.hasDoneHandshake) {
-          this.handleCommonFlow(messageType, slice, out)
-        } else {
-          val decoder = messageType match {
-            case ServerMessage.Error => {
-              this.clear
-              this.errorDecoder
-            }
-            case _ => this.handshakeDecoder
+          if (log.isTraceEnabled) {
+            log.trace(
+              s"Reading message type $messageType - " +
+                s"(count=$messagesCount,hasDoneHandshake=$hasDoneHandshake,size=$size,isInQuery=$isInQuery,processingColumns=$processingColumns,processingParams=$processingParams,processedColumns=$processedColumns,processedParams=$processedParams)" +
+                s"\n${BufferDumper.dumpAsHex(slice)}}"
+            )
           }
-          this.doDecoding(decoder, slice, out)
+
+          slice.readByte()
+
+          if (this.hasDoneHandshake) {
+            this.handleCommonFlow(messageType, slice, out)
+          } else {
+            val decoder = messageType match {
+              case ServerMessage.Error => {
+                this.clear
+                this.errorDecoder
+              }
+              case _ => this.handshakeDecoder
+            }
+            this.doDecoding(decoder, slice, out)
+          }
+        } finally {
+          slice.release()
         }
       } else {
         buffer.resetReaderIndex()
