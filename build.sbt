@@ -66,20 +66,21 @@ val implementationDependencies = Seq(
 
 val baseSettings = Seq(
   crossScalaVersions := Seq("2.11.12", "2.12.14", "2.13.6"),
-  testOptions in Test += Tests.Argument("sequential"),
-  scalaVersion := "2.13.6",
+  (Test / testOptions) += Tests.Argument("sequential"),
+  (Test / fork) := true,
+  scalaVersion  := "2.13.6",
   scalacOptions :=
     Opts.compile.encoding("UTF8")
       :+ Opts.compile.deprecation
       :+ Opts.compile.unchecked
       :+ "-feature"
       :+ "-Ydelambdafy:method",
-  testOptions in Test += Tests.Argument(TestFrameworks.Specs2, "sequential"),
-  scalacOptions in doc := Seq(
+  (Test / testOptions) += Tests.Argument(TestFrameworks.Specs2, "sequential"),
+  (doc / scalacOptions) := Seq(
     s"-doc-external-doc:scala=https://www.scala-lang.org/files/archive/api/${scalaVersion.value}/"
   ),
   javacOptions := Seq("-source", "1.8", "-target", "1.8", "-encoding", "UTF8"),
-  (javaOptions in Test) ++= Seq("-Dio.netty.leakDetection.level=paranoid"),
+  (Test / javaOptions) ++= Seq("-Dio.netty.leakDetection.level=paranoid"),
   organization      := "com.github.postgresql-async",
   parallelExecution := false
 ) ++ publishSettings
@@ -125,9 +126,9 @@ lazy val publishSettings = Seq(
   homepage := Some(url("https://github.com/postgresql-async/postgresql-async"))
 )
 
-(scalafmtOnCompile in ThisBuild) := true
-(compile in Compile) := {
-  (compile in Compile).dependsOn(scalafmtSbt in Compile).value
+(ThisBuild / scalafmtOnCompile) := true
+(Compile / compile) := {
+  (Compile / compile).dependsOn(Compile / scalafmtSbt).value
 }
 
 Global / useGpg := false

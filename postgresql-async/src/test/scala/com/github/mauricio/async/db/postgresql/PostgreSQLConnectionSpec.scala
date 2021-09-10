@@ -242,10 +242,13 @@ class PostgreSQLConnectionSpec extends Specification with DatabaseTestHelper {
         database = databaseName
       )
 
-      withHandler(configuration, { handler =>
-        val result = executeQuery(handler, "SELECT 0")
-        result.rows.get.apply(0)(0) === 0
-      })
+      withHandler(
+        configuration,
+        { handler =>
+          val result = executeQuery(handler, "SELECT 0")
+          result.rows.get.apply(0)(0) === 0
+        }
+      )
 
     }
 
@@ -258,10 +261,13 @@ class PostgreSQLConnectionSpec extends Specification with DatabaseTestHelper {
         database = databaseName
       )
 
-      withHandler(configuration, { handler =>
-        val result = executeQuery(handler, "SELECT 0")
-        result.rows.get(0)(0) === 0
-      })
+      withHandler(
+        configuration,
+        { handler =>
+          val result = executeQuery(handler, "SELECT 0")
+          result.rows.get(0)(0) === 0
+        }
+      )
 
     }
 
@@ -274,10 +280,13 @@ class PostgreSQLConnectionSpec extends Specification with DatabaseTestHelper {
         database = databaseName
       )
       try {
-        withHandler(configuration, { handler =>
-          val result = executeQuery(handler, "SELECT 0")
-          throw new IllegalStateException("should not have arrived")
-        })
+        withHandler(
+          configuration,
+          { handler =>
+            val result = executeQuery(handler, "SELECT 0")
+            throw new IllegalStateException("should not have arrived")
+          }
+        )
       } catch {
         case e: GenericDatabaseException =>
           e.errorMessage.fields(InformationMessage.Routine) === "auth_failed"
@@ -290,10 +299,9 @@ class PostgreSQLConnectionSpec extends Specification with DatabaseTestHelper {
       val handler: Connection = new PostgreSQLConnection(defaultConfiguration)
       val result: Future[QueryResult] = handler.connect
         .map(parameters => handler)
-        .flatMap(
-          connection =>
-            connection
-              .sendQuery("BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ")
+        .flatMap(connection =>
+          connection
+            .sendQuery("BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ")
         )
         .flatMap(query => handler.sendQuery("SELECT 0"))
         .flatMap(query => handler.sendQuery("COMMIT").map(value => query))
