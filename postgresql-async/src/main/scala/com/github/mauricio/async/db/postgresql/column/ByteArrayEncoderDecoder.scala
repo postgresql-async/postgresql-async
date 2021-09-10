@@ -74,11 +74,15 @@ object ByteArrayEncoderDecoder extends ColumnEncoderDecoder {
   }
 
   /**
-    * This is required since {@link Iterator#next} when {@linke Iterator#hasNext} is false is undefined.
-    * @param ci the iterator source of the data
-    * @return the next character
-    * @throws IllegalArgumentException if there is no next character
-    */
+   * This is required since {@link Iterator#next} when {@linke Iterator#hasNext}
+   * is false is undefined.
+   * @param ci
+   *   the iterator source of the data
+   * @return
+   *   the next character
+   * @throws IllegalArgumentException
+   *   if there is no next character
+   */
   private[this] def getCharOrDie(ci: Iterator[Char]): Char = {
     if (ci.hasNext) {
       ci.next()

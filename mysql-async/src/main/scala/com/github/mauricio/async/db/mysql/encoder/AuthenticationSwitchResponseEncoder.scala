@@ -17,9 +17,11 @@ class AuthenticationSwitchResponseEncoder(charset: Charset)
     val switch = message.asInstanceOf[AuthenticationSwitchResponse]
 
     val method = switch.request.method
-    val authenticator = AuthenticationMethod.Availables.getOrElse(method, {
-      throw new UnsupportedAuthenticationMethodException(method)
-    })
+    val authenticator = AuthenticationMethod.Availables.getOrElse(
+      method, {
+        throw new UnsupportedAuthenticationMethodException(method)
+      }
+    )
 
     val buffer = ByteBufferUtils.packetBuffer()
 

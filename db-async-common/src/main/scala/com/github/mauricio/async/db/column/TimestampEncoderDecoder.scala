@@ -67,7 +67,7 @@ class TimestampEncoderDecoder extends ColumnEncoderDecoder {
       case t: Calendar         => this.timezonedPrinter.print(new DateTime(t))
       case t: LocalDateTime    => this.nonTimezonedPrinter.print(t)
       case t: ReadableDateTime => this.timezonedPrinter.print(t)
-      case _                   => throw new DateEncoderNotAvailableException(value)
+      case _ => throw new DateEncoderNotAvailableException(value)
     }
   }
 

@@ -160,7 +160,9 @@ class PreparedStatementSpec extends Specification with DatabaseTestHelper {
           val result =
             executePreparedStatement(handler, this.messagesSelectAll).rows.get
           result.size === x
-          result.columnNames must contain(allOf("id", "content", "moment")).inOrder
+          result.columnNames must contain(
+            allOf("id", "content", "moment")
+          ).inOrder
           result(x - 1)("moment") === moment
           result(x - 1)("content") === message
 
@@ -383,7 +385,11 @@ class PreparedStatementSpec extends Specification with DatabaseTestHelper {
           Array(Some(content), None)
         )
 
-        executePreparedStatement(handler, query, Array("undefined")) must throwA[
+        executePreparedStatement(
+          handler,
+          query,
+          Array("undefined")
+        ) must throwA[
           GenericDatabaseException
         ]
         val result = executePreparedStatement(handler, query, Array(1)).rows.get
@@ -453,12 +459,11 @@ class PreparedStatementSpec extends Specification with DatabaseTestHelper {
           handler,
           "create temp table performance_test (id integer PRIMARY KEY, int1 integer)"
         )
-        (1 to 2000).foreach(
-          i =>
-            executeQuery(
-              handler,
-              s"insert into performance_test (id, int1) values ($i, ${Random.nextInt(20000)})"
-            )
+        (1 to 2000).foreach(i =>
+          executeQuery(
+            handler,
+            s"insert into performance_test (id, int1) values ($i, ${Random.nextInt(20000)})"
+          )
         )
 
         val preparedStatementStartTime = System.nanoTime()

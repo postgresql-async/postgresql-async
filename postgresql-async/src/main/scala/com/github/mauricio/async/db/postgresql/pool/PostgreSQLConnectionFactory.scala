@@ -36,11 +36,10 @@ object PostgreSQLConnectionFactory {
 }
 
 /**
-  *
-  * Object responsible for creating new connection instances.
-  *
-  * @param configuration
-  */
+ * Object responsible for creating new connection instances.
+ *
+ * @param configuration
+ */
 class PostgreSQLConnectionFactory(
   val configuration: Configuration,
   group: EventLoopGroup = NettyUtils.DefaultEventLoopGroup,
@@ -66,12 +65,13 @@ class PostgreSQLConnectionFactory(
   }
 
   /**
-    *
-    * Validates by checking if the connection is still connected to the database or not.
-    *
-    * @param item an object produced by this pool
-    * @return
-    */
+   * Validates by checking if the connection is still connected to the database
+   * or not.
+   *
+   * @param item
+   *   an object produced by this pool
+   * @return
+   */
   def validate(item: PostgreSQLConnection): Try[PostgreSQLConnection] = {
     Try {
       if (item.isTimeouted) {
@@ -88,12 +88,12 @@ class PostgreSQLConnectionFactory(
   }
 
   /**
-    *
-    * Tests whether we can still send a **SELECT 0** statement to the database.
-    *
-    * @param item an object produced by this pool
-    * @return
-    */
+   * Tests whether we can still send a **SELECT 0** statement to the database.
+   *
+   * @param item
+   *   an object produced by this pool
+   * @return
+   */
   override def test(item: PostgreSQLConnection): Try[PostgreSQLConnection] = {
     val result: Try[PostgreSQLConnection] = Try({
       Await.result(item.sendQuery("SELECT 0"), configuration.testTimeout)

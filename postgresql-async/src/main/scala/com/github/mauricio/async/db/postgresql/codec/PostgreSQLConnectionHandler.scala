@@ -74,7 +74,7 @@ class PostgreSQLConnectionHandler(
 
   private implicit final val _executionContext = executionContext
   private final val bootstrap                  = new Bootstrap()
-  private final val connectionFuture           = Promise[PostgreSQLConnectionHandler]()
+  private final val connectionFuture = Promise[PostgreSQLConnectionHandler]()
   private final val disconnectionPromise =
     Promise[PostgreSQLConnectionHandler]()
   private var processData: ProcessData = null
@@ -106,8 +106,8 @@ class PostgreSQLConnectionHandler(
     this.bootstrap
       .connect(new InetSocketAddress(configuration.host, configuration.port))
       .failed
-      .foreach {
-        case e => connectionFuture.tryFailure(e)
+      .foreach { case e =>
+        connectionFuture.tryFailure(e)
       }
 
     this.connectionFuture.future

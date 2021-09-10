@@ -20,8 +20,9 @@ import com.github.mauricio.async.db.util.Log
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
-  * Mainly a way to try to figure out why sometimes MySQL will fail with a bad prepared statement response message.
-  */
+ * Mainly a way to try to figure out why sometimes MySQL will fail with a bad
+ * prepared statement response message.
+ */
 object ConcurrentlyRunTest extends ConnectionHelper with Runnable {
 
   private val log      = Log.getByName(this.getClass.getName)

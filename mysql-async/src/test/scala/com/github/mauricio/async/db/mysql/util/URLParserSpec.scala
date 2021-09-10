@@ -217,7 +217,9 @@ class URLParserSpec extends Specification {
     }
 
     "pull the username and password from query string" in {
-      parse("jdbc:mysql://localhost:425/dbname?user=user&password=password") mustEqual DEFAULT
+      parse(
+        "jdbc:mysql://localhost:425/dbname?user=user&password=password"
+      ) mustEqual DEFAULT
         .copy(
           username = "user",
           password = Some("password"),

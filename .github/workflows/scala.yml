@@ -1,6 +1,10 @@
 name: build
 
-on: pull_request
+on:
+  pull_request:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -42,6 +46,11 @@ jobs:
 
       - name: Tests
         run: sbt ++${{matrix.scala}} test
+        if: ${{ !startsWith(matrix.scala, '2.13') }}
+
+      - name: Tests with Coverage
+        run: sbt ++${{matrix.scala}} coverage test coverageReport
+        if: ${{ startsWith(matrix.scala, '2.13') }}
 
       - name: Upload codecov
         if: ${{ startsWith(matrix.scala, '2.13') }}

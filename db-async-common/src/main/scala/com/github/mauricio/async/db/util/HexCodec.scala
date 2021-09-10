@@ -17,8 +17,8 @@
 package com.github.mauricio.async.db.util
 
 /**
-  * The code from this class was copied from the Hex class at commons-codec
-  */
+ * The code from this class was copied from the Hex class at commons-codec
+ */
 object HexCodec {
 
   private final val Digits = Array[Char]('0', '1', '2', '3', '4', '5', '6', '7',
@@ -37,13 +37,12 @@ object HexCodec {
   }
 
   /**
-    *
-    * Turns a HEX based char sequence into a Byte array
-    *
-    * @param value
-    * @param start
-    * @return
-    */
+   * Turns a HEX based char sequence into a Byte array
+   *
+   * @param value
+   * @param start
+   * @return
+   */
   def decode(value: CharSequence, start: Int = 0): Array[Byte] = {
 
     val length = value.length - start
@@ -73,13 +72,12 @@ object HexCodec {
   }
 
   /**
-    *
-    * Encodes a byte array into a String encoded with Hex values.
-    *
-    * @param bytes
-    * @param prefix
-    * @return
-    */
+   * Encodes a byte array into a String encoded with Hex values.
+   *
+   * @param bytes
+   * @param prefix
+   * @return
+   */
   def encode(bytes: Array[Byte], prefix: Array[Char] = Array.empty): String = {
     val length = (bytes.length * 2) + prefix.length
     val chars  = new Array[Char](length)
@@ -97,9 +95,9 @@ object HexCodec {
     var i          = 0
 
     while (i < dataLength) {
-      chars(j) = Digits((0xF0 & bytes(i)) >>> 4)
+      chars(j) = Digits((0xf0 & bytes(i)) >>> 4)
       j += 1
-      chars(j) = Digits(0x0F & bytes(i))
+      chars(j) = Digits(0x0f & bytes(i))
       j += 1
       i += 1
     }

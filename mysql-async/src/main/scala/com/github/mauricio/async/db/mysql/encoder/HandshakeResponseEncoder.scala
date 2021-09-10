@@ -76,9 +76,11 @@ class HandshakeResponseEncoder(charset: Charset, charsetMapper: CharsetMapper)
 
     if (m.password.isDefined) {
       val method = m.authenticationMethod
-      val authenticator = this.authenticationMethods.getOrElse(method, {
-        throw new UnsupportedAuthenticationMethodException(method)
-      })
+      val authenticator = this.authenticationMethods.getOrElse(
+        method, {
+          throw new UnsupportedAuthenticationMethodException(method)
+        }
+      )
       val bytes =
         authenticator.generateAuthentication(charset, m.password, m.seed)
       buffer.writeByte(bytes.length)

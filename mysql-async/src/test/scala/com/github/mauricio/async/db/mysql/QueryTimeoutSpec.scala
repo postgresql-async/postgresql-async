@@ -40,7 +40,9 @@ class QueryTimeoutSpec extends Specification with ConnectionHelper {
         ]()
         connection.isTimeouted === true
         Await.ready(pool.giveBack(connection), Duration(10, SECONDS))
-        pool.availables.count(_ == connection) === 0 // connection removed from pool
+        pool.availables.count(
+          _ == connection
+        ) === 0 // connection removed from pool
         // we do not know when the connection will be closed.
       }
     }
@@ -61,7 +63,9 @@ class QueryTimeoutSpec extends Specification with ConnectionHelper {
         connection.isTimeouted === false
         connection.isConnected === true
         Await.ready(pool.giveBack(connection), Duration(10, SECONDS))
-        pool.availables.count(_ == connection) === 1 // connection returned to pool
+        pool.availables.count(
+          _ == connection
+        ) === 1 // connection returned to pool
       }
     }
   }

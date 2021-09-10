@@ -39,7 +39,7 @@ class ArrayTypesSpec extends Specification with DatabaseTestHelper {
                                          timestamp_column timestamp with time zone[] not null,
                                          constraint bigserial_column_pkey primary key (bigserial_column)
                                        )"""
-  def simpleDrop(uniq: String)   = s"""drop table if exists type_test_table_$uniq;
+  def simpleDrop(uniq: String) = s"""drop table if exists type_test_table_$uniq;
                                        drop type  if exists endpoint_$uniq;
                                        drop type  if exists direction_$uniq"""
 
@@ -139,8 +139,12 @@ class ArrayTypesSpec extends Specification with DatabaseTestHelper {
           result(0)("smallint_column") === numbers
           result(0)("text_column") === texts
           result(0)("inet_column") === inets
-          result(0)("direction_column") === "{in,out}"                                 // user type decoding not supported
-          result(0)("endpoint_column") === """{"(127.0.0.1,80)","(2002:15::1,443)"}""" // user type decoding not supported
+          result(0)(
+            "direction_column"
+          ) === "{in,out}" // user type decoding not supported
+          result(0)(
+            "endpoint_column"
+          ) === """{"(127.0.0.1,80)","(2002:15::1,443)"}""" // user type decoding not supported
           result(0)("timestamp_column") === timestamps
         } finally {
           executeDdl(handler, simpleDrop("csaups"))

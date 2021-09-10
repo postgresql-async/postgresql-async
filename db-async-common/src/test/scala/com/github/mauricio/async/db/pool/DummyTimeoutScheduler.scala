@@ -21,12 +21,12 @@ import com.github.mauricio.async.db.util.{NettyUtils, ExecutorServiceUtils}
 import io.netty.channel.EventLoopGroup
 
 /**
-  * Implementation of TimeoutScheduler used for testing
-  */
+ * Implementation of TimeoutScheduler used for testing
+ */
 class DummyTimeoutScheduler extends TimeoutScheduler {
-  implicit val internalPool          = ExecutorServiceUtils.CachedExecutionContext
-  private val timeOuts               = new AtomicInteger
-  override def onTimeout             = timeOuts.incrementAndGet
-  def timeoutCount                   = timeOuts.get()
+  implicit val internalPool = ExecutorServiceUtils.CachedExecutionContext
+  private val timeOuts      = new AtomicInteger
+  override def onTimeout    = timeOuts.incrementAndGet
+  def timeoutCount          = timeOuts.get()
   def eventLoopGroup: EventLoopGroup = NettyUtils.DefaultEventLoopGroup
 }

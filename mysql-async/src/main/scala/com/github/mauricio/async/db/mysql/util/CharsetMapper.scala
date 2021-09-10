@@ -43,12 +43,15 @@ class CharsetMapper(
   charsetsToIntComplement: Map[Charset, Int] = Map.empty[Charset, Int]
 ) {
 
-  private var charsetsToInt = CharsetMapper.DefaultCharsetsByCharset ++ charsetsToIntComplement
+  private var charsetsToInt =
+    CharsetMapper.DefaultCharsetsByCharset ++ charsetsToIntComplement
 
   def toInt(charset: Charset): Int = {
-    charsetsToInt.getOrElse(charset, {
-      throw new CharsetMappingNotAvailableException(charset)
-    })
+    charsetsToInt.getOrElse(
+      charset, {
+        throw new CharsetMappingNotAvailableException(charset)
+      }
+    )
   }
 
 }

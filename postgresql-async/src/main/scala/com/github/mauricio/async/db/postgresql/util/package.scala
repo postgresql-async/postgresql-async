@@ -16,13 +16,13 @@
 package com.github.mauricio.async.db.postgresql
 
 /**
-  * Contains package level aliases and type renames.
-  */
+ * Contains package level aliases and type renames.
+ */
 package object util {
 
   /**
-    * Alias to help compatibility.
-    */
+   * Alias to help compatibility.
+   */
   @deprecated(
     "Use com.github.mauricio.async.db.postgresql.util.URLParser",
     since = "0.2.20"

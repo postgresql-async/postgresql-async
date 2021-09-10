@@ -34,7 +34,7 @@ object PostgreSQLIntervalEncoderDecoder extends ColumnEncoderDecoder {
     value match {
       case t: ReadablePeriod   => formatter.print(t)
       case t: ReadableDuration => t.toString // defaults to ISO8601
-      case _                   => throw new DateEncoderNotAvailableException(value)
+      case _ => throw new DateEncoderNotAvailableException(value)
     }
   }
 
@@ -51,7 +51,9 @@ object PostgreSQLIntervalEncoderDecoder extends ColumnEncoderDecoder {
       .appendSeparator(" ")
 
   private val postgres_verboseParser =
-    postgresYMDBuilder(new PeriodFormatterBuilder().appendLiteral("@ ")).appendHours
+    postgresYMDBuilder(
+      new PeriodFormatterBuilder().appendLiteral("@ ")
+    ).appendHours
       .appendSuffix(" hour", " hours")
       .appendSeparator(" ")
       .appendMinutes
@@ -63,7 +65,7 @@ object PostgreSQLIntervalEncoderDecoder extends ColumnEncoderDecoder {
 
   private def postgresHMSBuilder(builder: PeriodFormatterBuilder) =
     builder
-    // .printZeroAlways // really all-or-nothing
+      // .printZeroAlways // really all-or-nothing
       .rejectSignedValues(true) // XXX: sign should apply to all
       .appendHours
       .appendSuffix(":")
@@ -75,7 +77,9 @@ object PostgreSQLIntervalEncoderDecoder extends ColumnEncoderDecoder {
     postgresHMSBuilder(new PeriodFormatterBuilder()).toFormatter
 
   private val postgresParser =
-    postgresHMSBuilder(postgresYMDBuilder(new PeriodFormatterBuilder())).toFormatter
+    postgresHMSBuilder(
+      postgresYMDBuilder(new PeriodFormatterBuilder())
+    ).toFormatter
 
   /* These sql_standard parsers don't handle negative signs correctly. */
   private def sqlDTBuilder(builder: PeriodFormatterBuilder) =
@@ -123,9 +127,11 @@ object PostgreSQLIntervalEncoderDecoder extends ColumnEncoderDecoder {
             else if (value(i).equals('-'))
               /* sql_standard: Y-M */
               sqlParser
-            else if (value(i).equals(' ') && i + 1 < value.length && value(
-                       i + 1
-                     ).isDigit)
+            else if (
+              value(i).equals(' ') && i + 1 < value.length && value(
+                i + 1
+              ).isDigit
+            )
               /* sql_standard: D H:M:S */
               sqlDTParser
             else

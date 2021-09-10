@@ -236,10 +236,11 @@ class PreparedStatementsSpec extends Specification with ConnectionHelper {
       val date      = new LocalDate(2011, 9, 8)
       val dateTime  = new LocalDateTime(2012, 5, 27, 15, 29, 55)
       val timestamp = new Timestamp(dateTime.toDateTime.getMillis)
-      val time = Duration(3, TimeUnit.HOURS) + Duration(5, TimeUnit.MINUTES) + Duration(
-        10,
-        TimeUnit.SECONDS
-      )
+      val time =
+        Duration(3, TimeUnit.HOURS) + Duration(5, TimeUnit.MINUTES) + Duration(
+          10,
+          TimeUnit.SECONDS
+        )
       val year = 2012
 
       withConnection { connection =>
@@ -395,7 +396,9 @@ class PreparedStatementsSpec extends Specification with ConnectionHelper {
           connection,
           "CREATE TEMPORARY TABLE timestamps ( id INT NOT NULL, moment TIMESTAMP NULL, primary key (id))"
         )
-        val moment = LocalDateTime.now().withMillisOfDay(0) // cut off millis to match timestamp
+        val moment = LocalDateTime
+          .now()
+          .withMillisOfDay(0) // cut off millis to match timestamp
         executePreparedStatement(
           connection,
           "INSERT INTO timestamps (moment, id) VALUES (?, ?)",
