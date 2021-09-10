@@ -45,9 +45,11 @@ object InformationMessage {
   )
 
   def fieldName(name: Char): String =
-    Fields.getOrElse(name, {
-      name.toString
-    })
+    Fields.getOrElse(
+      name, {
+        name.toString
+      }
+    )
 
 }
 
@@ -59,9 +61,12 @@ abstract class InformationMessage(
   def message: String = this.fields('M')
 
   override def toString: String = {
-    "%s(fields=%s)".format(this.getClass.getSimpleName, fields.map { pair =>
-      InformationMessage.fieldName(pair._1) -> pair._2
-    })
+    "%s(fields=%s)".format(
+      this.getClass.getSimpleName,
+      fields.map { pair =>
+        InformationMessage.fieldName(pair._1) -> pair._2
+      }
+    )
   }
 
 }

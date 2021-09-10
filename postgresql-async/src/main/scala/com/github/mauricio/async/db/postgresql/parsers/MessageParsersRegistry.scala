@@ -45,15 +45,15 @@ class MessageParsersRegistry(charset: Charset) {
       case ServerMessage.Error           => this.errorParser
       case ServerMessage.EmptyQueryString =>
         ReturningMessageParser.EmptyQueryStringMessageParser
-      case ServerMessage.NoData               => ReturningMessageParser.NoDataMessageParser
-      case ServerMessage.Notice               => this.noticeParser
+      case ServerMessage.NoData => ReturningMessageParser.NoDataMessageParser
+      case ServerMessage.Notice => this.noticeParser
       case ServerMessage.NotificationResponse => this.notificationResponseParser
       case ServerMessage.ParameterStatus      => this.parameterStatusParser
       case ServerMessage.ParseComplete =>
         ReturningMessageParser.ParseCompleteMessageParser
       case ServerMessage.RowDescription => this.rowDescriptionParser
       case ServerMessage.ReadyForQuery  => ReadyForQueryParser
-      case _                            => throw new ParserNotAvailableException(t)
+      case _ => throw new ParserNotAvailableException(t)
     }
   }
 

@@ -37,8 +37,8 @@ import scala.language.postfixOps
 import com.github.mauricio.async.db.exceptions.ConnectionStillRunningQueryException
 
 /**
-  * Pending
-  */
+ * Pending
+ */
 abstract class SingleThreadedAsyncObjectPoolSpec
     extends Specification
     with DatabaseTestHelper {
@@ -105,12 +105,16 @@ abstract class SingleThreadedAsyncObjectPoolSpec
 
     "exhaust the pool" in {
 
-      withPool({ pool =>
-        1 to 2 foreach { _ =>
-          pool.take
-        }
-        await(pool.take) must throwA[PoolExhaustedException]
-      }, 1, 1)
+      withPool(
+        { pool =>
+          1 to 2 foreach { _ =>
+            pool.take
+          }
+          await(pool.take) must throwA[PoolExhaustedException]
+        },
+        1,
+        1
+      )
 
     }
 

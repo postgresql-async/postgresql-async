@@ -4,10 +4,8 @@ import org.specs2.mutable.Specification
 import io.netty.util.CharsetUtil
 
 /**
-  * User: mauricio
-  * Date: 5/9/13
-  * Time: 5:43 PM
-  */
+ * User: mauricio Date: 5/9/13 Time: 5:43 PM
+ */
 class PasswordHelperSpec extends Specification {
 
   val salt = Array[Byte](-31, 68, 99, 36)
@@ -26,7 +24,12 @@ class PasswordHelperSpec extends Specification {
       val username = "mauricio"
       val password = "example"
 
-      PasswordHelper.encode(username, password, salt, CharsetUtil.UTF_8) === result
+      PasswordHelper.encode(
+        username,
+        password,
+        salt,
+        CharsetUtil.UTF_8
+      ) === result
 
     }
 

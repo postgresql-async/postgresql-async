@@ -40,9 +40,10 @@ class QuerySpec extends Specification with ConnectionHelper {
 
     "raise an exception upon a bad statement" in {
       withConnection { connection =>
-        executeQuery(connection, "this is not SQL") must throwA[MySQLException].like {
-          case e =>
-            e.asInstanceOf[MySQLException].errorMessage.sqlState === "#42000"
+        executeQuery(connection, "this is not SQL") must throwA[
+          MySQLException
+        ].like { case e =>
+          e.asInstanceOf[MySQLException].errorMessage.sqlState === "#42000"
         }
       }
     }

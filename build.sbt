@@ -130,5 +130,3 @@ lazy val publishSettings = Seq(
 (Compile / compile) := {
   (Compile / compile).dependsOn(Compile / scalafmtSbt).value
 }
-
-Global / useGpg := false

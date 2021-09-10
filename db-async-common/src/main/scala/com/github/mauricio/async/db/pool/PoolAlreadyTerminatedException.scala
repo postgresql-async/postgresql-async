@@ -17,9 +17,7 @@
 package com.github.mauricio.async.db.pool
 
 /**
-  *
-  * Thrown when the pool has already been closed.
-  *
-  */
+ * Thrown when the pool has already been closed.
+ */
 class PoolAlreadyTerminatedException
     extends IllegalStateException("This pool has already been terminated")

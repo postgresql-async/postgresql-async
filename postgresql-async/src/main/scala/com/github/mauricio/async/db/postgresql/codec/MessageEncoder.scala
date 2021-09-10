@@ -60,7 +60,7 @@ class MessageEncoder(charset: Charset, encoderRegistry: ColumnEncoderRegistry)
           case ServerMessage.Parse           => this.openEncoder
           case ServerMessage.Query           => this.queryEncoder
           case ServerMessage.PasswordMessage => this.credentialEncoder
-          case _                             => throw new EncoderNotAvailableException(message)
+          case _ => throw new EncoderNotAvailableException(message)
         }
 
         encoder.encode(message)

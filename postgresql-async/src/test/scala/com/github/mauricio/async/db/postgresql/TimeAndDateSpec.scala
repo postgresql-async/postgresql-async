@@ -294,7 +294,8 @@ class TimeAndDateSpec extends Specification with DatabaseTestHelper {
           "CREATE TEMP TABLE intervals (duration interval NOT NULL)"
         )
 
-        val p = new Period(1, 2, 0, 4, 5, 6, 7, 8) /* postgres normalizes weeks */
+        val p =
+          new Period(1, 2, 0, 4, 5, 6, 7, 8) /* postgres normalizes weeks */
         executePreparedStatement(
           handler,
           "INSERT INTO intervals (duration) VALUES (?)",

@@ -23,8 +23,8 @@ import scala.concurrent.duration._
 import scala.concurrent.{Future, Promise}
 
 /**
-  * Tests for TimeoutScheduler
-  */
+ * Tests for TimeoutScheduler
+ */
 class TimeoutSchedulerSpec extends SpecificationWithJUnit {
 
   val TIMEOUT_DID_NOT_PASS = "timeout did not pass"

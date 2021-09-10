@@ -28,7 +28,13 @@ class IntervalSpec extends Specification {
     def both(s: String): String = encode(decode(s))
 
     "parse and encode example intervals" in {
-      Seq("1-2", "1 year 2 mons", "@ 1 year 2 mons", "@ 1 year 2 mons", "P1Y2M") forall {
+      Seq(
+        "1-2",
+        "1 year 2 mons",
+        "@ 1 year 2 mons",
+        "@ 1 year 2 mons",
+        "P1Y2M"
+      ) forall {
         both(_) === "P1Y2M"
       }
       Seq(

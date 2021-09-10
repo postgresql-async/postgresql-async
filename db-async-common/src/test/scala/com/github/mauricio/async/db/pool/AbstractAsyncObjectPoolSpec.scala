@@ -14,11 +14,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 
 /**
-  * This spec is designed abstract to allow testing of any implementation of AsyncObjectPool, against the common
-  * requirements the interface expects.
-  *
-  * @tparam T the AsyncObjectPool being tested.
-  */
+ * This spec is designed abstract to allow testing of any implementation of
+ * AsyncObjectPool, against the common requirements the interface expects.
+ *
+ * @tparam T
+ *   the AsyncObjectPool being tested.
+ */
 abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](
   implicit tag: TypeTag[T]
 ) extends Specification
@@ -87,7 +88,9 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](
         there was after(3.seconds).no(factory).destroy(any[Widget])
       }
 
-      reset(factory) // Considered bad form, but necessary as we depend on previous state in these tests
+      reset(
+        factory
+      ) // Considered bad form, but necessary as we depend on previous state in these tests
       "takes maxObjects back" in {
         val returns = Await.result(
           Future.sequence(for (widget <- taken) yield p.giveBack(widget)),

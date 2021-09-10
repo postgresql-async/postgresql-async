@@ -236,7 +236,9 @@ class URLParserSpec extends Specification {
     }
 
     "pull the username and password from URI credentials" in {
-      parse("jdbc:postgresql://user:password@localhost:425/dbname") mustEqual DEFAULT
+      parse(
+        "jdbc:postgresql://user:password@localhost:425/dbname"
+      ) mustEqual DEFAULT
         .copy(
           username = "user",
           password = Some("password"),

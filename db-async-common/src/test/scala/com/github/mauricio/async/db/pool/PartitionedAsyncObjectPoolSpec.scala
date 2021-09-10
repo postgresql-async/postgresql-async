@@ -13,8 +13,9 @@ import com.github.mauricio.async.db.util.ExecutorServiceUtils
 import scala.concurrent.ExecutionContext
 import java.util.concurrent.Executors
 
-/** This pool is buggy and error prone, currently test is not stable, skip test
-  */
+/**
+ * This pool is buggy and error prone, currently test is not stable, skip test
+ */
 abstract class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
   isolated
   sequential

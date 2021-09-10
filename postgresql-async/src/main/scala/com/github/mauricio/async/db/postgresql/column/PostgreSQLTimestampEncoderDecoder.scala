@@ -101,7 +101,7 @@ object PostgreSQLTimestampEncoderDecoder extends ColumnEncoderDecoder {
       case t: Calendar         => this.formatter.print(new DateTime(t))
       case t: LocalDateTime    => this.formatter.print(t)
       case t: ReadableDateTime => this.formatter.print(t)
-      case _                   => throw new DateEncoderNotAvailableException(value)
+      case _ => throw new DateEncoderNotAvailableException(value)
     }
   }
 

@@ -97,7 +97,7 @@ class PostgreSQLConnection(
   private var currentQuery: Option[ResultSetBuilder[PostgreSQLColumnData]] =
     None
   private var currentPreparedStatement: Option[PreparedStatementHolder] = None
-  private var version                                                   = Version(0, 0, 0)
+  private var version = Version(0, 0, 0)
   private var notifyListeners =
     new CopyOnWriteArrayList[NotificationResponse => Unit]()
 

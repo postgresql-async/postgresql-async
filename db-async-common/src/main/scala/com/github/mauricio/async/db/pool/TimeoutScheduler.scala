@@ -11,26 +11,24 @@ trait TimeoutScheduler {
   private var isTimeoutedBool = new AtomicBoolean(false)
 
   /**
-    *
-    * The event loop group to be used for scheduling.
-    *
-    * @return
-    */
+   * The event loop group to be used for scheduling.
+   *
+   * @return
+   */
   def eventLoopGroup: EventLoopGroup
 
   /**
-    * Implementors should decide here what they want to do when a timeout occur
-    */
+   * Implementors should decide here what they want to do when a timeout occur
+   */
   def onTimeout
     : Unit // implementors should decide here what they want to do when a timeout occur
 
   /**
-    *
-    * We need this property as isClosed takes time to complete and
-    * we don't want the connection to be used again.
-    *
-    * @return
-    */
+   * We need this property as isClosed takes time to complete and we don't want
+   * the connection to be used again.
+   *
+   * @return
+   */
   def isTimeouted: Boolean =
     isTimeoutedBool.get
 
@@ -40,11 +38,13 @@ trait TimeoutScheduler {
     durationOption.map { duration =>
       val scheduledFuture = schedule(
         {
-          if (promise.tryFailure(
-                new TimeoutException(
-                  s"Operation is timeouted after it took too long to return (${duration})"
-                )
-              )) {
+          if (
+            promise.tryFailure(
+              new TimeoutException(
+                s"Operation is timeouted after it took too long to return (${duration})"
+              )
+            )
+          ) {
             isTimeoutedBool.set(true)
             onTimeout
           }
@@ -58,7 +58,11 @@ trait TimeoutScheduler {
   }
 
   def schedule(block: => Unit, duration: Duration): ScheduledFuture[_] =
-    eventLoopGroup.schedule(new Runnable {
-      override def run(): Unit = block
-    }, duration.toMillis, TimeUnit.MILLISECONDS)
+    eventLoopGroup.schedule(
+      new Runnable {
+        override def run(): Unit = block
+      },
+      duration.toMillis,
+      TimeUnit.MILLISECONDS
+    )
 }

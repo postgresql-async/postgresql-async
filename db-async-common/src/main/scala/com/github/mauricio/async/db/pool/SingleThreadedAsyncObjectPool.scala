@@ -32,17 +32,19 @@ object SingleThreadedAsyncObjectPool {
 }
 
 /**
-  *
-  * Implements an [[com.github.mauricio.async.db.pool.AsyncObjectPool]] using a single thread from a
-  * fixed executor service as an event loop to cause all calls to be sequential.
-  *
-  * Once you are done with this object remember to call it's close method to clean up the thread pool and
-  * it's objects as this might prevent your application from ending.
-  *
-  * @param factory
-  * @param configuration
-  * @tparam T type of the object this pool holds
-  */
+ * Implements an [[com.github.mauricio.async.db.pool.AsyncObjectPool]] using a
+ * single thread from a fixed executor service as an event loop to cause all
+ * calls to be sequential.
+ *
+ * Once you are done with this object remember to call it's close method to
+ * clean up the thread pool and it's objects as this might prevent your
+ * application from ending.
+ *
+ * @param factory
+ * @param configuration
+ * @tparam T
+ *   type of the object this pool holds
+ */
 class SingleThreadedAsyncObjectPool[T](
   factory: ObjectFactory[T],
   configuration: PoolConfiguration
@@ -56,22 +58,26 @@ class SingleThreadedAsyncObjectPool[T](
   private val waitQueue = new Queue[Promise[T]]()
   private val timer =
     new Timer("async-object-pool-timer-" + Counter.incrementAndGet(), true)
-  timer.scheduleAtFixedRate(new TimerTask {
-    def run(): Unit = {
-      mainPool.action {
-        testObjects
+  timer.scheduleAtFixedRate(
+    new TimerTask {
+      def run(): Unit = {
+        mainPool.action {
+          testObjects
+        }
       }
-    }
-  }, configuration.validationInterval, configuration.validationInterval)
+    },
+    configuration.validationInterval,
+    configuration.validationInterval
+  )
 
   private var closed = false
 
   /**
-    *
-    * Asks for an object from the pool, this object should be returned to the pool when not in use anymore.
-    *
-    * @return
-    */
+   * Asks for an object from the pool, this object should be returned to the
+   * pool when not in use anymore.
+   *
+   * @return
+   */
   def take: Future[T] = {
 
     if (this.closed) {
@@ -84,13 +90,13 @@ class SingleThreadedAsyncObjectPool[T](
   }
 
   /**
-    *
-    * Returns an object to the pool. The object is validated before being added to the collection
-    * of available objects to make sure we have a usable object. If the object isn't valid it's discarded.
-    *
-    * @param item
-    * @return
-    */
+   * Returns an object to the pool. The object is validated before being added
+   * to the collection of available objects to make sure we have a usable
+   * object. If the object isn't valid it's discarded.
+   *
+   * @param item
+   * @return
+   */
   def giveBack(item: T): Future[AsyncObjectPool[T]] = {
     val promise = Promise[AsyncObjectPool[T]]()
     this.mainPool.action {
@@ -170,12 +176,11 @@ class SingleThreadedAsyncObjectPool[T](
   def isClosed: Boolean = this.closed
 
   /**
-    *
-    * Adds back an object that was in use to the list of poolable objects.
-    *
-    * @param item
-    * @param promise
-    */
+   * Adds back an object that was in use to the list of poolable objects.
+   *
+   * @param item
+   * @param promise
+   */
   private def addBack(item: T, promise: Promise[AsyncObjectPool[T]]): Unit = {
     this.poolables ::= new PoolableHolder[T](item)
 
@@ -187,12 +192,12 @@ class SingleThreadedAsyncObjectPool[T](
   }
 
   /**
-    *
-    * Enqueues a promise to be fulfilled in the future when objects are sent back to the pool. If
-    * we have already reached the limit of enqueued objects, fail the promise.
-    *
-    * @param promise
-    */
+   * Enqueues a promise to be fulfilled in the future when objects are sent back
+   * to the pool. If we have already reached the limit of enqueued objects, fail
+   * the promise.
+   *
+   * @param promise
+   */
   private def enqueuePromise(promise: Promise[T]): Unit = {
     if (this.waitQueue.size >= configuration.maxQueueSize) {
       val exception = new PoolExhaustedException(
@@ -216,12 +221,12 @@ class SingleThreadedAsyncObjectPool[T](
   }
 
   /**
-    *
-    * Checks if there is a poolable object available and returns it to the promise.
-    * If there are no objects available, create a new one using the factory and return it.
-    *
-    * @param promise
-    */
+   * Checks if there is a poolable object available and returns it to the
+   * promise. If there are no objects available, create a new one using the
+   * factory and return it.
+   *
+   * @param promise
+   */
   private def createOrReturnItem(promise: Promise[T]): Unit = {
     if (this.poolables.isEmpty) {
       try {
@@ -245,12 +250,10 @@ class SingleThreadedAsyncObjectPool[T](
   }
 
   /**
-    *
-    * Validates pooled objects not in use to make sure they are all usable, great if
-    * you're holding onto network connections since you can "ping" the destination
-    * to keep the connection alive.
-    *
-    */
+   * Validates pooled objects not in use to make sure they are all usable, great
+   * if you're holding onto network connections since you can "ping" the
+   * destination to keep the connection alive.
+   */
   private def testObjects: Unit = {
     val removals = new ArrayBuffer[PoolableHolder[T]]()
     this.poolables.foreach { poolable =>
