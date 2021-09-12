@@ -1,0 +1,714 @@
+[0m2021.09.10 22:47:33 INFO  Started: Metals version 0.10.6 in workspace '/home/neo/others/postgresql-async' for client Visual Studio Code 1.60.0.[0m
+[0m2021.09.10 22:47:35 INFO  time: initialize in 2.01s[0m
+[0m2021.09.10 22:47:36 WARN  Build server is not auto-connectable.[0m
+[0m2021.09.10 22:47:37 WARN  no build target for: /home/neo/others/postgresql-async/build.sbt[0m
+[0m2021.09.10 22:47:41 INFO  running '/usr/lib/jvm/java-11-openjdk-amd64/bin/java -Djline.terminal=jline.UnsupportedTerminal -Dsbt.log.noformat=true -Dfile.encoding=UTF-8 -jar /tmp/metals14994135614676645314/sbt-launch.jar -Dbloop.export-jar-classifiers=sources bloopInstall'[0m
+[0m2021.09.10 22:47:42 INFO  no build target: using presentation compiler with only scala-library: 2.12.14[0m
+[0m2021.09.10 22:47:42 WARN  no build target for: /home/neo/others/postgresql-async/project/metals.sbt[0m
+[0m2021.09.10 22:47:42 WARN  no build target for: /home/neo/others/postgresql-async/project/project/metals.sbt[0m
+[0m2021.09.10 22:47:41 INFO  skipping build import with status 'Started'[0m
+[0m2021.09.10 22:47:44 INFO  [info] welcome to sbt 1.5.5 (Ubuntu Java 11.0.11)[0m
+[0m2021.09.10 22:47:47 INFO  time: code lens generation in 8.56s[0m
+[0m2021.09.10 22:47:47 INFO  time: code lens generation in 5.42s[0m
+[0m2021.09.10 22:47:47 INFO  time: code lens generation in 8.08s[0m
+[0m2021.09.10 22:47:47 INFO  [info] loading global plugins from /home/neo/.sbt/1.0/plugins[0m
+[0m2021.09.10 22:47:53 INFO  [info] loading settings for project postgresql-async-build-build-build from metals.sbt ...[0m
+[0m2021.09.10 22:47:53 INFO  [info] loading project definition from /home/neo/others/postgresql-async/project/project/project[0m
+[0m2021.09.10 22:47:58 INFO  [info] loading settings for project postgresql-async-build-build from metals.sbt ...[0m
+[0m2021.09.10 22:47:58 INFO  [info] loading project definition from /home/neo/others/postgresql-async/project/project[0m
+[0m2021.09.10 22:48:01 INFO  [success] Generated .bloop/postgresql-async-build-build.json[0m
+[0m2021.09.10 22:48:01 INFO  [success] Total time: 3 s, completed Sep 10, 2021, 10:48:01 PM[0m
+[0m2021.09.10 22:48:02 INFO  [info] loading settings for project postgresql-async-build from metals.sbt,plugins.sbt ...[0m
+[0m2021.09.10 22:48:02 INFO  [info] loading project definition from /home/neo/others/postgresql-async/project[0m
+[0m2021.09.10 22:48:05 INFO  [success] Generated .bloop/postgresql-async-build.json[0m
+[0m2021.09.10 22:48:05 INFO  [success] Total time: 3 s, completed Sep 10, 2021, 10:48:05 PM[0m
+[0m2021.09.10 22:48:08 ERROR /home/neo/others/postgresql-async/version.sbt:1: warning: method in in trait ScopingSetting is deprecated (since 1.5.0): `in` is deprecated; migrate to slash syntax - https://www.scala-sbt.org/1.x/docs/Migrating-from-sbt-013x.html#slash[0m
+[0m2021.09.10 22:48:08 ERROR version in ThisBuild := "0.3.1-SNAPSHOT"[0m
+[0m2021.09.10 22:48:08 ERROR         ^[0m
+[0m2021.09.10 22:48:08 INFO  [info] loading settings for project root from build.sbt,version.sbt ...[0m
+[0m2021.09.10 22:48:10 INFO  [info] set current project to db-async-base (in build file:/home/neo/others/postgresql-async/)[0m
+[0m2021.09.10 22:48:10 INFO  [warn] there are 4 keys that are not used by any other settings/tasks:[0m
+[0m2021.09.10 22:48:10 INFO  [warn]  [0m
+[0m2021.09.10 22:48:10 INFO  [warn] * common / doc / scalacOptions[0m
+[0m2021.09.10 22:48:10 INFO  [warn]   +- /home/neo/others/postgresql-async/build.sbt:79[0m
+[0m2021.09.10 22:48:10 INFO  [warn] * mysql / doc / scalacOptions[0m
+[0m2021.09.10 22:48:10 INFO  [warn]   +- /home/neo/others/postgresql-async/build.sbt:79[0m
+[0m2021.09.10 22:48:10 INFO  [warn] * postgresql / doc / scalacOptions[0m
+[0m2021.09.10 22:48:10 INFO  [warn]   +- /home/neo/others/postgresql-async/build.sbt:79[0m
+[0m2021.09.10 22:48:10 INFO  [warn] * root / doc / scalacOptions[0m
+[0m2021.09.10 22:48:10 INFO  [warn]   +- /home/neo/others/postgresql-async/build.sbt:79[0m
+[0m2021.09.10 22:48:10 INFO  [warn]  [0m
+[0m2021.09.10 22:48:10 INFO  [warn] note: a setting might still be used by a command; to exclude a key from this `lintUnused` check[0m
+[0m2021.09.10 22:48:10 INFO  [warn] either append it to `Global / excludeLintKeys` or call .withRank(KeyRanks.Invisible) on the key[0m
+[0m2021.09.10 22:48:10 INFO  [info] Formatting 8 Scala sources...[0m
+[0m2021.09.10 22:48:10 INFO  [info] Formatting 19 Scala sources...[0m
+[0m2021.09.10 22:48:10 INFO  [info] Formatting 28 Scala sources...[0m
+[0m2021.09.10 22:48:12 INFO  [success] Generated .bloop/root-test.json[0m
+[0m2021.09.10 22:48:12 INFO  [success] Generated .bloop/root.json[0m
+[0m2021.09.10 22:48:12 INFO  [success] Generated .bloop/common-test.json[0m
+[0m2021.09.10 22:48:12 INFO  [success] Generated .bloop/mysql-test.json[0m
+[0m2021.09.10 22:48:12 INFO  [success] Generated .bloop/postgresql-test.json[0m
+[0m2021.09.10 22:48:14 INFO  [info] Formatting 71 Scala sources...[0m
+[0m2021.09.10 22:48:15 INFO  [info] Formatting 102 Scala sources...[0m
+[0m2021.09.10 22:48:15 INFO  [info] Formatting 87 Scala sources...[0m
+[0m2021.09.10 22:48:15 INFO  [success] Generated .bloop/common.json[0m
+[0m2021.09.10 22:48:17 INFO  [success] Generated .bloop/mysql.json[0m
+[0m2021.09.10 22:48:17 INFO  [success] Generated .bloop/postgresql.json[0m
+[0m2021.09.10 22:48:17 INFO  [success] Total time: 8 s, completed Sep 10, 2021, 10:48:18 PM[0m
+[0m2021.09.10 22:48:18 INFO  time: ran 'sbt bloopInstall' in 36s[0m
+[0m2021.09.10 22:48:18 INFO  Attempting to connect to the build server...[0m
+Starting the bsp launcher for bloop...
+Opening a bsp server connection with 'bsp --protocol local --socket /tmp/bsp-launcher16285369072792569668/bsp.socket'...
+Waiting for the bsp connection to come up...
+[0m[32m[D][0m Loading 8 projects from '/home/neo/others/postgresql-async/.bloop'...
+[0m[32m[D][0m Loading project from '/home/neo/others/postgresql-async/.bloop/postgresql.json'
+[0m[32m[D][0m Loading project from '/home/neo/others/postgresql-async/.bloop/mysql.json'
+[0m[32m[D][0m Loading project from '/home/neo/others/postgresql-async/.bloop/common-test.json'
+[0m[32m[D][0m Loading project from '/home/neo/others/postgresql-async/.bloop/root-test.json'
+[0m[32m[D][0m Loading project from '/home/neo/others/postgresql-async/.bloop/common.json'
+[0m[32m[D][0m Loading project from '/home/neo/others/postgresql-async/.bloop/postgresql-test.json'
+[0m[32m[D][0m Loading project from '/home/neo/others/postgresql-async/.bloop/root.json'
+[0m[32m[D][0m Loading project from '/home/neo/others/postgresql-async/.bloop/mysql-test.json'
+[0m[32m[D][0m Missing analysis file for project 'root'
+[0m[32m[D][0m Missing analysis file for project 'mysql-test'
+[0m[32m[D][0m Missing analysis file for project 'postgresql-test'
+[0m[32m[D][0m Missing analysis file for project 'common'
+[0m[32m[D][0m Missing analysis file for project 'root-test'
+[0m[32m[D][0m Missing analysis file for project 'mysql'
+[0m[32m[D][0m Missing analysis file for project 'common-test'
+[0m[32m[D][0m Missing analysis file for project 'postgresql'
+[0m[32m[D][0m Waiting for a connection at local:///tmp/bsp-launcher16285369072792569668/bsp.socket...
+The server is listening for incoming connections at local:///tmp/bsp-launcher16285369072792569668/bsp.socket...
+Starting thread that pumps stdin and redirects it to the bsp server...
+Starting thread that pumps server stdout and redirects it to the client stdout...
+[0m2021.09.10 22:48:18 INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /home/neo/.cache/metals/bsp.trace.json[0m
+[0m2021.09.10 22:48:18 INFO  Attempting to connect to the build server...[0m
+[0m2021.09.10 22:48:18Starting the bsp launcher for bloop... INFO  Attempting to connect to the build server...[0m
+
+Opening a bsp server connection with 'bsp --protocol local --socket /tmp/bsp-launcher7797284750676297466/bsp.socket'...
+Waiting for the bsp connection to come up...
+Starting the bsp launcher for bloop...
+Opening a bsp server connection with 'bsp --protocol local --socket /tmp/bsp-launcher4052109227625991614/bsp.socket'...
+Waiting for the bsp connection to come up...
+[0m[32m[D][0m Loading workspace settings from bloop.settings.json
+[0m[32m[D][0m Waiting for a connection at local:///tmp/bsp-launcher7797284750676297466/bsp.socket...
+The server is listening for incoming connections at local:///tmp/bsp-launcher7797284750676297466/bsp.socket...
+[0m[32m[D][0m Loading workspace settings from bloop.settings.json
+[0m[32m[D][0m Waiting for a connection at local:///tmp/bsp-launcher4052109227625991614/bsp.socket...
+The server is listening for incoming connections at local:///tmp/bsp-launcher4052109227625991614/bsp.socket...
+Starting thread that pumps stdin and redirects it to the bsp server...
+Starting thread that pumps stdin and redirects it to the bsp server...
+Starting thread that pumps server stdout and redirects it to the client stdout...
+Starting thread that pumps server stdout and redirects it to the client stdout...
+[0m2021.09.10 22:48:18 INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /home/neo/.cache/metals/bsp.trace.json[0m
+[0m2021.09.10 22:48:18 INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /home/neo/.cache/metals/bsp.trace.json[0m
+[0m2021.09.10 22:48:22 INFO  time: Connected to build server in 4.01s[0m
+[0m2021.09.10 22:48:22 INFO  Connected to Build server: Bloop v1.4.8-114-e47368ed[0m
+[0m2021.09.10 22:48:22 INFO  time: Imported build in 0.13s[0m
+[0m2021.09.10 22:48:28 WARN  Could not find java sources in None. Java symbols will not be available.[0m
+[0m2021.09.10 22:48:31 INFO  time: indexed workspace in 8.57s[0m
+[0m2021.09.10 22:48:32 INFO  no build target: using presentation compiler with only scala-library: 2.13.6[0m
+Sep 10, 2021 10:48:37 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 10
+[0m2021.09.10 22:48:38 INFO  time: code lens generation in 4.54s[0m
+[0m2021.09.10 22:49:02 INFO  compiling common (70 scala sources and 1 java source)[0m
+Sep 10, 2021 10:49:14 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 15
+[0m2021.09.10 22:49:17 INFO  time: compiled common in 14s[0m
+Sep 10, 2021 10:49:25 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 25
+Sep 10, 2021 10:50:30 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 37
+Sep 10, 2021 10:50:45 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 43
+Sep 10, 2021 10:51:00 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 49
+Sep 10, 2021 10:51:05 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 54
+Sep 10, 2021 10:51:19 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 62
+Sep 10, 2021 10:51:51 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 73
+Sep 10, 2021 10:52:14 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 79
+Sep 10, 2021 10:52:34 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 85
+[0m2021.09.10 22:52:48 INFO  compiling postgresql (87 scala sources)[0m
+[0m2021.09.10 22:52:58 INFO  time: compiled postgresql in 9.72s[0m
+Sep 10, 2021 10:54:15 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 99
+Sep 10, 2021 10:57:20 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 106
+[0m2021.09.10 22:58:40 INFO  skipping build import with status 'Dismissed'[0m
+[0m2021.09.10 22:59:56 INFO  compiling mysql (102 scala sources)[0m
+[0m2021.09.10 23:00:03 INFO  time: compiled mysql in 6.83s[0m
+[0m2021.09.10 23:02:00 INFO  compiling mysql-test (19 scala sources)[0m
+[0m2021.09.10 23:02:07 INFO  time: compiled mysql-test in 6.91s[0m
+[0m2021.09.10 23:02:07 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:02:08 INFO  time: compiled common in 0.44s[0m
+[0m2021.09.10 23:02:44 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:02:44 INFO  time: compiled common in 0.37s[0m
+Sep 10, 2021 11:05:10 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 186
+[0m2021.09.10 23:05:19 INFO  compiling common (7 scala sources)[0m
+Sep 10, 2021 11:05:24 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 190
+Sep 10, 2021 11:05:24 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 191
+[0m2021.09.10 23:05:24 INFO  time: compiled common in 3.69s[0m
+[0m2021.09.10 23:05:24 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:05:28 INFO  time: compiled common in 4.11s[0m
+[0m2021.09.10 23:07:09 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:07:09 INFO  time: compiled common in 0.26s[0m
+[0m2021.09.10 23:07:09 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:07:09 INFO  time: compiled common in 0.26s[0m
+[0m2021.09.10 23:07:09 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:07:09 INFO  time: compiled common in 0.22s[0m
+Sep 10, 2021 11:07:10 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 225
+[0m2021.09.10 23:07:16 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:07:16 INFO  time: compiled common in 0.3s[0m
+[0m2021.09.10 23:07:36 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:07:36 INFO  time: compiled common in 0.24s[0m
+[0m2021.09.10 23:08:23 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:08:23 INFO  time: compiled common in 0.27s[0m
+Sep 10, 2021 11:08:46 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 362
+Sep 10, 2021 11:08:48 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 369
+Sep 10, 2021 11:08:48 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 370
+Sep 10, 2021 11:12:26 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 482
+Sep 10, 2021 11:12:26 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 484
+Sep 10, 2021 11:12:26 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 486
+Sep 10, 2021 11:12:26 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 490
+Sep 10, 2021 11:12:26 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 489
+[0m2021.09.10 23:12:41 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:12:41 INFO  time: compiled common in 0.19s[0m
+[0m2021.09.10 23:15:04 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:15:07 INFO  time: compiled common in 2.85s[0m
+[0m2021.09.10 23:15:36 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:15:36 INFO  time: compiled common in 0.27s[0m
+[0m2021.09.10 23:16:22 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:16:22 INFO  time: compiled common in 0.3s[0m
+[0m2021.09.10 23:16:27 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:16:27 INFO  time: compiled common in 0.25s[0m
+[0m2021.09.10 23:17:00 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:17:00 INFO  time: compiled common in 0.35s[0m
+[0m2021.09.10 23:17:09 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:17:09 INFO  time: compiled common in 0.26s[0m
+[0m2021.09.10 23:17:21 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:17:21 INFO  time: compiled common in 0.24s[0m
+[0m2021.09.10 23:17:27 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:17:27 INFO  time: compiled common in 0.23s[0m
+[0m2021.09.10 23:17:42 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:17:42 INFO  time: compiled common in 0.25s[0m
+[0m2021.09.10 23:18:09 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:18:09 INFO  time: compiled common in 0.23s[0m
+[0m2021.09.10 23:18:12 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:18:12 INFO  time: compiled common in 0.23s[0m
+[0m2021.09.10 23:18:12 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:18:12 INFO  time: compiled common in 0.16s[0m
+[0m2021.09.10 23:21:37 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:21:37 INFO  time: compiled common in 0.21s[0m
+[0m2021.09.10 23:21:50 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:21:50 INFO  time: compiled common in 0.21s[0m
+Sep 10, 2021 11:22:10 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 886
+[0m2021.09.10 23:22:16 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:22:16 INFO  time: compiled common in 0.32s[0m
+[0m2021.09.10 23:23:13 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:23:13 INFO  time: compiled common in 0.26s[0m
+[0m2021.09.10 23:25:02 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:25:02 INFO  time: compiled common in 0.24s[0m
+[0m2021.09.10 23:25:37 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:25:37 INFO  time: compiled common in 0.24s[0m
+[0m2021.09.10 23:28:23 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:28:23 INFO  time: compiled common in 0.27s[0m
+[0m2021.09.10 23:29:13 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:29:13 INFO  time: compiled common in 0.23s[0m
+Sep 10, 2021 11:29:29 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 1296
+[0m2021.09.10 23:29:29 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:29:29 INFO  time: compiled common in 0.23s[0m
+[0m2021.09.10 23:29:32 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:29:32 INFO  time: compiled common in 0.13s[0m
+Sep 10, 2021 11:29:36 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 1314
+Sep 10, 2021 11:29:39 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 1320
+[0m2021.09.10 23:30:01 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:30:01 INFO  time: compiled common in 0.23s[0m
+[0m2021.09.10 23:30:31 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:30:31 INFO  time: compiled common in 0.21s[0m
+[0m2021.09.10 23:31:02 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:31:04 INFO  time: compiled common in 1.25s[0m
+[0m2021.09.10 23:31:12 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:31:12 INFO  time: compiled common in 0.15s[0m
+Sep 10, 2021 11:31:17 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 1521
+Sep 10, 2021 11:31:17 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 1522
+Sep 10, 2021 11:31:21 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 1531
+Sep 10, 2021 11:31:26 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 1540
+[0m2021.09.10 23:31:35 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:31:35 INFO  time: compiled common in 0.24s[0m
+[0m2021.09.10 23:32:02 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:32:02 INFO  time: compiled common in 0.15s[0m
+[0m2021.09.10 23:36:23 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:36:23 INFO  time: compiled common in 0.23s[0m
+[0m2021.09.10 23:36:36 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:36:36 INFO  time: compiled common in 0.17s[0m
+[0m2021.09.10 23:36:49 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:36:49 INFO  time: compiled common in 0.27s[0m
+[0m2021.09.10 23:37:09 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:37:09 INFO  time: compiled common in 0.28s[0m
+[0m2021.09.10 23:37:35 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:37:35 INFO  time: compiled common in 0.13s[0m
+[0m2021.09.10 23:38:18 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:38:18 INFO  time: compiled common in 0.3s[0m
+[0m2021.09.10 23:38:18 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:38:18 INFO  time: compiled common in 0.15s[0m
+[0m2021.09.10 23:38:27 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:38:27 INFO  time: compiled common in 0.29s[0m
+[0m2021.09.10 23:39:11 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:39:11 INFO  time: compiled common in 0.24s[0m
+[0m2021.09.10 23:39:36 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:39:36 INFO  time: compiled common in 0.1s[0m
+[0m2021.09.10 23:39:36 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:39:36 INFO  time: compiled common in 0.18s[0m
+[0m2021.09.10 23:40:06 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:40:06 INFO  time: compiled common in 0.32s[0m
+[0m2021.09.10 23:40:40 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:40:40 INFO  time: compiled common in 0.26s[0m
+[0m2021.09.10 23:41:18 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:41:18 INFO  time: compiled common in 0.23s[0m
+[0m2021.09.10 23:41:21 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:41:21 INFO  time: compiled common in 0.24s[0m
+[0m2021.09.10 23:41:34 INFO  running '/usr/lib/jvm/java-11-openjdk-amd64/bin/java -Djline.terminal=jline.UnsupportedTerminal -Dsbt.log.noformat=true -Dfile.encoding=UTF-8 -jar /tmp/metals4679702782607298104/sbt-launch.jar -Dbloop.export-jar-classifiers=sources bloopInstall'[0m
+[0m2021.09.10 23:41:36 INFO  [info] welcome to sbt 1.5.5 (Ubuntu Java 11.0.11)[0m
+[0m2021.09.10 23:41:37 INFO  [info] loading global plugins from /home/neo/.sbt/1.0/plugins[0m
+[0m2021.09.10 23:41:38 INFO  [info] loading settings for project postgresql-async-build-build-build from metals.sbt ...[0m
+[0m2021.09.10 23:41:38 INFO  [info] loading project definition from /home/neo/others/postgresql-async/project/project/project[0m
+[0m2021.09.10 23:41:38 INFO  [info] loading settings for project postgresql-async-build-build from metals.sbt ...[0m
+[0m2021.09.10 23:41:38 INFO  [info] loading project definition from /home/neo/others/postgresql-async/project/project[0m
+[0m2021.09.10 23:41:41 INFO  [success] Generated .bloop/postgresql-async-build-build.json[0m
+[0m2021.09.10 23:41:41 INFO  [success] Total time: 2 s, completed Sep 10, 2021, 11:41:41 PM[0m
+[0m2021.09.10 23:41:43 INFO  [info] loading settings for project postgresql-async-build from metals.sbt,plugins.sbt ...[0m
+[0m2021.09.10 23:41:43 INFO  [info] loading project definition from /home/neo/others/postgresql-async/project[0m
+[0m2021.09.10 23:41:48 INFO  [success] Generated .bloop/postgresql-async-build.json[0m
+[0m2021.09.10 23:41:50 INFO  [success] Total time: 7 s, completed Sep 10, 2021, 11:41:50 PM[0m
+[0m2021.09.10 23:41:53 INFO  [info] loading settings for project root from build.sbt,version.sbt ...[0m
+[0m2021.09.10 23:41:54 INFO  [info] set current project to db-async-base (in build file:/home/neo/others/postgresql-async/)[0m
+[0m2021.09.10 23:41:54 INFO  [warn] there are 4 keys that are not used by any other settings/tasks:[0m
+[0m2021.09.10 23:41:54 INFO  [warn]  [0m
+[0m2021.09.10 23:41:54 INFO  [warn] * common / doc / scalacOptions[0m
+[0m2021.09.10 23:41:54 INFO  [warn]   +- /home/neo/others/postgresql-async/build.sbt:78[0m
+[0m2021.09.10 23:41:54 INFO  [warn] * mysql / doc / scalacOptions[0m
+[0m2021.09.10 23:41:54 INFO  [warn]   +- /home/neo/others/postgresql-async/build.sbt:78[0m
+[0m2021.09.10 23:41:54 INFO  [warn] * postgresql / doc / scalacOptions[0m
+[0m2021.09.10 23:41:54 INFO  [warn]   +- /home/neo/others/postgresql-async/build.sbt:78[0m
+[0m2021.09.10 23:41:54 INFO  [warn] * root / doc / scalacOptions[0m
+[0m2021.09.10 23:41:54 INFO  [warn]   +- /home/neo/others/postgresql-async/build.sbt:78[0m
+[0m2021.09.10 23:41:54 INFO  [warn]  [0m
+[0m2021.09.10 23:41:54 INFO  [warn] note: a setting might still be used by a command; to exclude a key from this `lintUnused` check[0m
+[0m2021.09.10 23:41:54 INFO  [warn] either append it to `Global / excludeLintKeys` or call .withRank(KeyRanks.Invisible) on the key[0m
+[0m2021.09.10 23:41:54 INFO  [success] Generated .bloop/root.json[0m
+[0m2021.09.10 23:41:54 INFO  [success] Generated .bloop/root-test.json[0m
+[0m2021.09.10 23:41:56 INFO  [success] Generated .bloop/common.json[0m
+[0m2021.09.10 23:41:56 INFO  [success] Generated .bloop/common-test.json[0m
+[0m2021.09.10 23:41:56 INFO  [success] Generated .bloop/postgresql.json[0m
+[0m2021.09.10 23:41:56 INFO  [success] Generated .bloop/postgresql-test.json[0m
+[0m2021.09.10 23:41:56 INFO  [success] Generated .bloop/mysql.json[0m
+[0m2021.09.10 23:41:56 INFO  [success] Generated .bloop/mysql-test.json[0m
+[0m2021.09.10 23:41:56 INFO  [success] Total time: 2 s, completed Sep 10, 2021, 11:41:57 PM[0m
+[0m2021.09.10 23:41:57 INFO  time: ran 'sbt bloopInstall' in 22s[0m
+[0m2021.09.10 23:41:57 INFO  Disconnecting from Bloop session...[0m
+[0m2021.09.10 23:41:57 INFO  Shut down connection with build server.[0m
+[0m2021.09.10 23:41:57 INFO  Shut down connection with build server.[0m
+[0m2021.09.10 23:41:57 INFO  Shut down connection with build server.[0m
+No more data in the client stdin, exiting...
+No more data in the client stdin, exiting...
+No more data in the client stdin, exiting...
+[0m2021.09.10 23:41:57 INFO  Attempting to connect to the build server...[0m
+Starting the bsp launcher for bloop...
+Opening a bsp server connection with 'bsp --protocol local --socket /tmp/bsp-launcher3557545973159708143/bsp.socket'...
+Waiting for the bsp connection to come up...
+No more data in the server stdin, exiting...
+No more data in the server stdin, exiting...
+[0m[32m[D][0m Loading workspace settings from bloop.settings.json
+[0m[32m[D][0m Loading 6 projects from '/home/neo/others/postgresql-async/.bloop'...
+[0m[32m[D][0m Loading project from '/home/neo/others/postgresql-async/.bloop/postgresql.json'
+[0m[32m[D][0m Loading project from '/home/neo/others/postgresql-async/.bloop/common.json'
+[0m[32m[D][0m Loading project from '/home/neo/others/postgresql-async/.bloop/mysql.json'
+[0m[32m[D][0m Loading project from '/home/neo/others/postgresql-async/.bloop/common-test.json'
+[0m[32m[D][0m Loading project from '/home/neo/others/postgresql-async/.bloop/postgresql-test.json'
+[0m[32m[D][0m Loading project from '/home/neo/others/postgresql-async/.bloop/mysql-test.json'
+[0m[32m[D][0m Configured SemanticDB in projects 'mysql-test', 'common-test', 'common', 'postgresql-test', 'postgresql', 'mysql'
+[0m[32m[D][0m Waiting for a connection at local:///tmp/bsp-launcher3557545973159708143/bsp.socket...
+The server is listening for incoming connections at local:///tmp/bsp-launcher3557545973159708143/bsp.socket...
+Starting thread that pumps stdin and redirects it to the bsp server...
+Starting thread that pumps server stdout and redirects it to the client stdout...
+[0m2021.09.10 23:41:57 INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /home/neo/.cache/metals/bsp.trace.json[0m
+[0m2021.09.10 23:41:57 INFO  Attempting to connect to the build server...[0m
+Starting the bsp launcher for bloop...
+[0mOpening a bsp server connection with 'bsp --protocol local --socket /tmp/bsp-launcher13358183400261566878/bsp.socket'...2021.09.10 23:41:57
+ INFO  Attempting to connect to the build server...[0m
+Starting the bsp launcher for bloop...
+Waiting for the bsp connection to come up...
+Opening a bsp server connection with 'bsp --protocol local --socket /tmp/bsp-launcher10599247409946269926/bsp.socket'...
+Waiting for the bsp connection to come up...
+[0m[32m[D][0m Loading workspace settings from bloop.settings.json
+[0m[32m[D][0m Waiting for a connection at local:///tmp/bsp-launcher13358183400261566878/bsp.socket...
+The server is listening for incoming connections at local:///tmp/bsp-launcher13358183400261566878/bsp.socket...
+Starting thread that pumps stdin and redirects it to the bsp server...
+Starting thread that pumps server stdout and redirects it to the client stdout...
+[0m2021.09.10 23:41:57 INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /home/neo/.cache/metals/bsp.trace.json[0m
+[0m[32m[D][0m Loading workspace settings from bloop.settings.json
+[0m[32m[D][0m Waiting for a connection at local:///tmp/bsp-launcher10599247409946269926/bsp.socket...
+The server is listening for incoming connections at local:///tmp/bsp-launcher10599247409946269926/bsp.socket...
+Starting thread that pumps stdin and redirects it to the bsp server...
+Starting thread that pumps server stdout and redirects it to the client stdout...
+[0m2021.09.10 23:41:57 INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /home/neo/.cache/metals/bsp.trace.json[0m
+[0m2021.09.10 23:41:57 INFO  time: Connected to build server in 0.13s[0m
+[0m2021.09.10 23:41:57 INFO  Connected to Build server: Bloop v1.4.8-114-e47368ed[0m
+Sep 10, 2021 11:42:05 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 2231
+Sep 10, 2021 11:42:05 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 2228
+Sep 10, 2021 11:42:05 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 2233
+Sep 10, 2021 11:42:05 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 2230
+[0m2021.09.10 23:42:06 WARN  Could not find java sources in None. Java symbols will not be available.[0m
+[0m2021.09.10 23:42:06 INFO  time: indexed workspace in 8.39s[0m
+[0m2021.09.10 23:42:07 INFO  Deduplicating compilation of common from bsp client 'Metals 0.10.6' (since 9.873s)[0m
+[0m2021.09.10 23:42:07 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:42:07 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:42:15 INFO  no build target: using presentation compiler with only scala-library: 2.13.6[0m
+[0m2021.09.10 23:42:15 INFO  time: compiled common in 7.95s[0m
+[0m2021.09.10 23:42:45 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:42:45 INFO  time: compiled common in 0.17s[0m
+[0m2021.09.10 23:43:24 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:43:24 INFO  time: compiled common in 0.13s[0m
+Sep 10, 2021 11:44:34 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 2419
+Sep 10, 2021 11:44:37 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 2426
+Sep 10, 2021 11:44:39 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 2432
+Sep 10, 2021 11:44:53 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 2438
+Sep 10, 2021 11:44:57 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 2444
+Sep 10, 2021 11:45:01 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 2452
+[0m2021.09.10 23:45:19 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:45:19 INFO  time: compiled common in 0.31s[0m
+[0m2021.09.10 23:45:23 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:45:23 INFO  time: compiled common in 0.29s[0m
+[0m2021.09.10 23:45:40 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:45:40 INFO  time: compiled common in 0.31s[0m
+[0m2021.09.10 23:46:05 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:46:05 INFO  time: compiled common in 0.3s[0m
+[0m2021.09.10 23:46:09 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:46:09 INFO  time: compiled common in 0.25s[0m
+[0m2021.09.10 23:46:20 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:46:20 INFO  time: compiled common in 0.34s[0m
+[0m2021.09.10 23:47:10 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:47:10 INFO  time: compiled common in 0.33s[0m
+[0m2021.09.10 23:47:20 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:47:20 INFO  time: compiled common in 0.26s[0m
+[0m2021.09.10 23:47:50 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:47:50 INFO  time: compiled common in 0.31s[0m
+[0m2021.09.10 23:48:26 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:48:26 INFO  time: compiled common in 0.27s[0m
+[0m2021.09.10 23:50:02 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:50:02 INFO  time: compiled common in 0.28s[0m
+Sep 10, 2021 11:55:47 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3547
+Sep 10, 2021 11:55:47 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3549
+Sep 10, 2021 11:55:47 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3550
+Sep 10, 2021 11:55:47 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3551
+Sep 10, 2021 11:55:47 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3552
+Sep 10, 2021 11:55:47 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3545
+Sep 10, 2021 11:55:47 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3546
+Sep 10, 2021 11:55:47 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3556
+[0m2021.09.10 23:55:47 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:55:47 INFO  time: compiled common in 0.38s[0m
+[0m2021.09.10 23:55:47 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:55:47 INFO  time: compiled common in 0.21s[0m
+[0m2021.09.10 23:55:59 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:55:59 INFO  time: compiled common in 0.2s[0m
+[0m2021.09.10 23:58:07 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:58:07 INFO  time: compiled common in 0.31s[0m
+[0m2021.09.10 23:58:35 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:58:35 INFO  time: compiled common in 0.25s[0m
+[0m2021.09.10 23:58:58 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:58:58 INFO  time: compiled common in 0.24s[0m
+[0m2021.09.10 23:59:13 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:59:13 INFO  time: compiled common in 0.26s[0m
+[0m2021.09.10 23:59:28 INFO  compiling common (7 scala sources)[0m
+[0m2021.09.10 23:59:31 INFO  time: compiled common in 2.48s[0m
+Sep 10, 2021 11:59:37 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
+[0m2021.09.11 00:00:22 INFO  running '/usr/lib/jvm/java-11-openjdk-amd64/bin/java -Djline.terminal=jline.UnsupportedTerminal -Dsbt.log.noformat=true -Dfile.encoding=UTF-8 -jar /tmp/metals14040339024648297199/sbt-launch.jar -Dbloop.export-jar-classifiers=sources bloopInstall'[0m
+[0m2021.09.11 00:00:23 INFO  running '/usr/lib/jvm/java-11-openjdk-amd64/bin/java -Djline.terminal=jline.UnsupportedTerminal -Dsbt.log.noformat=true -Dfile.encoding=UTF-8 -jar /tmp/metals13832074836823648198/sbt-launch.jar -Dbloop.export-jar-classifiers=sources bloopInstall'[0m
+[0m2021.09.11 00:00:23 INFO  running '/usr/lib/jvm/java-11-openjdk-amd64/bin/java -Djline.terminal=jline.UnsupportedTerminal -Dsbt.log.noformat=true -Dfile.encoding=UTF-8 -jar /tmp/metals15611585495310476296/sbt-launch.jar -Dbloop.export-jar-classifiers=sources bloopInstall'[0m
+[0m2021.09.11 00:00:25 INFO  running '/usr/lib/jvm/java-11-openjdk-amd64/bin/java -Djline.terminal=jline.UnsupportedTerminal -Dsbt.log.noformat=true -Dfile.encoding=UTF-8 -jar /tmp/metals14002742217309836370/sbt-launch.jar -Dbloop.export-jar-classifiers=sources bloopInstall'[0m
+[0m2021.09.11 00:00:37 INFO  user cancelled sbt bloopInstall[0m
+[0m2021.09.11 00:00:38 INFO  user cancelled sbt bloopInstall[0m
+[0m2021.09.11 00:00:40 INFO  user cancelled sbt bloopInstall[0m
+[0m2021.09.11 00:00:44 INFO  time: ran 'sbt bloopInstall' in 20s[0m
+[0m2021.09.11 00:00:49 INFO  time: ran 'sbt bloopInstall' in 23s[0m
+[0m2021.09.11 00:00:53 INFO  time: ran 'sbt bloopInstall' in 29s[0m
+[0m2021.09.11 00:00:54 INFO  compiling mysql (13 scala sources)[0m
+[0m2021.09.11 00:00:54 INFO  time: compiled mysql in 0.32s[0m
+Sep 11, 2021 12:00:57 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3858
+[0m2021.09.11 00:01:12 INFO  [warn] In the last 5 seconds, 15.087 (330.1%) were spent in GC. [Heap: 0.17GB free of 0.19GB, max 3.01GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.[0m
+[0m2021.09.11 00:01:12 INFO  [info] welcome to sbt 1.5.5 (Ubuntu Java 11.0.11)[0m
+Sep 11, 2021 12:01:58 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3883
+Sep 11, 2021 12:01:58 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3884
+Sep 11, 2021 12:01:58 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3888
+Sep 11, 2021 12:01:58 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3889
+Sep 11, 2021 12:01:58 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3893
+Sep 11, 2021 12:01:58 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3895
+Sep 11, 2021 12:01:58 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3897
+Sep 11, 2021 12:01:58 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3901
+Sep 11, 2021 12:01:58 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3896
+Sep 11, 2021 12:01:58 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3902
+Sep 11, 2021 12:01:58 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3898
+Sep 11, 2021 12:01:58 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3899
+Sep 11, 2021 12:01:58 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3904
+Sep 11, 2021 12:01:58 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3907
+Sep 11, 2021 12:01:58 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3908
+Sep 11, 2021 12:01:58 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3914
+Sep 11, 2021 12:01:58 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3916
+Sep 11, 2021 12:01:58 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3917
+Sep 11, 2021 12:01:58 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3918
+Sep 11, 2021 12:01:58 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3920
+[0m2021.09.11 00:02:01 INFO  compiling mysql (13 scala sources)[0m
+[0m2021.09.11 00:02:03 INFO  time: compiled mysql in 2.53s[0m
+[0m2021.09.11 00:03:45 INFO  [warn] In the last 12 seconds, 11.436 (98.7%) were spent in GC. [Heap: 0.56GB free of 0.57GB, max 3.01GB] Consider increasing the JVM heap using `-Xmx` or try a different collector, e.g. `-XX:+UseG1GC`, for better performance.[0m
+Sep 11, 2021 12:03:48 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 3928
+[0m2021.09.11 00:03:51 INFO  [info] loading global plugins from /home/neo/.sbt/1.0/plugins[0m
+[0m2021.09.11 00:03:53 INFO  [info] loading settings for project postgresql-async-build-build-build from metals.sbt ...[0m
+[0m2021.09.11 00:03:53 INFO  [info] loading project definition from /home/neo/others/postgresql-async/project/project/project[0m
+[0m2021.09.11 00:03:53 INFO  [info] loading settings for project postgresql-async-build-build from metals.sbt ...[0m
+[0m2021.09.11 00:03:53 INFO  [info] loading project definition from /home/neo/others/postgresql-async/project/project[0m
+[0m2021.09.11 00:03:56 INFO  [success] Generated .bloop/postgresql-async-build-build.json[0m
+[0m2021.09.11 00:03:56 INFO  [success] Total time: 3 s, completed Sep 11, 2021, 12:03:56 AM[0m
+[0m2021.09.11 00:03:56 INFO  [info] loading settings for project postgresql-async-build from metals.sbt,plugins.sbt ...[0m
+[0m2021.09.11 00:03:56 INFO  [info] loading project definition from /home/neo/others/postgresql-async/project[0m
+[0m2021.09.11 00:03:58 INFO  [success] Generated .bloop/postgresql-async-build.json[0m
+[0m2021.09.11 00:03:58 INFO  [success] Total time: 2 s, completed Sep 11, 2021, 12:03:59 AM[0m
+[0m2021.09.11 00:04:00 INFO  [info] loading settings for project root from build.sbt,version.sbt ...[0m
+[0m2021.09.11 00:04:02 INFO  [info] set current project to db-async-base (in build file:/home/neo/others/postgresql-async/)[0m
+[0m2021.09.11 00:04:02 INFO  [warn] there are 4 keys that are not used by any other settings/tasks:[0m
+[0m2021.09.11 00:04:02 INFO  [warn]  [0m
+[0m2021.09.11 00:04:02 INFO  [warn] * common / doc / scalacOptions[0m
+[0m2021.09.11 00:04:02 INFO  [warn]   +- /home/neo/others/postgresql-async/build.sbt:78[0m
+[0m2021.09.11 00:04:02 INFO  [warn] * mysql / doc / scalacOptions[0m
+[0m2021.09.11 00:04:02 INFO  [warn]   +- /home/neo/others/postgresql-async/build.sbt:78[0m
+[0m2021.09.11 00:04:02 INFO  [warn] * postgresql / doc / scalacOptions[0m
+[0m2021.09.11 00:04:02 INFO  [warn]   +- /home/neo/others/postgresql-async/build.sbt:78[0m
+[0m2021.09.11 00:04:02 INFO  [warn] * root / doc / scalacOptions[0m
+[0m2021.09.11 00:04:02 INFO  [warn]   +- /home/neo/others/postgresql-async/build.sbt:78[0m
+[0m2021.09.11 00:04:02 INFO  [warn]  [0m
+[0m2021.09.11 00:04:02 INFO  [warn] note: a setting might still be used by a command; to exclude a key from this `lintUnused` check[0m
+[0m2021.09.11 00:04:02 INFO  [warn] either append it to `Global / excludeLintKeys` or call .withRank(KeyRanks.Invisible) on the key[0m
+[0m2021.09.11 00:04:04 INFO  [success] Generated .bloop/root-test.json[0m
+[0m2021.09.11 00:04:04 INFO  [success] Generated .bloop/root.json[0m
+[0m2021.09.11 00:04:04 INFO  [success] Generated .bloop/common.json[0m
+[0m2021.09.11 00:04:04 INFO  [success] Generated .bloop/common-test.json[0m
+[0m2021.09.11 00:04:04 INFO  [success] Generated .bloop/postgresql-test.json[0m
+[0m2021.09.11 00:04:04 INFO  [success] Generated .bloop/postgresql.json[0m
+[0m2021.09.11 00:04:05 INFO  [success] Generated .bloop/mysql.json[0m
+[0m2021.09.11 00:04:05 INFO  [success] Generated .bloop/mysql-test.json[0m
+[0m2021.09.11 00:04:05 INFO  [success] Total time: 2 s, completed Sep 11, 2021, 12:04:05 AM[0m
+[0m2021.09.11 00:04:05 INFO  time: ran 'sbt bloopInstall' in 3m43s[0m
+[0m2021.09.11 00:04:05 INFO  Disconnecting from Bloop session...[0m
+[0m2021.09.11 00:04:05 INFO  Shut down connection with build server.[0m
+[0m2021.09.11 00:04:05 INFO  Shut down connection with build server.[0m
+No more data in the client stdin, exiting...
+No more data in the client stdin, exiting...
+[0m2021.09.11 00:04:07 ERROR timeout: build server 'bloop' during shutdown[0m
+[0m2021.09.11 00:04:07 INFO  Attempting to connect to the build server...[0m
+Starting the bsp launcher for bloop...
+Opening a bsp server connection with 'bsp --protocol local --socket /tmp/bsp-launcher13051064240407994318/bsp.socket'...
+Waiting for the bsp connection to come up...
+[0m[32m[D][0m Loading workspace settings from bloop.settings.json
+[0m[32m[D][0m Waiting for a connection at local:///tmp/bsp-launcher13051064240407994318/bsp.socket...
+The server is listening for incoming connections at local:///tmp/bsp-launcher13051064240407994318/bsp.socket...
+Starting thread that pumps stdin and redirects it to the bsp server...
+Starting thread that pumps server stdout and redirects it to the client stdout...
+[0m2021.09.11 00:04:07 INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /home/neo/.cache/metals/bsp.trace.json[0m
+[0m2021.09.11 00:04:07 INFO  Attempting to connect to the build server...[0m
+Starting the bsp launcher for bloop...
+[0m2021.09.11 00:04:07 Opening a bsp server connection with 'bsp --protocol local --socket /tmp/bsp-launcher5224293419777469362/bsp.socket'...INFO  
+Attempting to connect to the build server...[0m
+Waiting for the bsp connection to come up...
+Starting the bsp launcher for bloop...
+Opening a bsp server connection with 'bsp --protocol local --socket /tmp/bsp-launcher721253460926418001/bsp.socket'...
+Waiting for the bsp connection to come up...
+[0m[32m[D][0m Loading workspace settings from bloop.settings.json
+[0m[32m[D][0m Waiting for a connection at local:///tmp/bsp-launcher5224293419777469362/bsp.socket...
+The server is listening for incoming connections at local:///tmp/bsp-launcher5224293419777469362/bsp.socket...
+Starting thread that pumps stdin and redirects it to the bsp server...
+Starting thread that pumps server stdout and redirects it to the client stdout...
+[0m2021.09.11 00:04:07 INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /home/neo/.cache/metals/bsp.trace.json[0m
+[0m[32m[D][0m Loading workspace settings from bloop.settings.json
+[0m[32m[D][0m Waiting for a connection at local:///tmp/bsp-launcher721253460926418001/bsp.socket...
+The server is listening for incoming connections at local:///tmp/bsp-launcher721253460926418001/bsp.socket...
+Starting thread that pumps stdin and redirects it to the bsp server...
+Starting thread that pumps server stdout and redirects it to the client stdout...
+[0m2021.09.11 00:04:07 INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /home/neo/.cache/metals/bsp.trace.json[0m
+[0m2021.09.11 00:04:07 INFO  time: Connected to build server in 0.12s[0m
+[0m2021.09.11 00:04:07 INFO  Connected to Build server: Bloop v1.4.8-114-e47368ed[0m
+[0m2021.09.11 00:04:11 WARN  Could not find java sources in None. Java symbols will not be available.[0m
+[0m2021.09.11 00:04:11 INFO  time: indexed workspace in 3.65s[0m
+[0m2021.09.11 00:04:13 INFO  no build target: using presentation compiler with only scala-library: 2.13.6[0m
+[0m2021.09.11 00:04:13 INFO  compiling mysql (13 scala sources)[0m
+[0m2021.09.11 00:04:13 INFO  compiling postgresql (4 scala sources)[0m
+[0m2021.09.11 00:04:13 INFO  compiling common-test (8 scala sources)[0m
+[0m2021.09.11 00:04:13 INFO  time: compiled mysql in 75ms[0m
+[0m2021.09.11 00:04:13 INFO  time: compiled postgresql in 88ms[0m
+[0m2021.09.11 00:04:13 INFO  time: compiled common-test in 88ms[0m
+[0m2021.09.11 19:59:35 INFO  Started: Metals version 0.10.6 in workspace '/mnt/d/User/neo/Xtiva/postgresql-async' for client Visual Studio Code 1.60.0.[0m
+[0m2021.09.11 19:59:43 INFO  time: initialize in 7.58s[0m
+[0m2021.09.11 19:59:52 INFO  Attempting to connect to the build server...[0m
+Starting the bsp launcher for bloop...
+Opening a bsp server connection with 'bsp --protocol local --socket /tmp/bsp-launcher14932908230252081964/bsp.socket'...
+Waiting for the bsp connection to come up...
+Waiting for the bsp connection to come up...
+[0m[32m[D][0m Loading workspace settings from bloop.settings.json
+[0m[32m[D][0m Loading 8 projects from '/mnt/d/User/neo/Xtiva/postgresql-async/.bloop'...
+[0m[32m[D][0m Loading project from '/mnt/d/User/neo/Xtiva/postgresql-async/.bloop/common.json'
+[0m[32m[D][0m Loading project from '/mnt/d/User/neo/Xtiva/postgresql-async/.bloop/postgresql-test.json'
+[0m[32m[D][0m Loading project from '/mnt/d/User/neo/Xtiva/postgresql-async/.bloop/common-test.json'
+[0m[32m[D][0m Loading project from '/mnt/d/User/neo/Xtiva/postgresql-async/.bloop/mysql-test.json'
+[0m[32m[D][0m Loading project from '/mnt/d/User/neo/Xtiva/postgresql-async/.bloop/postgresql.json'
+[0m[32m[D][0m Loading project from '/mnt/d/User/neo/Xtiva/postgresql-async/.bloop/root.json'
+[0m[32m[D][0m Loading project from '/mnt/d/User/neo/Xtiva/postgresql-async/.bloop/mysql.json'
+[0m[32m[D][0m Loading project from '/mnt/d/User/neo/Xtiva/postgresql-async/.bloop/root-test.json'
+[0m[32m[D][0m Configured SemanticDB in projects 'common', 'postgresql-test', 'mysql-test', 'postgresql', 'mysql', 'root-test', 'root', 'common-test'
+[0m[32m[D][0m Missing analysis file for project 'common'
+[0m[32m[D][0m Missing analysis file for project 'postgresql-test'
+[0m[32m[D][0m Missing analysis file for project 'mysql-test'
+[0m[32m[D][0m Missing analysis file for project 'postgresql'
+[0m[32m[D][0m Missing analysis file for project 'mysql'
+[0m[32m[D][0m Missing analysis file for project 'root-test'
+[0m[32m[D][0m Missing analysis file for project 'root'
+[0m[32m[D][0m Missing analysis file for project 'common-test'
+[0m[32m[D][0m Waiting for a connection at local:///tmp/bsp-launcher14932908230252081964/bsp.socket...
+The server is listening for incoming connections at local:///tmp/bsp-launcher14932908230252081964/bsp.socket...
+Starting thread that pumps stdin and redirects it to the bsp server...
+Starting thread that pumps server stdout and redirects it to the client stdout...
+[0m2021.09.11 19:59:58 INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /home/neo/.cache/metals/bsp.trace.json[0m
+[0m2021.09.11 19:59:58 INFO  Attempting to connect to the build server...[0m
+[0mStarting the bsp launcher for bloop...2021.09.11 19:59:58
+Opening a bsp server connection with 'bsp --protocol local --socket /tmp/bsp-launcher16945863015718264660/bsp.socket'... 
+INFO Waiting for the bsp connection to come up...
+ Attempting to connect to the build server...[0m
+Starting the bsp launcher for bloop...
+Opening a bsp server connection with 'bsp --protocol local --socket /tmp/bsp-launcher15731037157196323013/bsp.socket'...
+Waiting for the bsp connection to come up...
+[0m[32m[D][0m Loading workspace settings from bloop.settings.json
+[0m[32m[D][0m Waiting for a connection at local:///tmp/bsp-launcher16945863015718264660/bsp.socket...
+The server is listening for incoming connections at local:///tmp/bsp-launcher16945863015718264660/bsp.socket...
+Starting thread that pumps stdin and redirects it to the bsp server...
+Starting thread that pumps server stdout and redirects it to the client stdout...
+[0m2021.09.11 19:59:58 INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /home/neo/.cache/metals/bsp.trace.json[0m
+[0m[32m[D][0m Loading workspace settings from bloop.settings.json
+[0m[32m[D][0m Waiting for a connection at local:///tmp/bsp-launcher15731037157196323013/bsp.socket...
+The server is listening for incoming connections at local:///tmp/bsp-launcher15731037157196323013/bsp.socket...
+Starting thread that pumps stdin and redirects it to the bsp server...
+Starting thread that pumps server stdout and redirects it to the client stdout...
+[0m2021.09.11 19:59:58 INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /home/neo/.cache/metals/bsp.trace.json[0m
+[0m2021.09.11 19:59:58 WARN  Scala instance jar /mnt/d/User/neo/Xtiva/xcore/C:\Users\lin_w\.sbt\boot\scala-2.12.14\lib\scala-library.jar doesn't exist![0m
+[0m2021.09.11 19:59:58 WARN  Scala instance jar /mnt/d/User/neo/Xtiva/xcore/C:\Users\lin_w\.sbt\boot\scala-2.12.14\lib\scala-library.jar doesn't exist![0m
+[0m2021.09.11 19:59:58 WARN  Scala instance jar /mnt/d/User/neo/Xtiva/xcore/C:\Users\lin_w\.sbt\boot\scala-2.12.14\lib\scala-compiler.jar doesn't exist![0m
+[0m2021.09.11 19:59:58 WARN  Scala instance jar /mnt/d/User/neo/Xtiva/xcore/C:\Users\lin_w\.sbt\boot\scala-2.12.14\lib\scala-reflect.jar doesn't exist![0m
+[0m2021.09.11 19:59:58 WARN  Scala instance jar /mnt/d/User/neo/Xtiva/xcore/C:\Users\lin_w\.sbt\boot\scala-2.12.14\lib\scala-compiler.jar doesn't exist![0m
+[0m2021.09.11 19:59:58 WARN  Scala instance jar /mnt/d/User/neo/Xtiva/xcore/C:\Users\lin_w\.sbt\boot\scala-2.12.14\lib\scala-xml_2.12-1.0.6.jar doesn't exist![0m
+[0m2021.09.11 19:59:58 WARN  Scala instance jar /mnt/d/User/neo/Xtiva/xcore/C:\Users\lin_w\.sbt\boot\scala-2.12.14\lib\scala-reflect.jar doesn't exist![0m
+[0m2021.09.11 19:59:58 WARN  Scala instance jar /mnt/d/User/neo/Xtiva/xcore/C:\Users\lin_w\.sbt\boot\scala-2.12.14\lib\scala-xml_2.12-1.0.6.jar doesn't exist![0m
+[0m2021.09.11 19:59:58 ERROR Failed to connect with build server, no functionality will work.
+java.util.concurrent.ExecutionException: org.eclipse.lsp4j.jsonrpc.ResponseErrorException: Failed to load project from /mnt/d/User/neo/Xtiva/postgresql-async/project/project/.bloop/postgresql-async-build-build.json
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:395)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:2022)
+	at scala.meta.internal.metals.BuildServerConnection$.initialize(BuildServerConnection.scala:371)
+	at scala.meta.internal.metals.BuildServerConnection$.$anonfun$fromSockets$1(BuildServerConnection.scala:283)
+	at scala.util.Success.$anonfun$map$1(Try.scala:255)
+	at scala.util.Success.map(Try.scala:213)
+	at scala.concurrent.Future.$anonfun$map$1(Future.scala:292)
+	at scala.concurrent.impl.Promise.liftedTree1$1(Promise.scala:33)
+	at scala.concurrent.impl.Promise.$anonfun$transform$1(Promise.scala:33)
+	at scala.concurrent.impl.CallbackRunnable.run(Promise.scala:64)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.lang.Thread.run(Thread.java:829)
+Caused by: org.eclipse.lsp4j.jsonrpc.ResponseErrorException: Failed to load project from /mnt/d/User/neo/Xtiva/postgresql-async/project/project/.bloop/postgresql-async-build-build.json
+	at org.eclipse.lsp4j.jsonrpc.RemoteEndpoint.handleResponse(RemoteEndpoint.java:209)
+	at org.eclipse.lsp4j.jsonrpc.RemoteEndpoint.consume(RemoteEndpoint.java:193)
+	at org.eclipse.lsp4j.jsonrpc.json.StreamMessageProducer.handleMessage(StreamMessageProducer.java:194)
+	at org.eclipse.lsp4j.jsonrpc.json.StreamMessageProducer.listen(StreamMessageProducer.java:94)
+	at org.eclipse.lsp4j.jsonrpc.json.ConcurrentMessageProcessor.run(ConcurrentMessageProcessor.java:113)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.lang.Thread.run(Thread.java:829)
+[0m
+Sep 11, 2021 8:00:05 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
+[0m2021.09.11 20:03:58 INFO  shutting down Metals[0m
+[0m2021.09.11 20:03:58 ERROR Unexpected error initializing server
+org.eclipse.lsp4j.jsonrpc.ResponseErrorException: Request window/showMessageRequest failed with message: Canceled
+	at org.eclipse.lsp4j.jsonrpc.RemoteEndpoint.handleResponse(RemoteEndpoint.java:209)
+	at org.eclipse.lsp4j.jsonrpc.RemoteEndpoint.consume(RemoteEndpoint.java:193)
+	at org.eclipse.lsp4j.jsonrpc.json.StreamMessageProducer.handleMessage(StreamMessageProducer.java:194)
+	at org.eclipse.lsp4j.jsonrpc.json.StreamMessageProducer.listen(StreamMessageProducer.java:94)
+	at org.eclipse.lsp4j.jsonrpc.json.ConcurrentMessageProcessor.run(ConcurrentMessageProcessor.java:113)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.lang.Thread.run(Thread.java:829)
+[0m

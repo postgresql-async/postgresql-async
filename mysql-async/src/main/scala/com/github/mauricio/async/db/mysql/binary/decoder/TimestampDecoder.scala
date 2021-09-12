@@ -17,7 +17,8 @@
 package com.github.mauricio.async.db.mysql.binary.decoder
 
 import io.netty.buffer.ByteBuf
-import org.joda.time.LocalDateTime
+
+import java.time.{LocalDate, LocalDateTime, LocalTime}
 
 object TimestampDecoder extends BinaryDecoder {
   def decode(buffer: ByteBuf): LocalDateTime = {
@@ -26,39 +27,42 @@ object TimestampDecoder extends BinaryDecoder {
     size match {
       case 0 => null
       case 4 =>
-        new LocalDateTime()
-          .withDate(
+        LocalDateTime.of(
+          LocalDate.of(
             buffer.readUnsignedShort(),
             buffer.readUnsignedByte(),
             buffer.readUnsignedByte()
-          )
-          .withTime(0, 0, 0, 0)
+          ),
+          LocalTime.of(0, 0, 0, 0)
+        )
       case 7 =>
-        new LocalDateTime()
-          .withDate(
+        LocalDateTime.of(
+          LocalDate.of(
             buffer.readUnsignedShort(),
             buffer.readUnsignedByte(),
             buffer.readUnsignedByte()
-          )
-          .withTime(
+          ),
+          LocalTime.of(
             buffer.readUnsignedByte(),
             buffer.readUnsignedByte(),
             buffer.readUnsignedByte(),
             0
           )
+        )
       case 11 =>
-        new LocalDateTime()
-          .withDate(
+        LocalDateTime.of(
+          LocalDate.of(
             buffer.readUnsignedShort(),
             buffer.readUnsignedByte(),
             buffer.readUnsignedByte()
+          ),
+          LocalTime.of(
+            buffer.readUnsignedByte(),
+            buffer.readUnsignedByte(),
+            buffer.readUnsignedByte(),
+            buffer.readUnsignedInt().toInt
           )
-          .withTime(
-            buffer.readUnsignedByte(),
-            buffer.readUnsignedByte(),
-            buffer.readUnsignedByte(),
-            buffer.readUnsignedInt().toInt / 1000
-          )
+        )
     }
   }
 }

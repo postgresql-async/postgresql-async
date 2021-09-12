@@ -17,7 +17,7 @@
 package com.github.mauricio.async.db.postgresql
 
 import org.specs2.mutable.Specification
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import com.github.mauricio.async.db.util.Log
 import com.github.mauricio.async.db.exceptions.InsufficientParametersException
 import java.util.UUID

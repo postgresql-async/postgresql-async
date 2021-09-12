@@ -26,7 +26,7 @@ import scala.language.postfixOps
 
 object BasicExample {
 
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
 
     val configuration = URLParser.parse(
       "jdbc:postgresql://localhost:5233/my_database?username=postgres&password=somepassword"

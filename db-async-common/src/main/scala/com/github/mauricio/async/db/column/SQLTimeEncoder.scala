@@ -16,9 +16,9 @@
 
 package com.github.mauricio.async.db.column
 
-import org.joda.time.format.DateTimeFormatterBuilder
-import org.joda.time.LocalTime
-
+import java.time.format.DateTimeFormatterBuilder
+import java.time.LocalTime
+import java.time.Instant
 object SQLTimeEncoder extends ColumnEncoder {
 
   final private val format = new DateTimeFormatterBuilder()
@@ -28,6 +28,6 @@ object SQLTimeEncoder extends ColumnEncoder {
   override def encode(value: Any): String = {
     val time = value.asInstanceOf[java.sql.Time]
 
-    format.print(new LocalTime(time.getTime))
+    format.format(Instant.ofEpochMilli(time.getTime))
   }
 }

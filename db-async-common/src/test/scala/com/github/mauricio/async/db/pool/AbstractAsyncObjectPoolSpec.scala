@@ -229,7 +229,7 @@ object AbstractAsyncObjectPoolSpec {
 
     override def create: Widget = Widget(this)
 
-    override def destroy(item: Widget) = {}
+    override def destroy(item: Widget): Unit = {}
 
     override def validate(item: Widget): Try[Widget] = Try {
       if (item.factory eq this)
