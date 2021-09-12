@@ -77,7 +77,7 @@ val baseSettings = Seq(
   (doc / scalacOptions) := Seq(
     s"-doc-external-doc:scala=https://www.scala-lang.org/files/archive/api/${scalaVersion.value}/"
   ),
-  javacOptions := Seq("-source", "11", "-target", "11", "-encoding", "UTF8"),
+  javacOptions := Seq("-source", "1.8", "-target", "1.8", "-encoding", "UTF8"),
   (Test / javaOptions) ++= Seq("-Dio.netty.leakDetection.level=paranoid"),
   organization      := "com.github.postgresql-async",
   parallelExecution := false
