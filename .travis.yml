@@ -4,18 +4,17 @@ language: scala
 dist: trusty
 
 scala:
-  - 2.12.10
-  - 2.13.1
+  - 2.12.14
+  - 2.13.4
 
 jdk:
-  - openjdk8
   - openjdk11
 
 services:
   - mysql
 
 addons:
-  postgresql: "9.4"
+  postgresql: "13"
 
 
 cache:
