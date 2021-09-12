@@ -31,9 +31,9 @@ object PostgreSQLIntervalEncoderDecoder extends ColumnEncoderDecoder {
 
   override def encode(value: Any): String = {
     value match {
-      case t: Period => t.toString
+      case t: Period   => t.toString
       case t: Duration => t.toString // defaults to ISO8601
-      case _ => throw new DateEncoderNotAvailableException(value)
+      case _           => throw new DateEncoderNotAvailableException(value)
     }
   }
 

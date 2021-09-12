@@ -63,7 +63,7 @@ val implementationDependencies = Seq(
 )
 
 val baseSettings = Seq(
-  crossScalaVersions := Seq("2.11.12", "2.12.14", "2.13.6"),
+  crossScalaVersions := Seq("2.12.14", "2.13.6"),
   (Test / testOptions) += Tests.Argument("sequential"),
   (Test / fork) := true,
   scalaVersion  := "2.13.6",
