@@ -1,3 +1,6 @@
 package com.github.mauricio.async.db.pool
 
-class QueueSpec {}
+import org.specs2.mutable.Specification
+
+class QueueSpec extends Specification {
+}
