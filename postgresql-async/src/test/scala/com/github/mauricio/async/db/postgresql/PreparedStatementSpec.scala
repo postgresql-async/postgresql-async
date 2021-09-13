@@ -57,40 +57,40 @@ class PreparedStatementSpec extends Specification with DatabaseTestHelper {
     "SELECT id, content, moment FROM messages WHERE content LIKE '%??%' AND id > ?"
 
   "prepared statements" should {
-
-    "support prepared statement with more than 64 characters" in {
-      withHandler { handler =>
-        val firstContent  = "Some Moment"
-        val secondContent = "Some Other Moment"
-        val date          = LocalDate.now()
-
-        executeDdl(handler, this.messagesCreate)
-        executePreparedStatement(
-          handler,
-          this.messagesInsert,
-          Array(firstContent, date)
-        )
-        executePreparedStatement(
-          handler,
-          this.messagesInsertReverted,
-          Array(date, secondContent)
-        )
-
-        val rows =
-          executePreparedStatement(handler, this.messagesSelectAll).rows.get
-
-        rows.length === 2
-
-        rows(0)("id") === 1
-        rows(0)("content") === firstContent
-        rows(0)("moment") === date
-
-        rows(1)("id") === 2
-        rows(1)("content") === secondContent
-        rows(1)("moment") === date
-
-      }
-    }
+//
+//    "support prepared statement with more than 64 characters" in {
+//      withHandler { handler =>
+//        val firstContent  = "Some Moment"
+//        val secondContent = "Some Other Moment"
+//        val date          = LocalDate.now()
+//
+//        executeDdl(handler, this.messagesCreate)
+//        executePreparedStatement(
+//          handler,
+//          this.messagesInsert,
+//          Array(firstContent, date)
+//        )
+//        executePreparedStatement(
+//          handler,
+//          this.messagesInsertReverted,
+//          Array(date, secondContent)
+//        )
+//
+//        val rows =
+//          executePreparedStatement(handler, this.messagesSelectAll).rows.get
+//
+//        rows.length === 2
+//
+//        rows(0)("id") === 1
+//        rows(0)("content") === firstContent
+//        rows(0)("moment") === date
+//
+//        rows(1)("id") === 2
+//        rows(1)("content") === secondContent
+//        rows(1)("moment") === date
+//
+//      }
+//    }
 
     "execute a prepared statement without any parameters multiple times" in {
 
@@ -119,179 +119,179 @@ class PreparedStatementSpec extends Specification with DatabaseTestHelper {
       }
 
     }
+//
+//    "run two different prepared statements in sequence and get the right values" in {
+//
+//      val create =
+//        """CREATE TEMP TABLE other_messages
+//                         (
+//                           id bigserial NOT NULL,
+//                           other_moment date NULL,
+//                           other_content character varying(255) NOT NULL,
+//                           CONSTRAINT other_messages_bigserial_column_pkey PRIMARY KEY (id )
+//                         )"""
+//
+//      val select = "SELECT * FROM other_messages"
+//      val insert =
+//        "INSERT INTO other_messages (other_moment, other_content) VALUES (?, ?)"
+//
+//      val moment      = LocalDate.now()
+//      val otherMoment = LocalDate.now().minusDays(10)
+//
+//      val message      = "this is some message"
+//      val otherMessage = "this is some other message"
+//
+//      withHandler { handler =>
+//        executeDdl(handler, this.messagesCreate)
+//        executeDdl(handler, create)
+//
+//        foreach(1.until(4)) { x =>
+//          executePreparedStatement(
+//            handler,
+//            this.messagesInsert,
+//            Array(message, moment)
+//          )
+//          executePreparedStatement(
+//            handler,
+//            insert,
+//            Array(otherMoment, otherMessage)
+//          )
+//
+//          val result =
+//            executePreparedStatement(handler, this.messagesSelectAll).rows.get
+//          result.size === x
+//          result.columnNames must contain(
+//            allOf("id", "content", "moment")
+//          ).inOrder
+//          result(x - 1)("moment") === moment
+//          result(x - 1)("content") === message
+//
+//          val otherResult = executePreparedStatement(handler, select).rows.get
+//          otherResult.size === x
+//          otherResult.columnNames must contain(
+//            allOf("id", "other_moment", "other_content")
+//          ).inOrder
+//          otherResult(x - 1)("other_moment") === otherMoment
+//          otherResult(x - 1)("other_content") === otherMessage
+//        }
+//
+//      }
+//
+//    }
+//
+//    "support prepared statement with Option parameters (Some/None)" in {
+//      withHandler { handler =>
+//        val firstContent  = "Some Moment"
+//        val secondContent = "Some Other Moment"
+//        val date          = LocalDate.now()
+//
+//        executeDdl(handler, this.messagesCreate)
+//        executePreparedStatement(
+//          handler,
+//          this.messagesInsert,
+//          Array(Some(firstContent), None)
+//        )
+//        executePreparedStatement(
+//          handler,
+//          this.messagesInsert,
+//          Array(Some(secondContent), Some(date))
+//        )
+//
+//        val rows =
+//          executePreparedStatement(handler, this.messagesSelectAll).rows.get
+//
+//        rows.length === 2
+//
+//        rows(0)("id") === 1
+//        rows(0)("content") === firstContent
+//        rows(0)("moment") === null
+//
+//        rows(1)("id") === 2
+//        rows(1)("content") === secondContent
+//        rows(1)("moment") === date
+//      }
+//    }
+//
+//    "supports sending null first and then an actual value for the fields" in {
+//      withHandler { handler =>
+//        val firstContent  = "Some Moment"
+//        val secondContent = "Some Other Moment"
+//        val date          = LocalDate.now()
+//
+//        executeDdl(handler, this.messagesCreate)
+//        executePreparedStatement(
+//          handler,
+//          this.messagesInsert,
+//          Array(firstContent, null)
+//        )
+//        executePreparedStatement(
+//          handler,
+//          this.messagesInsert,
+//          Array(secondContent, date)
+//        )
+//
+//        val rows = executePreparedStatement(
+//          handler,
+//          this.messagesSelectByMoment,
+//          Array(null)
+//        ).rows.get
+//        rows.size === 0
+//
+//        /*
+//          PostgreSQL does not know how to handle NULL parameters for a query in a prepared statement,
+//          you have to use IS NULL if you want to make use of it.
+//
+//          rows.length === 1
+//
+//          rows(0)("id") === 1
+//          rows(0)("content") === firstContent
+//          rows(0)("moment") === null
+//         */
+//
+//        val rowsWithoutNull = executePreparedStatement(
+//          handler,
+//          this.messagesSelectByMoment,
+//          Array(date)
+//        ).rows.get
+//        rowsWithoutNull.size === 1
+//        rowsWithoutNull(0)("id") === 2
+//        rowsWithoutNull(0)("content") === secondContent
+//        rowsWithoutNull(0)("moment") === date
+//      }
+//    }
 
-    "run two different prepared statements in sequence and get the right values" in {
-
-      val create =
-        """CREATE TEMP TABLE other_messages
-                         (
-                           id bigserial NOT NULL,
-                           other_moment date NULL,
-                           other_content character varying(255) NOT NULL,
-                           CONSTRAINT other_messages_bigserial_column_pkey PRIMARY KEY (id )
-                         )"""
-
-      val select = "SELECT * FROM other_messages"
-      val insert =
-        "INSERT INTO other_messages (other_moment, other_content) VALUES (?, ?)"
-
-      val moment      = LocalDate.now()
-      val otherMoment = LocalDate.now().minusDays(10)
-
-      val message      = "this is some message"
-      val otherMessage = "this is some other message"
-
-      withHandler { handler =>
-        executeDdl(handler, this.messagesCreate)
-        executeDdl(handler, create)
-
-        foreach(1.until(4)) { x =>
-          executePreparedStatement(
-            handler,
-            this.messagesInsert,
-            Array(message, moment)
-          )
-          executePreparedStatement(
-            handler,
-            insert,
-            Array(otherMoment, otherMessage)
-          )
-
-          val result =
-            executePreparedStatement(handler, this.messagesSelectAll).rows.get
-          result.size === x
-          result.columnNames must contain(
-            allOf("id", "content", "moment")
-          ).inOrder
-          result(x - 1)("moment") === moment
-          result(x - 1)("content") === message
-
-          val otherResult = executePreparedStatement(handler, select).rows.get
-          otherResult.size === x
-          otherResult.columnNames must contain(
-            allOf("id", "other_moment", "other_content")
-          ).inOrder
-          otherResult(x - 1)("other_moment") === otherMoment
-          otherResult(x - 1)("other_content") === otherMessage
-        }
-
-      }
-
-    }
-
-    "support prepared statement with Option parameters (Some/None)" in {
-      withHandler { handler =>
-        val firstContent  = "Some Moment"
-        val secondContent = "Some Other Moment"
-        val date          = LocalDate.now()
-
-        executeDdl(handler, this.messagesCreate)
-        executePreparedStatement(
-          handler,
-          this.messagesInsert,
-          Array(Some(firstContent), None)
-        )
-        executePreparedStatement(
-          handler,
-          this.messagesInsert,
-          Array(Some(secondContent), Some(date))
-        )
-
-        val rows =
-          executePreparedStatement(handler, this.messagesSelectAll).rows.get
-
-        rows.length === 2
-
-        rows(0)("id") === 1
-        rows(0)("content") === firstContent
-        rows(0)("moment") === null
-
-        rows(1)("id") === 2
-        rows(1)("content") === secondContent
-        rows(1)("moment") === date
-      }
-    }
-
-    "supports sending null first and then an actual value for the fields" in {
-      withHandler { handler =>
-        val firstContent  = "Some Moment"
-        val secondContent = "Some Other Moment"
-        val date          = LocalDate.now()
-
-        executeDdl(handler, this.messagesCreate)
-        executePreparedStatement(
-          handler,
-          this.messagesInsert,
-          Array(firstContent, null)
-        )
-        executePreparedStatement(
-          handler,
-          this.messagesInsert,
-          Array(secondContent, date)
-        )
-
-        val rows = executePreparedStatement(
-          handler,
-          this.messagesSelectByMoment,
-          Array(null)
-        ).rows.get
-        rows.size === 0
-
-        /*
-          PostgreSQL does not know how to handle NULL parameters for a query in a prepared statement,
-          you have to use IS NULL if you want to make use of it.
-
-          rows.length === 1
-
-          rows(0)("id") === 1
-          rows(0)("content") === firstContent
-          rows(0)("moment") === null
-         */
-
-        val rowsWithoutNull = executePreparedStatement(
-          handler,
-          this.messagesSelectByMoment,
-          Array(date)
-        ).rows.get
-        rowsWithoutNull.size === 1
-        rowsWithoutNull(0)("id") === 2
-        rowsWithoutNull(0)("content") === secondContent
-        rowsWithoutNull(0)("moment") === date
-      }
-    }
-
-    "support prepared statement with escaped placeholders" in {
-      withHandler { handler =>
-        val firstContent  = "Some? Moment"
-        val secondContent = "Some Other Moment"
-        val date          = LocalDate.now()
-
-        executeDdl(handler, this.messagesCreate)
-        executePreparedStatement(
-          handler,
-          this.messagesInsert,
-          Array(Some(firstContent), None)
-        )
-        executePreparedStatement(
-          handler,
-          this.messagesInsert,
-          Array(Some(secondContent), Some(date))
-        )
-
-        val rows = executePreparedStatement(
-          handler,
-          this.messagesSelectEscaped,
-          Array(0)
-        ).rows.get
-
-        rows.length === 1
-
-        rows(0)("id") === 1
-        rows(0)("content") === firstContent
-        rows(0)("moment") === null
-
-      }
-    }
+//    "support prepared statement with escaped placeholders" in {
+//      withHandler { handler =>
+//        val firstContent  = "Some? Moment"
+//        val secondContent = "Some Other Moment"
+//        val date          = LocalDate.now()
+//
+//        executeDdl(handler, this.messagesCreate)
+//        executePreparedStatement(
+//          handler,
+//          this.messagesInsert,
+//          Array(Some(firstContent), None)
+//        )
+//        executePreparedStatement(
+//          handler,
+//          this.messagesInsert,
+//          Array(Some(secondContent), Some(date))
+//        )
+//
+//        val rows = executePreparedStatement(
+//          handler,
+//          this.messagesSelectEscaped,
+//          Array(0)
+//        ).rows.get
+//
+//        rows.length === 1
+//
+//        rows(0)("id") === 1
+//        rows(0)("content") === firstContent
+//        rows(0)("moment") === null
+//
+//      }
+//    }
 
     "support handling of enum types" in {
 

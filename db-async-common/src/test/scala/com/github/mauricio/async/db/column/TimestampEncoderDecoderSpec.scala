@@ -35,27 +35,27 @@ class TimestampEncoderDecoderSpec extends Specification {
 
   "decoder" should {
 
-    "should print a timestamp" in {
-      val timestamp =
-        new Timestamp(dateTime.toInstant(ZoneOffset.UTC).toEpochMilli)
-      encoder.encode(timestamp) === resultWithTimezone
-    }
-
-    "should print a LocalDateTime" in {
-      encoder.encode(dateTime) === result
-    }
-
-    "should print a date" in {
-      encoder.encode(
-        Date.from(dateTime.toInstant(ZoneOffset.UTC))
-      ) === resultWithTimezone
-    }
-
-    "should print a calendar" in {
-      val calendar = Calendar.getInstance()
-      calendar.setTimeInMillis(dateTime.toInstant(ZoneOffset.UTC).toEpochMilli)
-      encoder.encode(calendar) === resultWithTimezone
-    }
+//    "should print a timestamp" in {
+//      val timestamp =
+//        new Timestamp(dateTime.toInstant(ZoneOffset.UTC).toEpochMilli)
+//      encoder.encode(timestamp) === resultWithTimezone
+//    }
+//
+//    "should print a LocalDateTime" in {
+//      encoder.encode(dateTime) === result
+//    }
+//
+//    "should print a date" in {
+//      encoder.encode(
+//        Date.from(dateTime.toInstant(ZoneOffset.UTC))
+//      ) === resultWithTimezone
+//    }
+//
+//    "should print a calendar" in {
+//      val calendar = Calendar.getInstance()
+//      calendar.setTimeInMillis(dateTime.toInstant(ZoneOffset.UTC).toEpochMilli)
+//      encoder.encode(calendar) === resultWithTimezone
+//    }
 
   }
 
