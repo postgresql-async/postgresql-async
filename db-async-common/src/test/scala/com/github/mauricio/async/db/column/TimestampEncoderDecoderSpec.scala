@@ -17,26 +17,27 @@
 package com.github.mauricio.async.db.column
 
 import org.specs2.mutable.Specification
-import java.time._
+
 import java.sql.Timestamp
-import java.time.format.DateTimeFormatterBuilder
-import java.util.Calendar
+import java.time._
+import java.time.format.DateTimeFormatter
+import java.util.{Calendar, Date}
 
 class TimestampEncoderDecoderSpec extends Specification {
 
   val encoder = TimestampEncoderDecoder.Instance
-  val dateTime =
+  val dateTime: LocalDateTime =
     LocalDateTime.of(LocalDate.of(2013, 12, 27), LocalTime.of(8, 40, 50, 800))
 
-  val result    = "2013-12-27 08:40:50.800000"
-  val formatter = new DateTimeFormatterBuilder().appendPattern("Z").toFormatter
-  val resultWithTimezone =
-    s"2013-12-27 08:40:50.800000${formatter.print(dateTime)}"
+  val result             = "2013-12-27 08:40:50.800000"
+  val formatter          = DateTimeFormatter.ISO_ZONED_DATE_TIME
+  val resultWithTimezone = formatter.format(dateTime)
 
   "decoder" should {
 
     "should print a timestamp" in {
-      val timestamp = new Timestamp(dateTime.toEpochSecond(ZoneOffset.UTC))
+      val timestamp =
+        new Timestamp(dateTime.toInstant(ZoneOffset.UTC).toEpochMilli)
       encoder.encode(timestamp) === resultWithTimezone
     }
 
@@ -45,18 +46,16 @@ class TimestampEncoderDecoderSpec extends Specification {
     }
 
     "should print a date" in {
-      encoder.encode(dateTime.toLocalDate) === resultWithTimezone
+      encoder.encode(
+        Date.from(dateTime.toInstant(ZoneOffset.UTC))
+      ) === resultWithTimezone
     }
 
-//    "should print a calendar" in {
-//      val calendar = Calendar.getInstance()
-//      calendar.setTime(dateTime.)
-//      encoder.encode(calendar) === resultWithTimezone
-//    }
-
-//    "should print a datetime" in {
-//      encoder.encode(dateTime) === resultWithTimezone
-//    }
+    "should print a calendar" in {
+      val calendar = Calendar.getInstance()
+      calendar.setTimeInMillis(dateTime.toInstant(ZoneOffset.UTC).toEpochMilli)
+      encoder.encode(calendar) === resultWithTimezone
+    }
 
   }
 
