@@ -25,8 +25,8 @@ import io.netty.buffer.ByteBuf
 import java.nio.charset.Charset
 import java.sql.Timestamp
 import java.util.{Calendar, Date}
-import org.joda.time._
-import org.joda.time.format.DateTimeFormatterBuilder
+import java.time._
+import java.time.format.DateTimeFormatterBuilder
 
 object PostgreSQLTimestampEncoderDecoder extends ColumnEncoderDecoder {
 
@@ -34,7 +34,7 @@ object PostgreSQLTimestampEncoderDecoder extends ColumnEncoderDecoder {
 
   private val optionalTimeZone = new DateTimeFormatterBuilder()
     .appendPattern("Z")
-    .toParser
+    .toFormatter
 
   private val internalFormatters = 1.until(6).inclusive.map { index =>
     new DateTimeFormatterBuilder()
@@ -65,17 +65,20 @@ object PostgreSQLTimestampEncoderDecoder extends ColumnEncoderDecoder {
 
     columnType.dataType match {
       case ColumnTypes.Timestamp | ColumnTypes.TimestampArray => {
-        selectFormatter(text).parseLocalDateTime(text)
+        LocalDateTime.parse(text, selectFormatter(text))
       }
       case ColumnTypes.TimestampWithTimezoneArray => {
-        selectFormatter(text).parseDateTime(text)
+        LocalDateTime.parse(text, selectFormatter(text))
       }
       case ColumnTypes.TimestampWithTimezone => {
         if (columnType.dataTypeModifier > 0) {
-          internalFormatters(columnType.dataTypeModifier - 1)
-            .parseDateTime(text)
+          LocalDateTime.parse(
+            text,
+            internalFormatters(columnType.dataTypeModifier - 1)
+          )
         } else {
-          selectFormatter(text).parseDateTime(text)
+          LocalDateTime.parse(text, selectFormatter(text))
+
         }
       }
     }
@@ -96,11 +99,20 @@ object PostgreSQLTimestampEncoderDecoder extends ColumnEncoderDecoder {
 
   override def encode(value: Any): String = {
     value match {
-      case t: Timestamp        => this.formatter.print(new DateTime(t))
-      case t: Date             => this.formatter.print(new DateTime(t))
-      case t: Calendar         => this.formatter.print(new DateTime(t))
-      case t: LocalDateTime    => this.formatter.print(t)
-      case t: ReadableDateTime => this.formatter.print(t)
+      case t: Timestamp =>
+        this.formatter.format(
+          t.toInstant.atZone(ZoneId.of("UTC")).toLocalDateTime
+        )
+      case t: Date =>
+        this.formatter.format(
+          t.toInstant.atZone(ZoneId.of("UTC")).toLocalDate
+        )
+      case t: Calendar =>
+        this.formatter.format(
+          t.toInstant.atZone(ZoneId.of("UTC")).toLocalDate
+        )
+      case t: LocalDateTime => this.formatter.format(t)
+      // case t: ReadableDateTime => this.formatter.print(t)
       case _ => throw new DateEncoderNotAvailableException(value)
     }
   }

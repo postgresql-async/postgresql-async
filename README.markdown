@@ -60,19 +60,11 @@ Or Maven:
 ```xml
 <dependency>
   <groupId>com.github.postgresql</groupId>
-  <artifactId>postgresql-async_2.11</artifactId>
-  <version>0.3.0</version>
-</dependency>
-```
-
-respectively for Scala 2.12:
-```xml
-<dependency>
-  <groupId>com.github.postgresql</groupId>
   <artifactId>postgresql-async_2.12</artifactId>
   <version>0.3.0</version>
 </dependency>
 ```
+
 
 And if you're into MySQL:
 
@@ -85,18 +77,11 @@ Or Maven:
 ```xml
 <dependency>
   <groupId>com.github.postgresql</groupId>
-  <artifactId>mysql-async_2.11</artifactId>
-  <version>0.3.0</version>
-</dependency>
-```
-respectively for Scala 2.12:
-```xml
-<dependency>
-  <groupId>com.github.postgresql</groupId>
   <artifactId>mysql-async_2.12</artifactId>
   <version>0.3.0</version>
 </dependency>
 ```
+
 
 ## Database connections and encodings
 

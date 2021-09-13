@@ -18,14 +18,16 @@ package com.github.mauricio.async.db.mysql.binary.encoder
 
 import io.netty.buffer.ByteBuf
 import com.github.mauricio.async.db.mysql.column.ColumnTypes
-import org.joda.time._
+
+import java.time._
+import java.time.temporal.ChronoField
 
 object LocalDateTimeEncoder extends BinaryEncoder {
 
   def encode(value: Any, buffer: ByteBuf): Unit = {
     val instant = value.asInstanceOf[LocalDateTime]
 
-    val hasMillis = instant.getMillisOfSecond != 0
+    val hasMillis = instant.isSupported(ChronoField.MILLI_OF_SECOND)
 
     if (hasMillis) {
       buffer.writeByte(11)
@@ -34,14 +36,14 @@ object LocalDateTimeEncoder extends BinaryEncoder {
     }
 
     buffer.writeShort(instant.getYear)
-    buffer.writeByte(instant.getMonthOfYear)
+    buffer.writeByte(instant.getMonthValue)
     buffer.writeByte(instant.getDayOfMonth)
-    buffer.writeByte(instant.getHourOfDay)
-    buffer.writeByte(instant.getMinuteOfHour)
-    buffer.writeByte(instant.getSecondOfMinute)
+    buffer.writeByte(instant.getHour)
+    buffer.writeByte(instant.getMinute)
+    buffer.writeByte(instant.getSecond)
 
     if (hasMillis) {
-      buffer.writeInt(instant.getMillisOfSecond * 1000)
+      buffer.writeInt(instant.get(ChronoField.MILLI_OF_SECOND))
     }
 
   }

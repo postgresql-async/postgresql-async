@@ -17,14 +17,18 @@
 package com.github.mauricio.async.db.mysql.binary.encoder
 
 import io.netty.buffer.ByteBuf
-import org.joda.time.LocalTime
+
+import java.time.LocalTime
 import com.github.mauricio.async.db.mysql.column.ColumnTypes
+import io.netty.buffer.Unpooled.buffer
+
+import java.time.temporal.{TemporalAccessor, ChronoField}
 
 object LocalTimeEncoder extends BinaryEncoder {
   def encode(value: Any, buffer: ByteBuf): Unit = {
     val time = value.asInstanceOf[LocalTime]
 
-    val hasMillis = time.getMillisOfSecond != 0
+    val hasMillis = time.isSupported(ChronoField.MILLI_OF_SECOND)
 
     if (hasMillis) {
       buffer.writeByte(12)
@@ -32,7 +36,7 @@ object LocalTimeEncoder extends BinaryEncoder {
       buffer.writeByte(8)
     }
 
-    if (time.getMillisOfDay > 0) {
+    if (time.get(ChronoField.MILLI_OF_DAY) > 0) {
       buffer.writeByte(0)
     } else {
       buffer.writeByte(1)
@@ -40,12 +44,12 @@ object LocalTimeEncoder extends BinaryEncoder {
 
     buffer.writeInt(0)
 
-    buffer.writeByte(time.getHourOfDay)
-    buffer.writeByte(time.getMinuteOfHour)
-    buffer.writeByte(time.getSecondOfMinute)
+    buffer.writeByte(time.getHour)
+    buffer.writeByte(time.getMinute)
+    buffer.writeByte(time.getSecond)
 
     if (hasMillis) {
-      buffer.writeInt(time.getMillisOfSecond * 1000)
+      buffer.writeInt(time.get(ChronoField.MILLI_OF_SECOND))
     }
 
   }

@@ -23,3 +23,5 @@ mysql-async/target/*
 vendor/*
 .bloop/
 .bsp/
+.metals/
+.vscode/
