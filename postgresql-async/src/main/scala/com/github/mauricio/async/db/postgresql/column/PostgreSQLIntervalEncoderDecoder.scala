@@ -17,6 +17,8 @@
 
 package com.github.mauricio.async.db.postgresql.column
 
+import java.time.{Period => JavaPeriod}
+
 import com.github.mauricio.async.db.column.ColumnEncoderDecoder
 import com.github.mauricio.async.db.exceptions.DateEncoderNotAvailableException
 import com.github.mauricio.async.db.util.Log
@@ -63,7 +65,9 @@ object PostgreSQLIntervalEncoderDecoder extends ColumnEncoderDecoder {
       .appendSuffix(" sec", " secs")
       .toFormatter
 
-  private def postgresHMSBuilder(builder: PeriodFormatterBuilder) =
+  private def postgresHMSBuilder(
+    builder: PeriodFormatterBuilder
+  ): PeriodFormatterBuilder =
     builder
       // .printZeroAlways // really all-or-nothing
       .rejectSignedValues(true) // XXX: sign should apply to all
