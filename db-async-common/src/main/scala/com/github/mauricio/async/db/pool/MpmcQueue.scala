@@ -92,7 +92,7 @@ private[db] object MpmcQueue {
             val idx = (currReader % capacity).toInt
             val e = readUntilDefined(
               idx
-            ) // producer sometimes have not finished set element to the idx
+            ) // ensure element has be written
             enqueueSemaphore.release()
             e
           } else {
