@@ -1,11 +1,15 @@
 import ReleaseTransformations._
 
-val commonName       = "db-async-common"
-val postgresqlName   = "postgresql-async"
-val mysqlName        = "mysql-async"
-val nettyVersion     = "4.1.66.Final"
-val specs2Version    = "4.8.0"
-val specs2Dependency = "org.specs2" %% "specs2-core" % specs2Version % Test
+val commonName     = "db-async-common"
+val postgresqlName = "postgresql-async"
+val mysqlName      = "mysql-async"
+val nettyVersion   = "4.1.66.Final"
+val specs2Version  = "4.8.0"
+val specs2Dependency =
+  Seq(
+    "org.specs2" %% "specs2-core"       % specs2Version % Test,
+    "org.specs2" %% "specs2-scalacheck" % specs2Version % Test
+  )
 val specs2JunitDependency =
   "org.specs2" %% "specs2-junit" % specs2Version % Test
 val specs2MockDependency = "org.specs2" %% "specs2-mock" % specs2Version % Test
@@ -44,7 +48,7 @@ lazy val mysql = (project in file("mysql-async"))
   )
   .dependsOn(common)
 
-val commonDependencies = Seq(
+val commonDependencies = specs2Dependency ++ Seq(
   "org.slf4j"                % "slf4j-api"               % "1.7.29",
   "joda-time"                % "joda-time"               % "2.10.5",
   "org.joda"                 % "joda-convert"            % "2.2.1",
@@ -53,16 +57,13 @@ val commonDependencies = Seq(
   "org.javassist"            % "javassist"               % "3.26.0-GA",
   "org.scala-lang.modules"  %% "scala-collection-compat" % "2.1.2",
   "com.google.code.findbugs" % "jsr305"                  % "3.0.1" % Provided,
-  specs2Dependency,
   specs2JunitDependency,
   specs2MockDependency,
   logbackDependency
 )
 
-val implementationDependencies = Seq(
-  specs2Dependency,
-  logbackDependency
-)
+val implementationDependencies =
+  specs2Dependency :+ logbackDependency
 
 val baseSettings = Seq(
   crossScalaVersions := Seq("2.11.12", "2.12.14", "2.13.6"),

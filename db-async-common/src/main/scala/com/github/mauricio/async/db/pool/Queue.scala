@@ -1,11 +1,11 @@
-package com.mauricio.async.db.pool
+package com.github.mauricio.async.db.pool
 
 import java.util.concurrent.atomic._
 import java.util.concurrent.Semaphore
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
-private[db] trait Queue[A <: AnyRef] {
+private[db] trait Queue[A] {
 
   /**
    * Enqueue a, return false the queue is full
@@ -17,49 +17,69 @@ private[db] trait Queue[A <: AnyRef] {
    */
   def take(): Option[A]
 
-  /**
-   * Try take element, failed with TimeoutException if no elements avaliable at
-   * specified timeout
-   */
-  def takeIn(a: A, timeout: FiniteDuration): Future[A]
 }
 
 private[db] object Queue {
 
-  private class ArrayQueueImpl[A <: AnyRef: scala.reflect.ClassTag](
+  def apply[A](capacity: Int): Queue[A] = {
+    new ArrayQueueImpl(capacity)
+  }
+
+  private class ArrayQueueImpl[A](
     capacity: Int
   ) extends Queue[A] {
 
     private final val elements = new AtomicReferenceArray(
-      Array.ofDim[A](capacity)
+      Array.ofDim[Option[A]](capacity)
     )
     private final val enqueueSemaphore = new Semaphore(capacity)
     private final val readerIndex      = new AtomicLong(0)
     private final val writerIndex      = new AtomicLong(0)
+
+    private final val maxIdx = Long.MaxValue - Long.MaxValue % capacity - 1
+
+    private def getAndIncrWriteIndex() = {
+      val v    = writerIndex.get()
+      val next = if (v == maxIdx) 0 else v + 1
+    }
 
     /**
      * Enqueue a, return false the queue is full
      */
     def offer(a: A): Boolean = {
       if (enqueueSemaphore.tryAcquire()) {
-        val nextIdx = (writerIndex.incrementAndGet() % capacity).toInt
-        elements.set(nextIdx - 1, a)
+        val currIndex =
+          writerIndex.getAndUpdate(e => if (e == maxIdx) 0 else e + 1)
+        elements.set((currIndex % capacity).toInt, Some(a))
         true
       } else false
+    }
+
+    @annotation.tailrec
+    private def readUntilDefined(idx: Int): Option[A] = {
+      val r = elements.getAndSet(idx, None)
+      if (r != null && r != None) {
+        r
+      } else readUntilDefined(idx)
     }
 
     /**
      * Take element from the queue, return none if queue is empty
      */
     def take(): Option[A] = {
+      @annotation.tailrec
       def loop(): Option[A] = {
         val currReader = readerIndex.get()
         val currWriter = writerIndex.get()
         if (currReader != currWriter) {
-          val nextReader = ((currReader + 1) % capacity).toInt
-
+          val nextReader = if (currReader == maxIdx) 0 else currReader + 1
           if (readerIndex.compareAndSet(currReader, nextReader)) {
-            Some(elements.get(currReader.toInt))
+            val idx = (currReader % capacity).toInt
+            val e = readUntilDefined(
+              idx
+            ) // producer sometimes have not finished set element to the idx
+            enqueueSemaphore.release()
+            e
           } else {
             loop()
           }
@@ -68,14 +88,6 @@ private[db] object Queue {
         }
       }
       loop()
-    }
-
-    /**
-     * Try take element, failed with TimeoutException if no elements avaliable
-     * at specified timeout
-     */
-    def takeIn(a: A, timeout: FiniteDuration): Future[A] = {
-      ???
     }
   }
 }

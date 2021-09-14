@@ -72,7 +72,7 @@ abstract class SingleThreadedAsyncObjectPoolSpec
           so there is no guaranties that all promises in queue at that moment
            */
           val deadline = 5.seconds.fromNow
-          while (pool.queued.size < 3 || deadline.hasTimeLeft) {
+          while (pool.queued.size < 3 || deadline.hasTimeLeft()) {
             Thread.sleep(50)
           }
 
