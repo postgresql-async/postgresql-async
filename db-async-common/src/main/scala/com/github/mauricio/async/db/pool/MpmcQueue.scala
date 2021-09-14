@@ -23,7 +23,7 @@ private[db] trait MpmcQueue[A] {
   /**
    * Take element only if the element matches [[pred]]
    */
-  def takeIf(pred: A => Boolean): Option[A]
+  def peek(): Option[A]
 
 }
 
@@ -74,8 +74,21 @@ private[db] object MpmcQueue {
       } else readUntilDefined(idx)
     }
 
-    def takeIf(pred: A => Boolean): Option[A] = {
-      ???
+    def peek(): Option[A] = {
+      def loop(): Option[A] = {
+        val currReader = readerIndex.get()
+        val currWriter = writerIndex.get()
+        if (currReader != currWriter) {
+          val idx  = (currReader % capacity).toInt
+          val elem = elements.get(idx)
+          if (elem == null || elem == None) { // elemement might already consumed or not inited, try again
+            loop()
+          } else elem
+        } else {
+          None
+        }
+      }
+      loop()
     }
 
     /**
