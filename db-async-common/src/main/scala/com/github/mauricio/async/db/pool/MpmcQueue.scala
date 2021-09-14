@@ -41,9 +41,13 @@ private[db] object MpmcQueue {
 
     private final val maxIdx = Long.MaxValue - Long.MaxValue % capacity - 1
 
-    private def getAndIncrWriteIndex() = {
-      val v    = writerIndex.get()
-      val next = if (v == maxIdx) 0 else v + 1
+    @annotation.tailrec
+    private def getAndIncrWriteIndex(): Long = {
+      val curr = writerIndex.get()
+      val next = if (curr == maxIdx) 0 else curr + 1
+      if (writerIndex.compareAndSet(curr, next)) {
+        curr
+      } else getAndIncrWriteIndex()
     }
 
     /**
@@ -51,8 +55,7 @@ private[db] object MpmcQueue {
      */
     def offer(a: A): Boolean = {
       if (enqueueSemaphore.tryAcquire()) {
-        val currIndex =
-          writerIndex.getAndUpdate(e => if (e == maxIdx) 0 else e + 1)
+        val currIndex = getAndIncrWriteIndex()
         elements.set((currIndex % capacity).toInt, Some(a))
         true
       } else false
