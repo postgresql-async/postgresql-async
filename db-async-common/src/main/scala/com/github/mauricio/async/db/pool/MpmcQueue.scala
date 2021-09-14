@@ -20,6 +20,11 @@ private[db] trait MpmcQueue[A] {
    */
   def take(): Option[A]
 
+  /**
+   * Take element only if the element matches [[pred]]
+   */
+  def takeIf(pred: A => Boolean): Option[A]
+
 }
 
 private[db] object MpmcQueue {
@@ -67,6 +72,10 @@ private[db] object MpmcQueue {
       if (r != null && r != None) {
         r
       } else readUntilDefined(idx)
+    }
+
+    def takeIf(pred: A => Boolean): Option[A] = {
+      ???
     }
 
     /**
