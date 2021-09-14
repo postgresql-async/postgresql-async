@@ -7,7 +7,7 @@ import java.util.concurrent.{CountDownLatch, Semaphore}
 import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class QueueSpec extends Specification with ScalaCheck {
+class MpmcQueueSpec extends Specification with ScalaCheck {
 
   case class Data(
     capacity: Int,
@@ -22,7 +22,7 @@ class QueueSpec extends Specification with ScalaCheck {
   implicit val arbitraryData = Arbitrary(dataGen)
 
   val fifoNoOverflow = Prop.forAll { data: Data =>
-    val queue = Queue[Int](data.capacity)
+    val queue = MpmcQueue[Int](data.capacity)
 
     val r = data.input
       .grouped(data.capacity)
@@ -44,7 +44,7 @@ class QueueSpec extends Specification with ScalaCheck {
   }
 
   private def enqueueWithLatch[A](
-    queue: Queue[A],
+    queue: MpmcQueue[A],
     item: A,
     producerSemaphore: Semaphore,
     latch: CountDownLatch
@@ -61,7 +61,7 @@ class QueueSpec extends Specification with ScalaCheck {
   }
 
   private def dequeueWithLatch[A](
-    queue: Queue[A],
+    queue: MpmcQueue[A],
     consumeSemaphore: Semaphore,
     latch: CountDownLatch
   ) = {
@@ -78,7 +78,7 @@ class QueueSpec extends Specification with ScalaCheck {
 
   val parallelEnqueueDequeue = {
     Prop.forAll { data: Data =>
-      val queue             = Queue[Int](data.capacity)
+      val queue             = MpmcQueue[Int](data.capacity)
       val elems             = data.input
       val latch             = new CountDownLatch(1)
       val consumeSemaphore  = new Semaphore(data.capacity)

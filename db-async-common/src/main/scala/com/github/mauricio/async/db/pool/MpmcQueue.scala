@@ -5,7 +5,10 @@ import java.util.concurrent.Semaphore
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
-private[db] trait Queue[A] {
+/**
+ * A simple multi-producer-multi-consumer queue used internally
+ */
+private[db] trait MpmcQueue[A] {
 
   /**
    * Enqueue a, return false the queue is full
@@ -19,15 +22,15 @@ private[db] trait Queue[A] {
 
 }
 
-private[db] object Queue {
+private[db] object MpmcQueue {
 
-  def apply[A](capacity: Int): Queue[A] = {
+  def apply[A](capacity: Int): MpmcQueue[A] = {
     new ArrayQueueImpl(capacity)
   }
 
   private class ArrayQueueImpl[A](
     capacity: Int
-  ) extends Queue[A] {
+  ) extends MpmcQueue[A] {
 
     private final val elements = new AtomicReferenceArray(
       Array.ofDim[Option[A]](capacity)
