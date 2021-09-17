@@ -4,38 +4,61 @@ import scala.concurrent.duration._
 
 import org.specs2.mutable.Specification
 
-class PostgreSQLIntervalEncoderDecoderV2Spec extends Specification {
+class PostgreSQLIntervalEncoderDecoderSpec extends Specification {
 
-  import PostgreSQLIntervalEncoderDecoderV2Spec._
+  import PostgreSQLIntervalEncoderDecoderSpec._
 
-  val codec = PostgreSQLIntervalEncoderDecoderV2
+  private val codec = PostgreSQLIntervalEncoderDecoder
 
   "PostgreSQLIntervalEncoderDecoder" should {
+
+    "decode ISO8601 intervals" in {
+      List(
+        "P1Y2M"               -> "P1Y2M",
+        "-P1Y2M"              -> "-P1Y2M",
+        "P3DT4H5M6S"          -> "P3DT4H5M6S",
+        "P1Y1M27DT4H5M6S"     -> "P1Y1M27DT4H5M6S",
+        "P-1Y-2M3DT-4H-5M-6S" -> "-P1Y1M27DT4H5M6S"
+      ) forall { case (x, y) =>
+        codec.decode(x).show === y
+      }
+    }
+
     "decode postgres_verbose intervals" in {
-      val cases = List(
+      List(
+        "@ 1 year 2 mons"                -> "P1Y2M",
         "@ 3 days 4 hours 5 mins 6 secs" -> "P3DT4H5M6S",
         "@ 1 year 2 mons -3 days 4 hours 5 mins 6 secs ago" -> "P1Y1M27DT4H5M6S",
-        "@ 1 year 2 mons" -> "P1Y2M"
-      )
-      cases forall { case (x, y) =>
+        "@ 1 year 2 months -3 days 4 hours 5 minutes 6 seconds ago" -> "P1Y1M27DT4H5M6S"
+      ) forall { case (x, y) =>
+        codec.decode(x).show === y
+      }
+    }
+
+    "decode postgres intervals" in {
+      List(
+        "1 year 2 mons"                     -> "P1Y2M",
+        "3 days 04:05:06"                   -> "P3DT4H5M6S",
+        "-1 year -2 mons +3 days -04:05:06" -> "-P1Y1M27DT4H5M6S"
+      ) forall { case (x, y) =>
+        codec.decode(x).show === y
+      }
+    }
+
+    "decode sql standard intervals" in {
+      List(
+        "1-2"               -> "P1Y2M",
+        "3 4:05:06"         -> "P3DT4H5M6S",
+        "1-2 3 4:05:06"     -> "P1Y2M3DT4H5M6S",
+        "-1-2 +3 -04:05:06" -> "-P1Y1M27DT4H5M6S"
+      ) forall { case (x, y) =>
         codec.decode(x).show === y
       }
     }
   }
-
-  "decode postgres intervals" in {
-    val cases = List(
-      "1 year 2 mons"                     -> "P1Y2M",
-      "3 days 04:05:06"                   -> "P3DT4H5M6S",
-      "-1 year -2 mons +3 days -04:05:06" -> "-P1Y1M26DT19H54M54S"
-    )
-    cases forall { case (x, y) =>
-      codec.decode(x).show === y
-    }
-  }
 }
 
-object PostgreSQLIntervalEncoderDecoderV2Spec {
+object PostgreSQLIntervalEncoderDecoderSpec {
   implicit class DurationShow(d: Duration) {
     def show: String =
       if (d.isFinite) {
