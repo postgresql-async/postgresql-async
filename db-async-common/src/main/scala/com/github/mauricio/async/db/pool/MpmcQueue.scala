@@ -45,8 +45,8 @@ private[db] object MpmcQueue {
     indexUpperBound: Long
   ) extends MpmcQueue[A] {
 
-    private final val arraySize =
-      capacity + 1 //ensure reader index always != writerIndex if queue is full
+    // ensure reader index != writerIndex if queue is full
+    private final val arraySize = capacity + 1
     private final val elements = new AtomicReferenceArray(
       Array.ofDim[Option[A]](capacity + 1)
     )
