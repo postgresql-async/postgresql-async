@@ -171,11 +171,11 @@ object RegexPostgresIntervalDecoder extends RegexIntervalDecoder {
       |(?:([-+]?[0-9]+)\s(?:weeks|week)\s?)?
       |(?:([-+]?[0-9]+)\s(?:days|day),?\s?)?
       |([-+]?)?
-      |(?:([-+]?[0-9])+)?
+      |(?:([-+]?[0-9]){1,2})?
       |(?::)?
-      |(?:([-+]?[0-9])+)?
+      |(?:([-+]?[0-9]){1,2})?
       |(?::)?
-      |(?:([-+]?[0-9]+))?""".stripMargin.replace("\n", "").r(labels: _*)
+      |(?:([-+]?[0-9]{1,2}))?""".stripMargin.replace("\n", "").r(labels: _*)
 }
 
 /**
@@ -202,11 +202,11 @@ object RegexSqlStandardIntervalDecoder extends RegexIntervalDecoder {
       |(?:
       |\s
       |(?:([-+]?))?
-      |(?:([0-9])+)?
+      |(?:([0-9]){1,2})?
       |:
-      |(?:([0-9])*)?
+      |(?:([0-9]){1,2})?
       |:
-      |(?:([0-9])*)?
+      |(?:([0-9]){1,2})?
       |)?""".stripMargin.replace("\n", "").r(labels: _*)
 
   protected override def durationOf(matcher: Regex.Match): FiniteDuration =
