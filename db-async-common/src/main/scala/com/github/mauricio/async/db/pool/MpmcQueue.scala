@@ -30,21 +30,30 @@ private[db] trait MpmcQueue[A] {
 private[db] object MpmcQueue {
 
   def apply[A](capacity: Int): MpmcQueue[A] = {
-    new ArrayQueueImpl(capacity)
+    apply(capacity, Long.MaxValue)
+  }
+
+  private[db] def apply[A](
+    capacity: Int,
+    indexUpperBound: Long
+  ): MpmcQueue[A] = {
+    new ArrayQueueImpl(capacity, indexUpperBound)
   }
 
   private class ArrayQueueImpl[A](
-    capacity: Int
+    capacity: Int,
+    indexUpperBound: Long
   ) extends MpmcQueue[A] {
 
+    private final val arraySize =
+      capacity + 1 //ensure reader index always != writerIndex if queue is full
     private final val elements = new AtomicReferenceArray(
-      Array.ofDim[Option[A]](capacity)
+      Array.ofDim[Option[A]](capacity + 1)
     )
     private final val enqueueSemaphore = new Semaphore(capacity)
     private final val readerIndex      = new AtomicLong(0)
     private final val writerIndex      = new AtomicLong(0)
-
-    private final val maxIdx = Long.MaxValue - Long.MaxValue % capacity - 1
+    private final val maxIdx = indexUpperBound - indexUpperBound % arraySize - 1
 
     @annotation.tailrec
     private def getAndIncrWriteIndex(): Long = {
@@ -55,13 +64,19 @@ private[db] object MpmcQueue {
       } else getAndIncrWriteIndex()
     }
 
+    @inline
+    private def arrayOffsetOfIdx(index: Long) = {
+      (index % arraySize).toInt
+    }
+
     /**
      * Enqueue a, return false the queue is full
      */
     def offer(a: A): Boolean = {
+      val before = enqueueSemaphore.availablePermits()
       if (enqueueSemaphore.tryAcquire()) {
         val currIndex = getAndIncrWriteIndex()
-        elements.set((currIndex % capacity).toInt, Some(a))
+        elements.set(arrayOffsetOfIdx(currIndex), Some(a))
         true
       } else false
     }
@@ -79,7 +94,7 @@ private[db] object MpmcQueue {
         val currReader = readerIndex.get()
         val currWriter = writerIndex.get()
         if (currReader != currWriter) {
-          val idx  = (currReader % capacity).toInt
+          val idx  = arrayOffsetOfIdx(currReader)
           val elem = elements.get(idx)
           if (elem == null || elem == None) { // elemement might already consumed or not inited, try again
             loop()
@@ -102,10 +117,7 @@ private[db] object MpmcQueue {
         if (currReader != currWriter) {
           val nextReader = if (currReader == maxIdx) 0 else currReader + 1
           if (readerIndex.compareAndSet(currReader, nextReader)) {
-            val idx = (currReader % capacity).toInt
-            val e = readUntilDefined(
-              idx
-            ) // ensure element has be written
+            val e = readUntilDefined(arrayOffsetOfIdx(currReader))
             enqueueSemaphore.release()
             e
           } else {

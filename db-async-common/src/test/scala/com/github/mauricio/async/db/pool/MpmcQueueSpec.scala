@@ -11,18 +11,20 @@ class MpmcQueueSpec extends Specification with ScalaCheck {
 
   case class Data(
     capacity: Int,
+    indexUpperBound: Long,
     input: Vector[Int]
   )
 
   val dataGen = for {
-    c     <- Gen.choose(1, 10000)
+    c     <- Gen.choose(1, 100000)
+    upper <- Gen.choose(c * 2, c * 20)
     input <- Arbitrary.arbitrary[Vector[Int]]
-  } yield Data(c, input)
+  } yield Data(c, upper, input)
 
   implicit val arbitraryData = Arbitrary(dataGen)
 
   val fifoNoOverflow = Prop.forAll { data: Data =>
-    val queue = MpmcQueue[Int](data.capacity)
+    val queue = MpmcQueue[Int](data.capacity, data.indexUpperBound)
 
     val r = data.input
       .grouped(data.capacity)
@@ -70,7 +72,7 @@ class MpmcQueueSpec extends Specification with ScalaCheck {
       blocking {
         latch.await()
         consumeSemaphore.acquire
-        val e = queue.take()
+        val e = dequeueFunc(queue)
         consumeSemaphore.release
         e
       }
@@ -100,7 +102,7 @@ class MpmcQueueSpec extends Specification with ScalaCheck {
     data: Data,
     dequeueFunc: MpmcQueue[Int] => Option[Int]
   ): RunResult = {
-    val queue             = MpmcQueue[Int](data.capacity)
+    val queue             = MpmcQueue[Int](data.capacity, data.indexUpperBound)
     val elems             = data.input
     val latch             = new CountDownLatch(1)
     val consumeSemaphore  = new Semaphore(data.capacity)
@@ -159,8 +161,21 @@ class MpmcQueueSpec extends Specification with ScalaCheck {
     }
   }
 
+  val notExceedCapacity = {
+    Prop.forAll { data: Data =>
+      val rr = runParallel(data, _ => None) // do nothing for dequeue
+      val enqueueCount = rr.enqueueR.collect { case (i, true) =>
+        i
+      }.size
+      if (data.input.size > data.capacity) {
+        enqueueCount === data.capacity
+      } else enqueueCount === data.input.size
+    }
+  }
+
   s2"queue must enqueue / dequeue in fifo order ${fifoNoOverflow}"
   s2"enqueue/deuque correctly during parallel access ${parallelEnqueueDequeue}"
   s2"peek should always return last enqueued element ${peekLastElem}"
   s2"peek should not affect enqueue/dequeue during parallel access ${runParallelWithPeek}"
+  s2"enqueue should not exceed max capacity ${notExceedCapacity}"
 }
