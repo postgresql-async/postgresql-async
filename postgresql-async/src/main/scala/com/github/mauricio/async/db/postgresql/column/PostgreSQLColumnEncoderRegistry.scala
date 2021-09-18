@@ -18,6 +18,8 @@ package com.github.mauricio.async.db.postgresql.column
 
 import java.nio.ByteBuffer
 
+import scala.concurrent.duration.Duration
+
 import com.github.mauricio.async.db.column._
 import io.netty.buffer.ByteBuf
 import org.joda.time._
@@ -62,10 +64,7 @@ class PostgreSQLColumnEncoderRegistry extends ColumnEncoderRegistry {
     ] -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
     classOf[ReadableInstant] -> (DateEncoderDecoder -> ColumnTypes.Date),
     classOf[
-      ReadablePeriod
-    ] -> (PostgreSQLIntervalEncoderDecoder -> ColumnTypes.Interval),
-    classOf[
-      ReadableDuration
+      Duration
     ] -> (PostgreSQLIntervalEncoderDecoder -> ColumnTypes.Interval),
     classOf[
       java.util.Date

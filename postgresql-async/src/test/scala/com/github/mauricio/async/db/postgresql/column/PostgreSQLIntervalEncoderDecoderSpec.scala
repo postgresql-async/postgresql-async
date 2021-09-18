@@ -39,7 +39,8 @@ class PostgreSQLIntervalEncoderDecoderSpec extends Specification {
       List(
         "1 year 2 mons"                     -> "P1Y2M",
         "3 days 04:05:06"                   -> "P3DT4H5M6S",
-        "-1 year -2 mons +3 days -04:05:06" -> "-P1Y1M27DT4H5M6S"
+        "-1 year -2 mons +3 days -04:05:06" -> "-P1Y1M27DT4H5M6S",
+        "10301:06:07"                       -> "P1Y2M4DT5H6M7S"
       ) forall { case (x, y) =>
         codec.decode(x).show === y
       }

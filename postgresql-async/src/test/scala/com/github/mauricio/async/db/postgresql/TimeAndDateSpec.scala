@@ -16,8 +16,11 @@
 
 package com.github.mauricio.async.db.postgresql
 
-import org.specs2.mutable.Specification
 import org.joda.time._
+
+import scala.concurrent.duration._
+
+import org.specs2.mutable.Specification
 
 class TimeAndDateSpec extends Specification with DatabaseTestHelper {
 
@@ -295,7 +298,8 @@ class TimeAndDateSpec extends Specification with DatabaseTestHelper {
         )
 
         val p =
-          new Period(1, 2, 0, 4, 5, 6, 7, 8) /* postgres normalizes weeks */
+          (1 * 365).days + (2 * 30).days + 4.days + 5.hours + 6.minutes + 7.seconds // P1Y2M4DT5H6M7S
+
         executePreparedStatement(
           handler,
           "INSERT INTO intervals (duration) VALUES (?)",
