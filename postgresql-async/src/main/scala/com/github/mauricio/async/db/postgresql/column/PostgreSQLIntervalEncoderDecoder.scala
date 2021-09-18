@@ -222,7 +222,8 @@ object PostgreSQLIntervalEncoderDecoder extends ColumnEncoderDecoder {
       case s if s.startsWith("P") || s.startsWith("-P") || s.startsWith("+P") =>
         RegexIso8601PeriodDecoder
       case s if s.startsWith("@ ") => RegexPostgresVerboseIntervalDecoder
-      case s if RegexSqlStandardIntervalDecoder.regex.matches(s) =>
+      case s
+          if RegexSqlStandardIntervalDecoder.regex.findFirstIn(s).isDefined =>
         RegexSqlStandardIntervalDecoder
       case _ => RegexPostgresIntervalDecoder
     }
