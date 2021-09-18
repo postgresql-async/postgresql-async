@@ -218,11 +218,15 @@ object RegexSqlStandardIntervalDecoder extends RegexIntervalDecoder {
 
 object PostgreSQLIntervalEncoderDecoder extends ColumnEncoderDecoder {
 
+  private val pgPriorityRegex = """^[-+]?[0-9]+:[0-9]{2}:[0-9]{2}$""".r
+
   override def decode(value: String): Duration = {
     val decoder: RegexIntervalDecoder = value match {
       case s if s.startsWith("P") || s.startsWith("-P") || s.startsWith("+P") =>
         RegexIso8601PeriodDecoder
       case s if s.startsWith("@ ") => RegexPostgresVerboseIntervalDecoder
+      case s if pgPriorityRegex.pattern.matcher(s).matches() =>
+        RegexPostgresIntervalDecoder
       case s
           if RegexSqlStandardIntervalDecoder.regex.pattern
             .matcher(s)
