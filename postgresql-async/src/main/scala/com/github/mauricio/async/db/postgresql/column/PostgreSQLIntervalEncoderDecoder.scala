@@ -195,18 +195,19 @@ object RegexSqlStandardIntervalDecoder extends RegexIntervalDecoder {
   private val labels = segments.map(_.label)
 
   override val regex: Regex =
-    """([-+]+)?
+    """(?:([-+]+)?
       |(?:([0-9]+)-([0-9]+))?
-      |\s?
-      |(?:([-+]?[0-9])+)?
+      |)?
       |(?:
+      |\s?
+      |(?:([-+]?[0-9])+)+
       |\s
       |(?:([-+]?))?
-      |(?:([0-9]){1,2})?
+      |(?:([0-9]){1,2})+
       |:
-      |(?:([0-9]){1,2})?
+      |(?:([0-9]){1,2})+
       |:
-      |(?:([0-9]){1,2})?
+      |(?:([0-9]){1,2})+
       |)?""".stripMargin.replace("\n", "").r(labels: _*)
 
   protected override def durationOf(matcher: Regex.Match): FiniteDuration =
@@ -223,10 +224,13 @@ object PostgreSQLIntervalEncoderDecoder extends ColumnEncoderDecoder {
         RegexIso8601PeriodDecoder
       case s if s.startsWith("@ ") => RegexPostgresVerboseIntervalDecoder
       case s
-          if RegexSqlStandardIntervalDecoder.regex.findFirstIn(s).isDefined =>
+          if RegexSqlStandardIntervalDecoder.regex.pattern
+            .matcher(s)
+            .matches() =>
         RegexSqlStandardIntervalDecoder
       case _ => RegexPostgresIntervalDecoder
     }
+    println(s"decoder: $decoder, row: $value")
     decoder.decode(value)
   }
 
