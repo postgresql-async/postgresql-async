@@ -159,8 +159,8 @@ object SelfHealing {
             ) =>
           implicit val ec = Execution.naive
           oldRelease.future.flatMap(_ => newItem.future)
-        case i @ State.Ready(c, l, p) =>
-          p.future
+        case s: State.Ready[A] =>
+          tryHealIfDead(s)
       }
     }
 
