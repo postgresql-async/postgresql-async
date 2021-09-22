@@ -30,16 +30,21 @@ private[db] trait SelfHealing[A] {
 
 object SelfHealing {
 
-  object Timer {
-    type CancelToken = () => Unit
-  }
-
   trait Timer {
-    def setTimeout(duration: FiniteDuration, f: () => Unit): Timer.CancelToken
+
+    /**
+     * Return a default value if future not completed in specified timeout
+     */
+    def timeoutTo[A](
+      duration: FiniteDuration,
+      f: () => Future[A],
+      recoverWith: A
+    ): Future[A]
   }
 
   case class Config(
     checkInterval: Long,
+    releaseTimeout: Long,
     checkTimeout: Long,
     minHealInterval: Long
   )
@@ -78,10 +83,60 @@ object SelfHealing {
     acquire: () => Future[A],
     release: A => Future[Unit],
     check: A => Future[Boolean],
-    config: Config
+    config: Config,
+    timer: Timer
   ) extends SelfHealing[A] {
 
     val state = new AtomicReference[State[A]](State.Idle)
+
+    private def tryHeal(s: State.Ready[A], a: A): Option[Future[A]] = {
+      implicit val ec = Execution.naive
+      val releaseOld  = Promise[Unit]()
+      val acquireNew  = Promise[A]()
+      val newState    = State.Swapping(a, acquireNew, releaseOld)
+      if (state.compareAndSet(s, newState)) {
+        val doAcquire = acquireNew.completeWith(acquire()).future
+        val doRelease = releaseOld
+          .completeWith(
+            timer.timeoutTo(config.releaseTimeout.millis, () => release(a), ())
+          )
+          .future
+        Some(doRelease.flatMap(_ => doAcquire))
+      } else None
+    }
+
+    private def tryHealIfDead(
+      curr: State.Ready[A]
+    ): Future[A] = {
+      implicit val ec = Execution.naive
+      val now         = System.currentTimeMillis
+      if (now - curr.lastActive > config.checkInterval) {
+
+        def healed(a: A) = {
+          tryHeal(curr, a) match {
+            case Some(newRes) => newRes
+            case None         => get() // concurrent access detected, retry loop
+          }
+        }
+
+        if (state.compareAndSet(curr, curr.copy(lastActive = now))) {
+          for {
+            a <- curr.promise.future
+            isAlive <- timer.timeoutTo(
+              config.checkTimeout.millis,
+              () => check(a),
+              false
+            )
+            isSick = isAlive || (now - curr.createTime) < config.minHealInterval
+            r <- if (isSick) Future.successful(a) else healed(a)
+          } yield r
+        } else { // under checking, return old resource
+          curr.promise.future
+        }
+      } else {
+        curr.promise.future
+      }
+    }
 
     def get(): Future[A] = {
       state.get() match {
