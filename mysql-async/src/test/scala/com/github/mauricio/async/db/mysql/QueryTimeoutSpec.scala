@@ -24,6 +24,7 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 
 class QueryTimeoutSpec extends Specification with ConnectionHelper {
+  private val port = 3306
   implicit def unitAsResult: AsResult[Unit] = new AsResult[Unit] {
     def asResult(r: => Unit) =
       ResultExecution.execute(r)(_ => Success())
@@ -73,7 +74,7 @@ class QueryTimeoutSpec extends Specification with ConnectionHelper {
   def shortTimeoutConfiguration = new Configuration(
     "mysql_async",
     "localhost",
-    port = 3306,
+    port = port,
     password = Some("root"),
     database = Some("mysql_async_tests"),
     queryTimeout = Some(Duration(1, NANOSECONDS))
@@ -82,7 +83,7 @@ class QueryTimeoutSpec extends Specification with ConnectionHelper {
   def longTimeoutConfiguration = new Configuration(
     "mysql_async",
     "localhost",
-    port = 3306,
+    port = port,
     password = Some("root"),
     database = Some("mysql_async_tests"),
     queryTimeout = Some(Duration(5, SECONDS))

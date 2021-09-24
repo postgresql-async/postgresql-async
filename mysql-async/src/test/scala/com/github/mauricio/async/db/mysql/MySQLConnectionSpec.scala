@@ -22,10 +22,12 @@ import org.specs2.mutable.Specification
 
 class MySQLConnectionSpec extends Specification {
 
+  private val port = 63306
+
   val configuration = new Configuration(
     "mysql_async",
     "localhost",
-    port = 3306,
+    port = port,
     password = Some("root"),
     database = Some("mysql_async_tests")
   )
@@ -33,7 +35,7 @@ class MySQLConnectionSpec extends Specification {
   val configurationWithoutPassword = new Configuration(
     "mysql_async_nopw",
     "localhost",
-    port = 3306,
+    port = port,
     password = None,
     database = Some("mysql_async_tests")
   )
@@ -41,7 +43,7 @@ class MySQLConnectionSpec extends Specification {
   val configurationWithoutDatabase = new Configuration(
     "mysql_async_nopw",
     "localhost",
-    port = 3306,
+    port = port,
     password = None,
     database = Some("mysql_async_tests")
   )
@@ -49,7 +51,7 @@ class MySQLConnectionSpec extends Specification {
   val configurationWithPasswordWithoutDatabase = new Configuration(
     "mysql_async",
     "localhost",
-    port = 3306,
+    port = port,
     password = Some("root"),
     database = None
   )
