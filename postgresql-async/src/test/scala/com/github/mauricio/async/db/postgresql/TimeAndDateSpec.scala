@@ -16,8 +16,12 @@
 
 package com.github.mauricio.async.db.postgresql
 
-import org.specs2.mutable.Specification
 import org.joda.time._
+import java.time.{Period, Duration => JavaDuration}
+
+import scala.concurrent.duration._
+
+import org.specs2.mutable.Specification
 
 class TimeAndDateSpec extends Specification with DatabaseTestHelper {
 
@@ -291,22 +295,61 @@ class TimeAndDateSpec extends Specification with DatabaseTestHelper {
       withHandler { handler =>
         executeDdl(
           handler,
-          "CREATE TEMP TABLE intervals (duration interval NOT NULL)"
+          "CREATE TEMP TABLE intervals (id Int, duration interval NOT NULL)"
         )
 
-        val p =
-          new Period(1, 2, 0, 4, 5, 6, 7, 8) /* postgres normalizes weeks */
+        // Scala Duration P1Y2M4DT5H6M7S
+        val p1 =
+          365.days
+            .plus((2 * 30).days)
+            .plus(4.days)
+            .plus(5.hours)
+            .plus(6.minutes)
+            .plus(7.seconds)
+
+        // Java Time Duration P1D2H3M4S
+        val p2 =
+          JavaDuration
+            .ofDays(1)
+            .plusHours(2)
+            .plusMinutes(3)
+            .plusSeconds(4)
+
+        // Java Time Period P1Y2M3D
+        val p3 = Period.ofYears(1).plusMonths(2).plusDays(3)
+
         executePreparedStatement(
           handler,
-          "INSERT INTO intervals (duration) VALUES (?)",
-          Array(p)
+          "INSERT INTO intervals (id, duration) VALUES (?, ?)",
+          Array(1, p1)
         )
+        executePreparedStatement(
+          handler,
+          "INSERT INTO intervals (id, duration) VALUES (?, ?)",
+          Array(2, p2)
+        )
+        executePreparedStatement(
+          handler,
+          "INSERT INTO intervals (id, duration) VALUES (?, ?)",
+          Array(3, p3)
+        )
+
         val rows =
-          executeQuery(handler, "SELECT duration FROM intervals").rows.get
+          executeQuery(
+            handler,
+            "SELECT duration FROM intervals order by id"
+          ).rows.get
 
-        rows.length === 1
+        rows.length === 3
 
-        rows(0)(0) === p
+        rows(0)(0) === p1
+
+        rows(1)(0) === p2.getSeconds.seconds
+
+        val p30 =
+          (p3.getYears * 365).days + (p3.getMonths * 30).days + p3.getDays.days
+
+        rows(2)(0) === p30
       }
     }
 

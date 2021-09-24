@@ -17,134 +17,232 @@
 
 package com.github.mauricio.async.db.postgresql.column
 
+import java.time.{Period, Duration => JavaDuration}
+
+import scala.concurrent.duration._
+import scala.util.Try
+import scala.util.matching.Regex
+
 import com.github.mauricio.async.db.column.ColumnEncoderDecoder
 import com.github.mauricio.async.db.exceptions.DateEncoderNotAvailableException
-import com.github.mauricio.async.db.util.Log
-import org.joda.time.{Period, ReadablePeriod, ReadableDuration}
-import org.joda.time.format.{ISOPeriodFormat, PeriodFormatterBuilder}
 
-object PostgreSQLIntervalEncoderDecoder extends ColumnEncoderDecoder {
+object RegexIntervalDecoder {
+  sealed trait Sign
+  case object PositiveSign extends Sign
+  case object NegativeSign extends Sign
 
-  private val log = Log.getByName(this.getClass.getName)
+  sealed abstract class IntervalSegment(
+    val label: String,
+    val toDuration: Int => FiniteDuration
+  )
+  case object YmdSign extends IntervalSegment("sign1", _ => Duration.Zero)
+  case object Year  extends IntervalSegment("year", (i: Int) => (i * 365).days)
+  case object Month extends IntervalSegment("month", (i: Int) => (i * 30).days)
+  case object Week  extends IntervalSegment("week", (i: Int) => (i * 7).days)
+  case object Day   extends IntervalSegment("day", _.days)
+  case object TSegment extends IntervalSegment("t", _.days)
+  case object HmsSign  extends IntervalSegment("sign2", _ => Duration.Zero)
+  case object Hour     extends IntervalSegment("hour", _.hours)
+  case object Minute   extends IntervalSegment("minute", _.minutes)
+  case object Second   extends IntervalSegment("second", _.seconds)
 
-  /* Postgres accepts all ISO8601 formats. */
-  private val formatter = ISOPeriodFormat.standard
+  object IntervalSegment {
+    val all: List[IntervalSegment] = List(
+      YmdSign,
+      Year,
+      Month,
+      Week,
+      Day,
+      TSegment,
+      HmsSign,
+      Hour,
+      Minute,
+      Second
+    )
+  }
 
-  override def encode(value: Any): String = {
-    value match {
-      case t: ReadablePeriod   => formatter.print(t)
-      case t: ReadableDuration => t.toString // defaults to ISO8601
-      case _ => throw new DateEncoderNotAvailableException(value)
+}
+
+trait RegexIntervalDecoder {
+
+  import RegexIntervalDecoder._
+
+  def regex: Regex
+
+  def decode(value: String): FiniteDuration =
+    regex.findFirstMatchIn(value) match {
+      case None => throw new DateEncoderNotAvailableException(value)
+      case Some(m: Regex.Match) => durationOf(m)
+    }
+
+  protected def segments: List[IntervalSegment]
+
+  protected val dateSegments: List[IntervalSegment] =
+    List(Year, Month, Week, Day)
+
+  protected val timeSegments: List[IntervalSegment] = List(Hour, Minute, Second)
+
+  protected def durationOf(matcher: Regex.Match): FiniteDuration =
+    durationOf(dateSegments, matcher, parseSign(matcher, YmdSign.label)) +
+      durationOf(timeSegments, matcher, parseSign(matcher, HmsSign.label))
+
+  protected def durationOf(
+    segments: Seq[IntervalSegment],
+    matcher: Regex.Match,
+    sign: Sign
+  ): FiniteDuration = {
+    val d = segments.flatMap { segment =>
+      Option(matcher.group(segment.label)).map { s =>
+        segment.toDuration(s.toInt).toMillis
+      }
+    }.sum
+    sign match {
+      case RegexIntervalDecoder.PositiveSign => d.milliseconds
+      case RegexIntervalDecoder.NegativeSign => (0L - d).milliseconds
     }
   }
 
-  /* these should only be used for parsing: */
-  private def postgresYMDBuilder(builder: PeriodFormatterBuilder) =
-    builder.appendYears
-      .appendSuffix(" year", " years")
-      .appendSeparator(" ")
-      .appendMonths
-      .appendSuffix(" mon", " mons")
-      .appendSeparator(" ")
-      .appendDays
-      .appendSuffix(" day", " days")
-      .appendSeparator(" ")
-
-  private val postgres_verboseParser =
-    postgresYMDBuilder(
-      new PeriodFormatterBuilder().appendLiteral("@ ")
-    ).appendHours
-      .appendSuffix(" hour", " hours")
-      .appendSeparator(" ")
-      .appendMinutes
-      .appendSuffix(" min", " mins")
-      .appendSeparator(" ")
-      .appendSecondsWithOptionalMillis
-      .appendSuffix(" sec", " secs")
-      .toFormatter
-
-  private def postgresHMSBuilder(builder: PeriodFormatterBuilder) =
-    builder
-      // .printZeroAlways // really all-or-nothing
-      .rejectSignedValues(true) // XXX: sign should apply to all
-      .appendHours
-      .appendSuffix(":")
-      .appendMinutes
-      .appendSuffix(":")
-      .appendSecondsWithOptionalMillis
-
-  private val hmsParser =
-    postgresHMSBuilder(new PeriodFormatterBuilder()).toFormatter
-
-  private val postgresParser =
-    postgresHMSBuilder(
-      postgresYMDBuilder(new PeriodFormatterBuilder())
-    ).toFormatter
-
-  /* These sql_standard parsers don't handle negative signs correctly. */
-  private def sqlDTBuilder(builder: PeriodFormatterBuilder) =
-    postgresHMSBuilder(builder.appendDays.appendSeparator(" "))
-
-  private val sqlDTParser =
-    sqlDTBuilder(new PeriodFormatterBuilder()).toFormatter
-
-  private val sqlParser =
-    sqlDTBuilder(
-      new PeriodFormatterBuilder().printZeroAlways
-        .rejectSignedValues(true) // XXX: sign should apply to both
-        .appendYears
-        .appendSeparator("-")
-        .appendMonths
-        .rejectSignedValues(false)
-        .printZeroNever
-        .appendSeparator(" ")
-    ).toFormatter
-
-  /* This supports all positive intervals, and intervalstyle of postgres_verbose, and iso_8601 perfectly.
-   * If intervalstyle is set to postgres or sql_standard, some negative intervals may be rejected.
-   */
-  def decode(value: String): Period = {
-    if (value.isEmpty)
-      /* huh? */
-      Period.ZERO
-    else {
-      val format =
-        (
-          if (value(0).equals('P'))
-            /* iso_8601 */
-            formatter
-          else if (value.startsWith("@ "))
-            postgres_verboseParser
-          else {
-            /* try to guess based on what comes after the first number */
-            val i = value.indexWhere(
-              !_.isDigit,
-              if ("-+".contains(value(0))) 1 else 0
-            )
-            if (i < 0 || ":.".contains(value(i)))
-              /* simple HMS (to support group negation) */
-              hmsParser
-            else if (value(i).equals('-'))
-              /* sql_standard: Y-M */
-              sqlParser
-            else if (
-              value(i).equals(' ') && i + 1 < value.length && value(
-                i + 1
-              ).isDigit
-            )
-              /* sql_standard: D H:M:S */
-              sqlDTParser
-            else
-              postgresParser
-          }
-        )
-      if ((format eq hmsParser) && value(0).equals('-'))
-        format.parsePeriod(value.substring(1)).negated
-      else if (value.endsWith(" ago"))
-        /* only really applies to postgres_verbose, but shouldn't hurt */
-        format.parsePeriod(value.stripSuffix(" ago")).negated
-      else
-        format.parsePeriod(value)
+  protected def parseSign(matcher: Regex.Match, label: String): Sign =
+    Try(Option(matcher.group(label))).toOption.flatten match {
+      case Some("+") => PositiveSign
+      case Some("-") => NegativeSign
+      case _         => PositiveSign
     }
+
+}
+
+object RegexIso8601PeriodDecoder extends RegexIntervalDecoder {
+
+  import RegexIntervalDecoder._
+
+  override protected val segments: List[IntervalSegment] =
+    IntervalSegment.all.filterNot(_ == HmsSign)
+
+  private val labels: List[String] = segments.map(_.label)
+
+  override val regex: Regex = {
+    "([-+]?)P(?:([-+]?[0-9]+)Y)?(?:([-+]?[0-9]+)M)?(?:([-+]?[0-9]+)W)?(?:([-+]?[0-9]+)D)?(T)?(?:([-+]?[0-9]+)H)?(?:([-+]?[0-9]+)M)?(?:([-+]?[0-9]+)S)?"
+      .r(labels: _*)
+  }
+}
+
+/**
+ * @ 1 year 2 mons
+ * @ 3 days 4 hours 5 mins 6 secs
+ * @ 1 year 2 mons -3 days 4 hours 5 mins 6 secs ago
+ */
+object RegexPostgresVerboseIntervalDecoder extends RegexIntervalDecoder {
+
+  import RegexIntervalDecoder._
+
+  override val segments: List[RegexIntervalDecoder.IntervalSegment] =
+    IntervalSegment.all.filter(s =>
+      s != YmdSign && s != TSegment && s != HmsSign
+    )
+
+  private val labels = segments.map(_.label)
+
+  override val regex: Regex =
+    """(?:@\s)
+      |(?:([-+]?[0-9]+)\s(?:years|year)\s?)?
+      |(?:([-+]?[0-9]+)\s(?:months|month|mons|mon)\s?)?
+      |(?:([-+]?[0-9]+)\s(?:weeks|week)\s?)?
+      |(?:([-+]?[0-9]+)\s(?:days|day)\s?)?
+      |(?:([-+]?[0-9]+)\s(?:hours|hour)\s?)?
+      |(?:([-+]?[0-9]+)\s(?:minutes|minute|mins|min)\s?)?
+      |(?:([-+]?[0-9]+)\s(?:seconds|second|secs|sec))?
+      |(?:\s(?:ago))?""".stripMargin.replace("\n", "").r(labels: _*)
+}
+
+/**
+ * 1 year 2 mons 3 days 04:05:06
+ * -1 year -2 mons +3 days -04:05:06
+ */
+object RegexPostgresIntervalDecoder extends RegexIntervalDecoder {
+
+  import RegexIntervalDecoder._
+
+  override val segments: List[RegexIntervalDecoder.IntervalSegment] =
+    IntervalSegment.all.filter(s => s != YmdSign && s != TSegment)
+
+  private val labels = segments.map(_.label)
+
+  override val regex: Regex =
+    """(?:([-+]?[0-9]+)\s(?:years|year)\s?)?
+      |(?:([-+]?[0-9]+)\s(?:months|month|mons|mon)\s?)?
+      |(?:([-+]?[0-9]+)\s(?:weeks|week)\s?)?
+      |(?:([-+]?[0-9]+)\s(?:days|day),?\s?)?
+      |([-+]?)?
+      |(?:([-+]?[0-9]+))?
+      |(?::)?
+      |(?:([-+]?[0-9]{1,2}))?
+      |(?::)?
+      |(?:([-+]?[0-9]{1,2}))?""".stripMargin.replace("\n", "").r(labels: _*)
+}
+
+/**
+ * 1-2 3 -4:05:06
+ * -1-2 +3 -4:05:06
+ */
+object RegexSqlStandardIntervalDecoder extends RegexIntervalDecoder {
+
+  import RegexIntervalDecoder._
+
+  protected override val dateSegments: List[IntervalSegment] =
+    List(Year, Month, Day)
+
+  override val segments: List[RegexIntervalDecoder.IntervalSegment] =
+    List(YmdSign, Year, Month, Day, HmsSign, Hour, Minute, Second)
+
+  private val labels = segments.map(_.label)
+
+  override val regex: Regex =
+    """(?:([-+]+)?
+      |(?:([0-9]+)-([0-9]+))?
+      |)?
+      |(?:
+      |\s?
+      |(?:([-+]?[0-9])+)+
+      |\s
+      |(?:([-+]?))?
+      |(?:([0-9]){1,2})+
+      |:
+      |(?:([0-9]){1,2})+
+      |:
+      |(?:([0-9]){1,2})+
+      |)?""".stripMargin.replace("\n", "").r(labels: _*)
+
+  protected override def durationOf(matcher: Regex.Match): FiniteDuration =
+    durationOf(List(Year, Month), matcher, parseSign(matcher, YmdSign.label)) +
+      durationOf(List(Day), matcher, PositiveSign) +
+      durationOf(timeSegments, matcher, parseSign(matcher, HmsSign.label))
+}
+
+object PostgreSQLIntervalEncoderDecoder extends ColumnEncoderDecoder {
+
+  private val pgPriorityRegex = """^[-+]?[0-9]+:[0-9]{2}:[0-9]{2}$""".r
+
+  override def decode(value: String): Duration = {
+    val decoder: RegexIntervalDecoder = value match {
+      case s if s.startsWith("P") || s.startsWith("-P") || s.startsWith("+P") =>
+        RegexIso8601PeriodDecoder
+      case s if s.startsWith("@ ") => RegexPostgresVerboseIntervalDecoder
+      case s if pgPriorityRegex.pattern.matcher(s).matches() =>
+        RegexPostgresIntervalDecoder
+      case s
+          if RegexSqlStandardIntervalDecoder.regex.pattern
+            .matcher(s)
+            .matches() =>
+        RegexSqlStandardIntervalDecoder
+      case _ => RegexPostgresIntervalDecoder
+    }
+    decoder.decode(value)
+  }
+
+  override def encode(value: Any): String = value match {
+    case d: FiniteDuration => f"${d.toMicros / 1000000.0}%10.6f seconds"
+    case d: JavaDuration   => d.toString
+    case p: Period         => p.toString
+    case _                 => throw new DateEncoderNotAvailableException(value)
   }
 }
