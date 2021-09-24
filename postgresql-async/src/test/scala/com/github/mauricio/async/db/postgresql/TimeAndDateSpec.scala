@@ -298,9 +298,7 @@ class TimeAndDateSpec extends Specification with DatabaseTestHelper {
           "CREATE TEMP TABLE intervals (id Int, duration interval NOT NULL)"
         )
 
-        /**
-         * Scala Duration P1Y2M4DT5H6M7S
-         */
+        // Scala Duration P1Y2M4DT5H6M7S
         val p1 =
           365.days
             .plus((2 * 30).days)
@@ -309,9 +307,7 @@ class TimeAndDateSpec extends Specification with DatabaseTestHelper {
             .plus(6.minutes)
             .plus(7.seconds)
 
-        /**
-         * Java Time Duration P1D2H3M4S
-         */
+        // Java Time Duration P1D2H3M4S
         val p2 =
           JavaDuration
             .ofDays(1)
@@ -319,9 +315,7 @@ class TimeAndDateSpec extends Specification with DatabaseTestHelper {
             .plusMinutes(3)
             .plusSeconds(4)
 
-        /**
-         * Java Time Period P1Y2M3D
-         */
+        // Java Time Period P1Y2M3D
         val p3 = Period.ofYears(1).plusMonths(2).plusDays(3)
 
         executePreparedStatement(
