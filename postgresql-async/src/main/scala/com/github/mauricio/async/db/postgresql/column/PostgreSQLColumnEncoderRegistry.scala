@@ -17,6 +17,7 @@
 package com.github.mauricio.async.db.postgresql.column
 
 import java.nio.ByteBuffer
+import java.time.{Period, Duration => JavaDuration}
 
 import scala.concurrent.duration.Duration
 
@@ -65,6 +66,12 @@ class PostgreSQLColumnEncoderRegistry extends ColumnEncoderRegistry {
     classOf[ReadableInstant] -> (DateEncoderDecoder -> ColumnTypes.Date),
     classOf[
       Duration
+    ] -> (PostgreSQLIntervalEncoderDecoder -> ColumnTypes.Interval),
+    classOf[
+      Period
+    ] -> (PostgreSQLIntervalEncoderDecoder -> ColumnTypes.Interval),
+    classOf[
+      JavaDuration
     ] -> (PostgreSQLIntervalEncoderDecoder -> ColumnTypes.Interval),
     classOf[
       java.util.Date
