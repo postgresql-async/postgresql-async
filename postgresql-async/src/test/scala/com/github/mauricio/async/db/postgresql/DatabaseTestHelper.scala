@@ -35,7 +35,7 @@ trait DatabaseTestHelper {
 
   def timeTestDatabase = Some("netty_driver_time_test")
 
-  def databasePort = 5432
+  def databasePort = 65432
 
   def defaultConfiguration =
     new Configuration(

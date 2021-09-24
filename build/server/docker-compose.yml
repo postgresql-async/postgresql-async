@@ -2,7 +2,8 @@ version: "3"
 services:
   pgdb:
     image: postgres:${PGV:-latest}
-    network_mode: "host"
+    ports:
+      - "65432:5432"
     security_opt:
       - seccomp:unconfined
     volumes:
@@ -23,6 +24,7 @@ services:
 
   mysqldb:
     image: mysql:${MYSQLV:-latest}
-    network_mode: "host"
+    ports:
+      - "63306:3306"
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
