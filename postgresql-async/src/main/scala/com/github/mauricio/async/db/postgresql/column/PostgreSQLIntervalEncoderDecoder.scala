@@ -17,6 +17,8 @@
 
 package com.github.mauricio.async.db.postgresql.column
 
+import java.time.{Period, Duration => JavaDuration}
+
 import scala.concurrent.duration._
 import scala.util.Try
 import scala.util.matching.Regex
@@ -238,7 +240,9 @@ object PostgreSQLIntervalEncoderDecoder extends ColumnEncoderDecoder {
   }
 
   override def encode(value: Any): String = value match {
-    case d: FiniteDuration => s"${d.toSeconds} seconds"
+    case d: FiniteDuration => f"${d.toMicros / 1000000.0}%10.6f seconds"
+    case d: JavaDuration   => d.toString
+    case p: Period         => p.toString
     case _                 => throw new DateEncoderNotAvailableException(value)
   }
 }
