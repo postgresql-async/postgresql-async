@@ -38,7 +38,7 @@ object SelfHealing {
     def timeoutTo[A](
       duration: FiniteDuration,
       f: () => Future[A],
-      recoverWith: A
+      fallback: A
     ): Future[A]
   }
 
@@ -59,7 +59,13 @@ object SelfHealing {
     config: Config,
     timer: Timer
   ): SelfHealing[A] = {
-    ???
+    new SelfHealingImpl[A](
+      acquire,
+      release,
+      check,
+      config,
+      timer
+    )
   }
 
   private sealed trait State[+A]
