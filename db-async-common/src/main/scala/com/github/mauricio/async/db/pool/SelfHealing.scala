@@ -30,18 +30,6 @@ private[db] trait SelfHealing[A] {
 
 object SelfHealing {
 
-  trait Timer {
-
-    /**
-     * Return a default value if future not completed in specified timeout
-     */
-    def timeoutTo[A](
-      duration: FiniteDuration,
-      f: () => Future[A],
-      fallback: A
-    ): Future[A]
-  }
-
   case class Config(
     checkInterval: Long,
     releaseTimeout: Long,
@@ -57,7 +45,7 @@ object SelfHealing {
     release: A => Future[Unit],
     check: A => Future[Boolean],
     config: Config,
-    timer: Timer
+    timer: FutureTimer
   ): SelfHealing[A] = {
     new SelfHealingImpl[A](
       acquire,
@@ -90,7 +78,7 @@ object SelfHealing {
     release: A => Future[Unit],
     check: A => Future[Boolean],
     config: Config,
-    timer: Timer
+    timer: FutureTimer
   ) extends SelfHealing[A] {
 
     val state = new AtomicReference[State[A]](State.Idle)

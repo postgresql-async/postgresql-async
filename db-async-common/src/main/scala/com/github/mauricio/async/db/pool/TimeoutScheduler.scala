@@ -6,7 +6,7 @@ import io.netty.channel.EventLoopGroup
 import scala.concurrent.{ExecutionContext, Promise}
 import scala.concurrent.duration.Duration
 
-trait TimeoutScheduler {
+private[db] trait TimeoutScheduler {
 
   private var isTimeoutedBool = new AtomicBoolean(false)
 
