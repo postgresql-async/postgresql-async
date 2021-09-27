@@ -73,7 +73,7 @@ private[db] object FutureTimer {
           TimeUnit.MILLISECONDS
         )
 
-        f().andThen { r =>
+        f().andThen { case r =>
           if (p.tryComplete(r)) {
             sf.cancel(true)
           }
