@@ -3,6 +3,7 @@ package com.github.mauricio.async.db.pool
 import org.scalacheck._
 import scala.concurrent._
 import scala.concurrent.duration._
+import scala.util._
 import java.util.concurrent.Executors
 
 trait FutureGenInstance {
@@ -33,7 +34,7 @@ trait FutureGenInstance {
     } yield () => {
       FutureGenInstance.timer
         .sleep(mills.millis)
-        .flatMap(_ => Future.fromTry(eOrA.toTry))
+        .flatMap(_ => Future.fromTry(eOrA.fold(Failure(_), Success(_))))
     }
     Gen.frequency(
       1 -> genHangs,
