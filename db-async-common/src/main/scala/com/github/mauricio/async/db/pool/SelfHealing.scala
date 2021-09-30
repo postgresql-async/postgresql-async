@@ -32,6 +32,7 @@ object SelfHealing {
 
   case class Config(
     checkInterval: Long,
+    createTimeout: Long,
     releaseTimeout: Long,
     checkTimeout: Long,
     minHealInterval: Long
@@ -81,7 +82,17 @@ object SelfHealing {
     timer: FutureTimer
   ) extends SelfHealing[A] {
 
-    val state = new AtomicReference[State[A]](State.Idle)
+    private final val state = new AtomicReference[State[A]](State.Idle)
+    private final val logger =
+      LoggerFactory.getLogger(classOf[SelfHealingImpl[A]])
+
+    val timeoutAcquire = () => {
+      timer.timeout(config.createTimeout.millis, () => acquire())
+    }
+
+    val timeoutRelease = (a: A) => {
+      timer.timeoutTo(config.releaseTimeout.millis, () => release(a), ())
+    }
 
     private def tryHeal(s: State.Ready[A], a: A): Option[Future[A]] = {
       implicit val ec = Execution.naive
@@ -89,13 +100,9 @@ object SelfHealing {
       val acquireNew  = Promise[A]()
       val newState    = State.Swapping(a, acquireNew, releaseOld)
       if (state.compareAndSet(s, newState)) {
-        val doAcquire = acquireNew.completeWith(acquire()).future
-        val doRelease = releaseOld
-          .completeWith(
-            timer.timeoutTo(config.releaseTimeout.millis, () => release(a), ())
-          )
-          .future
-        Some(doRelease.flatMap(_ => doAcquire))
+        acquireNew.completeWith(timeoutAcquire())
+        releaseOld.completeWith(timeoutRelease(a))
+        Some(releaseOld.future.flatMap(_ => acquireNew.future))
       } else None
     }
 
@@ -121,8 +128,8 @@ object SelfHealing {
               () => check(a),
               false
             )
-            isSick = isAlive || (now - curr.createTime) < config.minHealInterval
-            r <- if (isSick) Future.successful(a) else healed(a)
+            isOk = isAlive || (now - curr.createTime) < config.minHealInterval
+            r <- if (isOk) Future.successful(a) else healed(a)
           } yield r
         } else { // under checking, return old resource
           curr.promise.future
@@ -143,7 +150,7 @@ object SelfHealing {
               State.Ready(nowMillis, nowMillis, p)
             )
           ) {
-            p.completeWith(acquire())
+            p.completeWith(timeoutAcquire())
             p.future
           } else get()
         case s @ State.Swapping(
@@ -151,8 +158,7 @@ object SelfHealing {
               newItem,
               oldRelease
             ) =>
-          implicit val ec = Execution.naive
-          oldRelease.future.flatMap(_ => newItem.future)
+          newItem.future
         case s: State.Ready[A] =>
           tryHealIfDead(s)
       }
@@ -163,14 +169,14 @@ object SelfHealing {
       state.get() match {
         case s @ State.Ready(_, _, p) =>
           if (state.compareAndSet(s, State.Idle)) {
-            s.promise.future.flatMap(release).map(_ => true)
+            s.promise.future.flatMap(timeoutRelease).map(_ => true)
           } else Future.successful(false)
         case State.Idle =>
           Future.successful(false)
         case s @ State.Swapping(old, newItem, oldRelease) =>
           if (state.compareAndSet(s, State.Idle)) {
             oldRelease.future
-              .flatMap(_ => newItem.future.flatMap(release))
+              .flatMap(_ => newItem.future.flatMap(timeoutRelease))
               .map(_ => true)
           } else Future.successful(false)
       }
