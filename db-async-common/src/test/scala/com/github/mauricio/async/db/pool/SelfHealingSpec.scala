@@ -106,7 +106,7 @@ class SelfHealingSpec
     val start = System.currentTimeMillis()
     val call = func(sh)
       .flatMap(_ =>
-        sh.tryRelease().recover { e =>
+        sh.tryRelease().recover { case e =>
           false
         }
       )
@@ -129,7 +129,9 @@ class SelfHealingSpec
 
   val alwaysReleasedResources = Prop.forAll { data: Data =>
     val r = runPropTest(data) { sh =>
-      Future.sequence(Seq.fill(1000)(sh.get())).recover { e => }
+      Future.sequence(Seq.fill(1000)(sh.get())).recover { case e =>
+        e.printStackTrace
+      }
     }
     val maxGap = (r.endAt - r.startAt) / 10 + 1
     println(
