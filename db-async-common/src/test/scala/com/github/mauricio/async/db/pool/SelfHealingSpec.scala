@@ -19,6 +19,14 @@ class SelfHealingSpec
     check: () => Future[Boolean]
   )
 
+  final val config = SelfHealing.Config(
+    checkInterval = 10,
+    releaseTimeout = 10,
+    checkTimeout = 10,
+    minHealInterval = 10,
+    createTimeout = 10
+  )
+
   val dataGen = {
     for {
       a <- futureGen[Int]
@@ -53,13 +61,6 @@ class SelfHealingSpec
     val checkInterval  = 10
     val releaseTimeout = 10
     val checkTimeout   = 10
-    val config = SelfHealing.Config(
-      checkInterval = 10,
-      releaseTimeout = 10,
-      checkTimeout = 10,
-      minHealInterval = 10,
-      createTimeout = 10
-    )
 
     val acquire = () => {
       createCount.incrementAndGet()
@@ -130,18 +131,32 @@ class SelfHealingSpec
   val alwaysReleasedResources = Prop.forAll { data: Data =>
     val r = runPropTest(data) { sh =>
       Future.sequence(Seq.fill(1000)(sh.get())).recover { case e =>
-        e.printStackTrace
+        println(s"Failed get resource ${e}")
       }
     }
     val maxGap = (r.endAt - r.startAt) / 10 + 1
-    println(
-      s"successCreate: ${r.successCreate} , createCount: ${r.createCount} , release: ${r.releaseCount} , checkCount: ${r.checkCount} , maxGap: ${maxGap}"
-    )
+    //println(s"successCreate: ${r.successCreate} , createCount: ${r.createCount} , release: ${r.releaseCount} , checkCount: ${r.checkCount} , maxGap: ${maxGap}")
     r.successCreate === r.releaseCount
     r.checkCount <= maxGap
     r.createCount <= maxGap
     r.createCount <= (r.checkCount - r.successCheck) + 1
   }
 
-  s2"recreate/release resource if it is dead ${alwaysReleasedResources}"
+  val recreateIfDead = Prop.forAll { data: Data =>
+    val nd = data.copy(check = () => Future.successful(false))
+    val rr = runPropTest(nd) { sh =>
+      (for {
+        _ <- sh.get()
+        _ <- FutureGenInstance.timer.sleep((config.checkInterval + 10).millis)
+        _ <- sh.get()
+      } yield {}).recover { e =>
+        println(s"Error run get ${e}")
+      }
+    }
+    rr.checkCount shouldEqual (1)
+    rr.createCount shouldEqual (2)
+  }
+
+  s2"Always release created resource ${alwaysReleasedResources}"
+  s2"Recreate if resource is dead ${recreateIfDead}"
 }

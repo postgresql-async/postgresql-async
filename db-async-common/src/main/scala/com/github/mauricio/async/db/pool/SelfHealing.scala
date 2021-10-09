@@ -86,12 +86,16 @@ object SelfHealing {
     private final val logger =
       LoggerFactory.getLogger(classOf[SelfHealingImpl[A]])
 
-    val timeoutAcquire = () => {
+    def timeoutAcquire() = {
       timer.timeout(config.createTimeout.millis, () => acquire())
     }
 
-    val timeoutRelease = (a: A) => {
+    def timeoutRelease(a: A) = {
       timer.timeoutTo(config.releaseTimeout.millis, () => release(a), ())
+    }
+
+    def timeoutCheck(a: A) = {
+      timer.timeoutTo(config.checkTimeout.millis, () => check(a), false)
     }
 
     private def tryHeal(s: State.Ready[A], a: A): Option[Future[A]] = {
@@ -102,6 +106,16 @@ object SelfHealing {
       if (state.compareAndSet(s, newState)) {
         acquireNew.completeWith(timeoutAcquire())
         releaseOld.completeWith(timeoutRelease(a))
+        releaseOld.future.onComplete { r =>
+          val nowMillis = System.currentTimeMillis
+          state.set(
+            State.Ready(
+              lastActive = nowMillis,
+              createTime = nowMillis,
+              acquireNew
+            )
+          )
+        }
         Some(releaseOld.future.flatMap(_ => acquireNew.future))
       } else None
     }
@@ -111,8 +125,7 @@ object SelfHealing {
     ): Future[A] = {
       implicit val ec = Execution.naive
       val now         = System.currentTimeMillis
-      if (now - curr.lastActive > config.checkInterval) {
-
+      if ((now - curr.lastActive) >= config.checkInterval) {
         def healed(a: A) = {
           tryHeal(curr, a) match {
             case Some(newRes) => newRes
@@ -122,12 +135,8 @@ object SelfHealing {
 
         if (state.compareAndSet(curr, curr.copy(lastActive = now))) {
           for {
-            a <- curr.promise.future
-            isAlive <- timer.timeoutTo(
-              config.checkTimeout.millis,
-              () => check(a),
-              false
-            )
+            a       <- curr.promise.future
+            isAlive <- timeoutCheck(a)
             isOk = isAlive || (now - curr.createTime) < config.minHealInterval
             r <- if (isOk) Future.successful(a) else healed(a)
           } yield r
