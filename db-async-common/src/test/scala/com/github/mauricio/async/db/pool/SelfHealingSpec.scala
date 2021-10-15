@@ -145,13 +145,14 @@ class SelfHealingSpec
   val recreateIfDead = Prop.forAll { data: Data =>
     val nd = data.copy(check = () => Future.successful(false))
     val rr = runPropTest(nd) { sh =>
-      (for {
-        _ <- sh.get()
+      for {
+        _ <- sh.get().recover(e => {})
+        start = System.currentTimeMillis()
         _ <- FutureGenInstance.timer.sleep((config.checkInterval + 10).millis)
-        _ <- sh.get()
-      } yield {}).recover { e =>
-        println(s"Error run get ${e}")
-      }
+        end = System.currentTimeMillis
+        _   = println(s"${end - start}.......")
+        _ <- sh.get().recover(e => {})
+      } yield {}
     }
     rr.checkCount shouldEqual (1)
     rr.createCount shouldEqual (2)

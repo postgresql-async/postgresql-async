@@ -68,7 +68,7 @@ object SelfHealing {
     ) extends State[A]
 
     case class Swapping[A](
-      oldItem: A,
+      oldItem: Promise[A],
       newItem: Promise[A],
       oldRelease: Promise[Unit]
     ) extends State[A]
@@ -98,14 +98,14 @@ object SelfHealing {
       timer.timeoutTo(config.checkTimeout.millis, () => check(a), false)
     }
 
-    private def tryHeal(s: State.Ready[A], a: A): Option[Future[A]] = {
+    private def tryHeal(s: State.Ready[A], oldRes: Promise[A]): Option[Future[A]] = {
       implicit val ec = Execution.naive
       val releaseOld  = Promise[Unit]()
       val acquireNew  = Promise[A]()
-      val newState    = State.Swapping(a, acquireNew, releaseOld)
+      val newState    = State.Swapping(oldRes, acquireNew, releaseOld)
       if (state.compareAndSet(s, newState)) {
         acquireNew.completeWith(timeoutAcquire())
-        releaseOld.completeWith(timeoutRelease(a))
+        releaseOld.completeWith(oldRes.future.flatMap(timeoutRelease))
         releaseOld.future.onComplete { r =>
           val nowMillis = System.currentTimeMillis
           state.set(
@@ -116,7 +116,9 @@ object SelfHealing {
             )
           )
         }
-        Some(releaseOld.future.flatMap(_ => acquireNew.future))
+        Some(releaseOld.future.recover { e =>
+          logger.info(s"Error realease resource", e)
+        }.flatMap(_ => acquireNew.future))
       } else None
     }
 
@@ -126,7 +128,8 @@ object SelfHealing {
       implicit val ec = Execution.naive
       val now         = System.currentTimeMillis
       if ((now - curr.lastActive) >= config.checkInterval) {
-        def healed(a: A) = {
+
+        def healed(a: Promise[A]) = {
           tryHeal(curr, a) match {
             case Some(newRes) => newRes
             case None         => get() // concurrent access detected, retry loop
@@ -134,11 +137,16 @@ object SelfHealing {
         }
 
         if (state.compareAndSet(curr, curr.copy(lastActive = now))) {
+          println(s"start heal...")
           for {
-            a       <- curr.promise.future
-            isAlive <- timeoutCheck(a)
+            isAlive <- curr.promise.future
+              .flatMap(timeoutCheck)
+              .recover(e => false)
             isOk = isAlive || (now - curr.createTime) < config.minHealInterval
-            r <- if (isOk) Future.successful(a) else healed(a)
+            _ = println(
+              s"isAlive: ${isAlive} , duration: ${now - curr.createTime}, isOk: ${isOk}................"
+            )
+            r <- if (isOk) curr.promise.future else healed(curr.promise)
           } yield r
         } else { // under checking, return old resource
           curr.promise.future
