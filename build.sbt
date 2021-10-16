@@ -1,15 +1,23 @@
 import ReleaseTransformations._
 
-val commonName       = "db-async-common"
-val postgresqlName   = "postgresql-async"
-val mysqlName        = "mysql-async"
-val nettyVersion     = "4.1.66.Final"
-val specs2Version    = "4.8.0"
-val specs2Dependency = "org.specs2" %% "specs2-core" % specs2Version % Test
-val specs2JunitDependency =
-  "org.specs2" %% "specs2-junit" % specs2Version % Test
-val specs2MockDependency = "org.specs2" %% "specs2-mock" % specs2Version % Test
+val commonName     = "db-async-common"
+val postgresqlName = "postgresql-async"
+val mysqlName      = "mysql-async"
+val nettyVersion   = "4.1.66.Final"
+
+def specs2Dependency(scalaVersion: String) = {
+  Seq(
+    "org.specs2" %% "specs2-core"  % specs2Version(scalaVersion) % Test,
+    "org.specs2" %% "specs2-junit" % specs2Version(scalaVersion) % Test
+  )
+}
 val logbackDependency = "ch.qos.logback" % "logback-classic" % "1.2.3" % Test
+
+def specs2Version(scalaVersion: String) = {
+  if (scalaVersion.startsWith("2."))
+    "4.10.6"
+  else "5.0.0-RC-15"
+}
 
 lazy val root = (project in file("."))
   .settings(baseSettings: _*)
@@ -25,14 +33,14 @@ lazy val common = (project in file("db-async-common"))
   .settings(baseSettings: _*)
   .settings(
     name := commonName,
-    libraryDependencies ++= commonDependencies
+    libraryDependencies ++= commonDependencies(scalaVersion.value)
   )
 
 lazy val postgresql = (project in file("postgresql-async"))
   .settings(baseSettings: _*)
   .settings(
     name := postgresqlName,
-    libraryDependencies ++= implementationDependencies
+    libraryDependencies ++= implementationDependencies(scalaVersion.value)
   )
   .dependsOn(common)
 
@@ -40,32 +48,28 @@ lazy val mysql = (project in file("mysql-async"))
   .settings(baseSettings: _*)
   .settings(
     name := mysqlName,
-    libraryDependencies ++= implementationDependencies
+    libraryDependencies ++= implementationDependencies(scalaVersion.value)
   )
   .dependsOn(common)
 
-val commonDependencies = Seq(
+def commonDependencies(scalaVersion: String) = Seq(
   "org.slf4j"                % "slf4j-api"               % "1.7.29",
   "joda-time"                % "joda-time"               % "2.10.5",
   "org.joda"                 % "joda-convert"            % "2.2.1",
   "io.netty"                 % "netty-codec"             % nettyVersion,
   "io.netty"                 % "netty-handler"           % nettyVersion,
   "org.javassist"            % "javassist"               % "3.26.0-GA",
-  "org.scala-lang.modules"  %% "scala-collection-compat" % "2.1.2",
-  "com.google.code.findbugs" % "jsr305"                  % "3.0.1" % Provided,
-  specs2Dependency,
-  specs2JunitDependency,
-  specs2MockDependency,
-  logbackDependency
-)
+  "org.scala-lang.modules"  %% "scala-collection-compat" % "2.5.0",
+  "com.google.code.findbugs" % "jsr305"                  % "3.0.1" % Provided
+) ++ specs2Dependency(scalaVersion)
 
-val implementationDependencies = Seq(
-  specs2Dependency,
-  logbackDependency
-)
+def implementationDependencies(scalaVersion: String) =
+  specs2Dependency(scalaVersion) ++ Seq(
+    logbackDependency
+  )
 
 val baseSettings = Seq(
-  crossScalaVersions := Seq("2.11.12", "2.12.14", "2.13.6"),
+  crossScalaVersions := Seq("2.11.12", "2.12.14", "2.13.6", "3.0.2"),
   (Test / testOptions) += Tests.Argument("sequential"),
   (Test / fork) := true,
   scalaVersion  := "2.13.6",
@@ -74,7 +78,8 @@ val baseSettings = Seq(
       :+ Opts.compile.deprecation
       :+ Opts.compile.unchecked
       :+ "-feature"
-      :+ "-Ydelambdafy:method",
+      :+ "-Ydelambdafy:method"
+      :+ "-Xsource:3",
   (Test / testOptions) += Tests.Argument(TestFrameworks.Specs2, "sequential"),
   (doc / scalacOptions) := Seq(
     s"-doc-external-doc:scala=https://www.scala-lang.org/files/archive/api/${scalaVersion.value}/"

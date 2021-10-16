@@ -13,7 +13,7 @@ class PasswordHelperSpec extends Specification {
     100, 100, 54, 101, 56, 52, 57, 49, 100, 52, 101, 99, 49, 55, 100, 57, 97,
     51, 102, 97, 97, 55, 56)
 
-  def printArray(name: String, bytes: Array[Byte]) {
+  def printArray(name: String, bytes: Array[Byte]) = {
     printf("%s %s -> (%s)%n", name, bytes.length, bytes.mkString(","))
   }
 

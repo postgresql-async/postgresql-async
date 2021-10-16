@@ -50,7 +50,7 @@ class MySQLConnectionHandler(
   connectionId: String
 ) extends SimpleChannelInboundHandler[Object] {
 
-  private implicit val internalPool = executionContext
+  private implicit val internalPool: ExecutionContext = executionContext
   private final val log = Log.getByName(s"[connection-handler]${connectionId}")
   private final val bootstrap         = new Bootstrap().group(this.group)
   private final val connectionPromise = Promise[MySQLConnectionHandler]()

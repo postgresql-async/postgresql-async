@@ -47,11 +47,11 @@ object ByteBufferUtils {
 
     var byte: Byte = 0
     var count      = 0
-
-    do {
-      byte = b.readByte()
+    byte = b.readByte()
+    while (byte != 0) {
       count += 1
-    } while (byte != 0)
+      byte = b.readByte
+    }
 
     b.resetReaderIndex()
 

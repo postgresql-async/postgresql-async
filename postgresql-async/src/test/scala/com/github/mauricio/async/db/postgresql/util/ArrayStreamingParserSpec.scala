@@ -105,21 +105,21 @@ class LoggingDelegate extends ArrayStreamingParserDelegate {
   var starts = 0
   var ends   = 0
 
-  override def arrayStarted {
+  override def arrayStarted = {
     items += "{"
     starts += 1
   }
 
-  override def arrayEnded {
+  override def arrayEnded = {
     items += "}"
     ends += 1
   }
 
-  override def elementFound(element: String) {
+  override def elementFound(element: String) = {
     items += element
   }
 
-  override def nullElementFound {
+  override def nullElementFound = {
     items += null
   }
 }
