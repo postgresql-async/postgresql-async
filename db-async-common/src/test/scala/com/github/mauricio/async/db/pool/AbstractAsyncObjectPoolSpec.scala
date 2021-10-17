@@ -1,17 +1,17 @@
 package com.github.mauricio.async.db.pool
 
 import com.github.mauricio.async.db.pool.AbstractAsyncObjectPoolSpec.Widget
-import org.mockito.Mockito.reset
-import org.specs2.mock.Mockito
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
+
+import org.mockito.Mockito._
 
 import scala.concurrent.{Await, Future}
 import scala.util.Failure
 
-import scala.reflect.runtime.universe.TypeTag
 import scala.util.Try
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
+import scala.language.postfixOps
 
 /**
  * This spec is designed abstract to allow testing of any implementation of
@@ -21,9 +21,8 @@ import scala.concurrent.duration._
  *   the AsyncObjectPool being tested.
  */
 abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](
-  implicit tag: TypeTag[T]
-) extends Specification
-    with Mockito {
+  label: String
+) extends Spec {
 
   import AbstractAsyncObjectPoolSpec._
 
@@ -33,13 +32,13 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](
   ): T
 
   // Evaluates to the type of AsyncObjectPool
-  s"the ${tag.tpe.erasure} variant of AsyncObjectPool" should {
+  s"the ${label} variant of AsyncObjectPool" - {
 
     "successfully retrieve and return a Widget" in {
       val p      = pool()
       val widget = Await.result(p.take, Duration.Inf)
 
-      widget must not beNull
+      widget must not be (null)
 
       val thePool = Await.result(p.giveBack(widget), Duration.Inf)
       thePool must be(p)
@@ -47,14 +46,12 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](
 
     "reject Widgets that did not come from it" in {
       val p = pool()
-
-      Await.result(p.giveBack(Widget(null)), Duration.Inf) must throwAn[
-        IllegalArgumentException
-      ]
+      assertThrows[IllegalArgumentException] {
+        Await.result(p.giveBack(Widget(null)), Duration.Inf)
+      }
     }
 
-    "scale contents" >> {
-      sequential
+    "scale contents" - {
 
       val factory = spy(new TestWidgetFactory)
 
@@ -76,11 +73,11 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](
         )
 
         taken must have size 5
-        taken.head must not beNull;
-        taken(1) must not beNull;
-        taken(2) must not beNull;
-        taken(3) must not beNull;
-        taken(4) must not beNull
+        taken.head must not be null
+        taken(1) must not be null
+        taken(2) must not be null
+        taken(3) must not be null
+        taken(4) must not be null
       }
 
       "does not attempt to expire taken items" in {
@@ -242,7 +239,9 @@ object AbstractAsyncObjectPoolSpec {
 }
 
 class SingleThreadedAsyncObjectPoolSpec
-    extends AbstractAsyncObjectPoolSpec[SingleThreadedAsyncObjectPool[Widget]] {
+    extends AbstractAsyncObjectPoolSpec[SingleThreadedAsyncObjectPool[Widget]](
+      "SingleThread"
+    ) {
 
   import AbstractAsyncObjectPoolSpec._
 

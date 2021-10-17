@@ -7,8 +7,8 @@ val nettyVersion   = "4.1.66.Final"
 
 def specs2Dependency(scalaVersion: String) = {
   Seq(
-    "org.specs2" %% "specs2-core"  % specs2Version(scalaVersion) % Test,
-    "org.specs2" %% "specs2-junit" % specs2Version(scalaVersion) % Test
+    "org.scalatest" %% "scalatest"    % "3.2.10" % Test,
+    "org.mockito"    % "mockito-core" % "4.0.0"  % Test
   )
 }
 val logbackDependency = "ch.qos.logback" % "logback-classic" % "1.2.3" % Test

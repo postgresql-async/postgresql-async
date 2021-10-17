@@ -16,7 +16,7 @@
 
 package com.github.mauricio.async.db.util
 
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 
 object HexCodecSpec {
 
@@ -30,35 +30,38 @@ object HexCodecSpec {
 
 }
 
-class HexCodecSpec extends Specification {
+class HexCodecSpec extends spec {
 
   import HexCodecSpec._
 
-  "codec" should {
+  "codec" - {
 
     "correctly generate an array of bytes" in {
 
       val bytes = HexCodec.decode(
         "5361792048656c6c6f20746f204d79204c6974746c6520467269656e64"
       )
-      bytes === sampleArray
+      bytes shouldEqual sampleArray
 
     }
 
     "correctly generate a string from an array of bytes" in {
-      HexCodec.encode(sampleArray) === sampleHex
+      HexCodec.encode(sampleArray) shouldEqual sampleHex
     }
 
     "correctly generate a byte array from the PG output" in {
 
       val input = "\\x53617920"
       val bytes = Array[Byte](83, 97, 121, 32)
-      HexCodec.decode(input, 2) === bytes
+      HexCodec.decode(input, 2) shouldEqual bytes
 
     }
 
     "correctly encode to hex using the PostgreSQL format" in {
-      HexCodec.encode(sampleArray, HexStartChars) === (HexStart + sampleHex)
+      HexCodec.encode(
+        sampleArray,
+        HexStartChars
+      ) shouldEqual (HexStart + sampleHex)
     }
 
   }

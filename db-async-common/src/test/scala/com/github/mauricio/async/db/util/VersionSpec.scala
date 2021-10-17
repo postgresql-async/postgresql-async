@@ -16,11 +16,11 @@
 
 package com.github.mauricio.async.db.util
 
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 
-class VersionSpec extends Specification {
+class VersionSpec extends Spec {
 
-  "version" should {
+  "version" - {
 
     "correctly parse versions" in {
       val version = Version("9.1.4")
@@ -41,7 +41,7 @@ class VersionSpec extends Specification {
       val version1 = Version("8.2.0")
       val version2 = Version("9.2.0")
 
-      version2 must beGreaterThan(version1)
+      version2 must be > (version1)
 
     }
 
@@ -59,7 +59,7 @@ class VersionSpec extends Specification {
       val version1 = Version("8.2.8")
       val version2 = Version("8.2.87")
 
-      version2 must beGreaterThan(version1)
+      version2 must be > (version1)
 
     }
 
@@ -68,7 +68,7 @@ class VersionSpec extends Specification {
       val version1 = Version("9.1.2")
       val version2 = Version("9.2.0")
 
-      version2 must beGreaterThan(version1)
+      version2 must be > (version1)
 
     }
 

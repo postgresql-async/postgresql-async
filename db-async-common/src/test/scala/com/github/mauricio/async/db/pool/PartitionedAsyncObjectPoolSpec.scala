@@ -2,7 +2,7 @@ package com.github.mauricio.async.db.pool
 
 import java.util.concurrent.atomic.AtomicInteger
 
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import scala.util.Try
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -16,9 +16,7 @@ import java.util.concurrent.Executors
 /**
  * This pool is buggy and error prone, currently test is not stable, skip test
  */
-abstract class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
-  isolated
-  sequential
+abstract class PartitionedAsyncObjectPoolSpec extends Spec {
 
   val config =
     PoolConfiguration(100, Long.MaxValue, 100, Int.MaxValue)
@@ -47,9 +45,9 @@ abstract class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
   def maxIdle      = config.maxIdle / 2
   def maxQueueSize = config.maxQueueSize / 2
 
-  "pool contents" >> {
+  "pool contents" - {
 
-    "before exceed maxObjects" >> {
+    "before exceed maxObjects" - {
 
       "take one element" in {
         takeAndWait(1)
@@ -118,11 +116,11 @@ abstract class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
       }
     }
 
-    "after exceed maxObjects" >> {
+    "after exceed maxObjects" - {
 
       takeAndWait(maxObjects)
 
-      "before exceed maxQueueSize" >> {
+      "before exceed maxQueueSize" - {
 
         "one take queued" in {
           pool.take
@@ -188,7 +186,7 @@ abstract class PartitionedAsyncObjectPoolSpec extends SpecificationWithJUnit {
         }
       }
 
-      "after exceed maxQueueSize" >> {
+      "after exceed maxQueueSize" - {
 
         for (_ <- 0 until maxQueueSize)
           pool.take
