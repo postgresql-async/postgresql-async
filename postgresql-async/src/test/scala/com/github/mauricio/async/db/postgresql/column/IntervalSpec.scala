@@ -63,7 +63,7 @@ class IntervalSpec extends Spec {
       both("-4:05:06") === "PT-4H-5M-6S"
     }
 
-    "parse and encode example intervals" in {
+    "parse and encode example intervals (pending)" in {
       pendingUntilFixed {
         Seq("-1-2 +3 -4:05:06", "-1 year -2 mons +3 days -04:05:06") forall {
           both(_) === "P-1Y-2M3DT-4H-5M-6S"
