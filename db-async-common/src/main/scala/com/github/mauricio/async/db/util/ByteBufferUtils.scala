@@ -45,7 +45,8 @@ object ByteBufferUtils {
   def readCString(b: ByteBuf, charset: Charset): String = {
     b.markReaderIndex()
     var byte: Byte = 0.toByte
-    var count      = 0
+    var count      = 1
+    byte = b.readByte
     while (byte != 0.toByte) {
       count = count + 1
       byte = b.readByte()
