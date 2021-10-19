@@ -67,7 +67,7 @@ def scalacOpts(v: String): Seq[String] = {
     base ++ Seq(
       Opts.compile.deprecation,
       Opts.compile.unchecked,
-      "-Xmax-classfile-name", "78"
+      "-Xmax-classfile-name", "78",
       "-Xsource:3",
       "-Ydelambdafy:method"
     )
