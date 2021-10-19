@@ -56,20 +56,23 @@ def commonDependencies(scalaVersion: String) = Seq(
 ) ++ testDependency(scalaVersion)
 
 def scalacOpts(v: String): Seq[String] = {
-  val base = Opts.compile.encoding("UTF8")
+  val base = Opts.compile.encoding(
+    "UTF8"
+  ) :+ Opts.compile.deprecation :+ Opts.compile.unchecked :+ "-feature"
   if (v.startsWith("3.")) {
+    base
+  } else if (v.startsWith("2.11")) {
     base ++ Seq(
-      Opts.compile.deprecation,
-      Opts.compile.unchecked,
-      "-feature"
+      "-Xmax-classfile-name",
+      "78",
+      "-Xsource:3",
+      "-Ydelambdafy:method"
     )
   } else {
     base ++ Seq(
       Opts.compile.deprecation,
       Opts.compile.unchecked,
-      "-Xmax-classfile-name", "78",
-      "-Xsource:3",
-      "-Ydelambdafy:method"
+      "-Xsource:3"
     )
   }
 }
@@ -84,7 +87,7 @@ val baseSettings = Seq(
   ),
   javacOptions := Seq("-source", "1.8", "-target", "1.8", "-encoding", "UTF8"),
   (Test / javaOptions) ++= Seq("-Dio.netty.leakDetection.level=paranoid"),
-  organization      := "com.github.postgresql-async",
+  organization               := "com.github.postgresql-async",
   (Test / parallelExecution) := false
 ) ++ publishSettings
 

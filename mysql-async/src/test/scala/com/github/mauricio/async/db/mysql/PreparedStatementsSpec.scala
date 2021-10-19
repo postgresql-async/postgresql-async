@@ -61,7 +61,7 @@ class PreparedStatementsSpec extends Spec with ConnectionHelper {
 
         result(0)("name") === "joe"
         result(0)("id") === 1
-        result(0)("null_value") must be(null)
+        result(0)("null_value") must be(null: Any)
         result.length === 1
 
       }
@@ -434,13 +434,13 @@ class PreparedStatementsSpec extends Spec with ConnectionHelper {
 
         row("id") === 1
         row("some_text") === "this is some text here"
-        row("some_date") must be(null)
+        row("some_date") must be(null: Any)
 
         val queryRow = executePreparedStatement(connection, select).rows.get(0)
 
         queryRow("id") === 1
         queryRow("some_text") === "this is some text here"
-        queryRow("some_date") must be(null)
+        queryRow("some_date") mustEqual (null: Any)
 
       }
     }

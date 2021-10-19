@@ -20,7 +20,7 @@ abstract class PartitionedAsyncObjectPoolSpec extends Spec {
   val config =
     PoolConfiguration(100, Long.MaxValue, 100, Int.MaxValue)
   private var current = new AtomicInteger
-  val factory = new ObjectFactory[Int] {
+  object factory extends ObjectFactory[Int] {
     var reject     = Set[Int]()
     var failCreate = false
 

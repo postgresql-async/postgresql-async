@@ -141,7 +141,7 @@ class TimeAndDateSpec extends Spec with DatabaseTestHelper {
 
     "support timestamp with timezone and microseconds" in {
 
-      forAll(1.until(6)) { index =>
+      forAll(1.until(6).toList) { index =>
         withHandler { handler =>
           val create = """CREATE TEMP TABLE messages
                          (

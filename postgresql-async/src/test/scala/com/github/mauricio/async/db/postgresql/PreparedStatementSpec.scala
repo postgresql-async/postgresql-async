@@ -148,7 +148,7 @@ class PreparedStatementSpec extends Spec with DatabaseTestHelper {
         executeDdl(handler, this.messagesCreate)
         executeDdl(handler, create)
 
-        forAll(1.until(4)) { x =>
+        forAll((1 until 4).toList) { (x: Int) =>
           executePreparedStatement(
             handler,
             this.messagesInsert,

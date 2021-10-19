@@ -63,7 +63,7 @@ class BinaryRowDecoderSpec extends Spec {
       buffer.release()
       result(0) === 1L
       result(1) === "joe"
-      result(2) must be(null)
+      result(2) must be(null: Any)
     }
 
   }

@@ -22,9 +22,9 @@ class ZeroDatesSpec extends Spec with ConnectionHelper {
 
   def matchValues(result: RowData) = {
     result("name") === "Joe"
-    result("timestamp_column") must be(null)
-    result("datetime_column") must be(null)
-    result("date_column") must be(null)
+    result("timestamp_column") must be(null: Any)
+    result("datetime_column") must be(null: Any)
+    result("date_column") must be(null: Any)
     result("year_column") === 0
     result("time_column") === Duration.Zero
   }
