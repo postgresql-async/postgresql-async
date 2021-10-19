@@ -31,7 +31,10 @@ class QueryTimeoutSpec extends Spec with ConnectionHelper {
         connection.isTimeouted === false
         connection.isConnected === true
         val queryResultFuture = connection.sendQuery("select sleep(1)")
-        a[TimeoutException] must be thrownBy Await.result(queryResultFuture, Duration(10, SECONDS))
+        a[TimeoutException] must be thrownBy Await.result(
+          queryResultFuture,
+          Duration(10, SECONDS)
+        )
         connection.isTimeouted === true
         Await.ready(pool.giveBack(connection), Duration(10, SECONDS))
         pool.availables.count(

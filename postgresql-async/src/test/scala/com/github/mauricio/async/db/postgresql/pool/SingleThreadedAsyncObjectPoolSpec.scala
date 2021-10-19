@@ -65,7 +65,7 @@ abstract class SingleThreadedAsyncObjectPoolSpec
 
           pool.availables.size === 0
           pool.inUse.size === 1
-          pool.queued.size must be <=(3)
+          pool.queued.size must be <= (3)
 
           /* pool.take call checkout that call this.mainPool.action,
           so enqueuePromise called in executorService,
@@ -150,7 +150,9 @@ abstract class SingleThreadedAsyncObjectPoolSpec
 
         pool.inUse.size === 1
 
-        a[ClosedChannelException] must be thrownBy await(pool.giveBack(connection))
+        a[ClosedChannelException] must be thrownBy await(
+          pool.giveBack(connection)
+        )
 
         pool.availables.size === 0
         pool.inUse.size === 0
@@ -164,7 +166,9 @@ abstract class SingleThreadedAsyncObjectPoolSpec
         val connection = get(pool)
         connection.sendPreparedStatement("SELECT pg_sleep(3)")
 
-        a[ConnectionStillRunningQueryException] must be thrownBy await(pool.giveBack(connection))
+        a[ConnectionStillRunningQueryException] must be thrownBy await(
+          pool.giveBack(connection)
+        )
         pool.availables.size === 0
         pool.inUse.size === 0
       }

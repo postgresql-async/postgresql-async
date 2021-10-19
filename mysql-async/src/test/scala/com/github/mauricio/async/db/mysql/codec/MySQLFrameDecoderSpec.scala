@@ -109,8 +109,8 @@ class MySQLFrameDecoderSpec extends Spec {
       embedder.writeInbound(buffer) must be(true)
       embedder.readInbound().asInstanceOf[ErrorMessage].errorMessage === content
 
-      decoder.isInQuery must be (false)
-      decoder.processingColumns must be (false)
+      decoder.isInQuery must be(false)
+      decoder.processingColumns must be(false)
 
     }
 

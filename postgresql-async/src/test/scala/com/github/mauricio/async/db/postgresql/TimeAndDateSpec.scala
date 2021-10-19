@@ -168,8 +168,8 @@ class TimeAndDateSpec extends Spec with DatabaseTestHelper {
 
           // Note: Since this assertion depends on Brazil locale, I think epoch time assertion is preferred
           // dateTime.getZone.toTimeZone.getRawOffset === -10800000
-          dateTime.getMillis must be >=(915779106000L)
-          dateTime.getMillis must be <(915779107000L)
+          dateTime.getMillis must be >= (915779106000L)
+          dateTime.getMillis must be < (915779107000L)
         }
       }
     }
@@ -197,7 +197,7 @@ class TimeAndDateSpec extends Spec with DatabaseTestHelper {
 
         val dateTime = rows(0)("moment").asInstanceOf[DateTime]
 
-        dateTime.getMillis must === (millis +- 500)
+        dateTime.getMillis must ===(millis +- 500)
       }
     }
 

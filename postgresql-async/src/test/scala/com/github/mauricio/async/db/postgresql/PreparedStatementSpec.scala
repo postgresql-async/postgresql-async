@@ -113,7 +113,12 @@ class PreparedStatementSpec extends Spec with DatabaseTestHelper {
 
       withHandler { handler =>
         executeDdl(handler, this.messagesCreate)
-        a[InsufficientParametersException] must be thrownBy executePreparedStatement(handler, this.messagesSelectOne)
+        a[
+          InsufficientParametersException
+        ] must be thrownBy executePreparedStatement(
+          handler,
+          this.messagesSelectOne
+        )
       }
 
     }
@@ -158,7 +163,7 @@ class PreparedStatementSpec extends Spec with DatabaseTestHelper {
           val result =
             executePreparedStatement(handler, this.messagesSelectAll).rows.get
           result.size === x
-          result.columnNames must contain inOrder("id", "content", "moment")
+          result.columnNames must contain inOrder ("id", "content", "moment")
           result(x - 1)("moment") === moment
           result(x - 1)("content") === message
 
@@ -487,7 +492,7 @@ class PreparedStatementSpec extends Spec with DatabaseTestHelper {
         }
         val plainQueryTime = System.nanoTime() - plainQueryStartTime
 
-        preparedStatementTime must be <(plainQueryTime * 2)
+        preparedStatementTime must be < (plainQueryTime * 2)
       }
     }
   }

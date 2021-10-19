@@ -98,7 +98,7 @@ class MutableResultSetSpec extends Spec {
       )
       val resultSet = new ResultSetBuilder(columns).build()
 
-      resultSet.columnNames must contain inOrder("id", "name", "birthday", "created_at", "updated_at")
+      resultSet.columnNames must contain inOrder ("id", "name", "birthday", "created_at", "updated_at")
 
     }
 

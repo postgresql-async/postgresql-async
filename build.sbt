@@ -84,7 +84,7 @@ val baseSettings = Seq(
   javacOptions := Seq("-source", "1.8", "-target", "1.8", "-encoding", "UTF8"),
   (Test / javaOptions) ++= Seq("-Dio.netty.leakDetection.level=paranoid"),
   organization      := "com.github.postgresql-async",
-  parallelExecution := false
+  (Test / parallelExecution) := false
 ) ++ publishSettings
 
 lazy val publishSettings = Seq(
