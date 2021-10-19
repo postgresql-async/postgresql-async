@@ -98,14 +98,20 @@ object SelfHealing {
       timer.timeoutTo(config.checkTimeout.millis, () => check(a), false)
     }
 
-    private def tryHeal(s: State.Ready[A], oldRes: Promise[A]): Option[Future[A]] = {
+    private def tryHeal(s: State.Ready[A]): Option[Future[A]] = {
       implicit val ec = Execution.naive
       val releaseOld  = Promise[Unit]()
       val acquireNew  = Promise[A]()
-      val newState    = State.Swapping(oldRes, acquireNew, releaseOld)
+      val newState    = State.Swapping(s.promise, acquireNew, releaseOld)
+      println(s" ${state.get()} -> ${newState}")
       if (state.compareAndSet(s, newState)) {
+        println(s"start replace old res ${s}")
         acquireNew.completeWith(timeoutAcquire())
-        releaseOld.completeWith(oldRes.future.flatMap(timeoutRelease))
+        releaseOld.completeWith(
+          s.promise.future.flatMap(timeoutRelease).recover { e =>
+            logger.warn(s"Failed to release resource", e)
+          }
+        )
         releaseOld.future.onComplete { r =>
           val nowMillis = System.currentTimeMillis
           state.set(
@@ -116,10 +122,11 @@ object SelfHealing {
             )
           )
         }
-        Some(releaseOld.future.recover { e =>
-          logger.info(s"Error realease resource", e)
-        }.flatMap(_ => acquireNew.future))
-      } else None
+        Some(acquireNew.future)
+      } else {
+        println(s"try heal failed")
+        None
+      }
     }
 
     private def tryHealIfDead(
@@ -129,15 +136,16 @@ object SelfHealing {
       val now         = System.currentTimeMillis
       if ((now - curr.lastActive) >= config.checkInterval) {
 
-        def healed(a: Promise[A]) = {
-          tryHeal(curr, a) match {
+        def healed(state: State.Ready[A]) = {
+          tryHeal(state) match {
             case Some(newRes) => newRes
             case None         => get() // concurrent access detected, retry loop
           }
         }
 
-        if (state.compareAndSet(curr, curr.copy(lastActive = now))) {
-          println(s"start heal...")
+        val newState = curr.copy(lastActive = now)
+
+        if (state.compareAndSet(curr, newState)) {
           for {
             isAlive <- curr.promise.future
               .flatMap(timeoutCheck)
@@ -146,7 +154,7 @@ object SelfHealing {
             _ = println(
               s"isAlive: ${isAlive} , duration: ${now - curr.createTime}, isOk: ${isOk}................"
             )
-            r <- if (isOk) curr.promise.future else healed(curr.promise)
+            r <- if (isOk) curr.promise.future else healed(newState)
           } yield r
         } else { // under checking, return old resource
           curr.promise.future

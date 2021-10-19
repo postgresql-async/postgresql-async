@@ -63,7 +63,8 @@ class SelfHealingSpec
     val checkTimeout   = 10
 
     val acquire = () => {
-      createCount.incrementAndGet()
+      val c = createCount.incrementAndGet()
+      println(s"Create timets: ${c}")
       data.acquire().map { r =>
         successCreate.incrementAndGet()
         r
