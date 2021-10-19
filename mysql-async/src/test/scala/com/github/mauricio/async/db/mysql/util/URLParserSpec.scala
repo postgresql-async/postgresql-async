@@ -21,13 +21,13 @@ import java.nio.charset.Charset
 import com.github.mauricio.async.db.{Configuration, SSLConfiguration}
 import com.github.mauricio.async.db.exceptions.UnableToParseURLException
 import io.netty.buffer.{ByteBufAllocator, PooledByteBufAllocator}
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 
 import scala.concurrent.duration.Duration
 
-class URLParserSpec extends Specification {
+class URLParserSpec extends Spec {
 
-  "mysql URLParser" should {
+  "mysql URLParser" - {
     import URLParser.{DEFAULT, parse, parseOrDie}
 
     "have a reasonable default" in {
@@ -264,7 +264,7 @@ class URLParserSpec extends Specification {
       configuration.host === "127.0.0.1"
       configuration.port === 3306
 
-      parseOrDie(connectionUri) must throwA[UnableToParseURLException]
+      a[UnableToParseURLException] must be thrownBy parseOrDie(connectionUri)
     }
 
   }

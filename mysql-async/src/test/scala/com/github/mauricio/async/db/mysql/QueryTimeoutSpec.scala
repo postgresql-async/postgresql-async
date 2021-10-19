@@ -18,16 +18,12 @@ package com.github.mauricio.async.db.mysql
 
 import java.util.concurrent.TimeoutException
 import com.github.mauricio.async.db.Configuration
-import org.specs2.execute.{AsResult, Success, ResultExecution}
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-class QueryTimeoutSpec extends Specification with ConnectionHelper {
-  implicit def unitAsResult: AsResult[Unit] = new AsResult[Unit] {
-    def asResult(r: => Unit) =
-      ResultExecution.execute(r)(_ => Success())
-  }
+class QueryTimeoutSpec extends Spec with ConnectionHelper {
+
   "Simple query with 1 nanosec timeout" in {
     withConfigurablePool(shortTimeoutConfiguration) { pool =>
       {
@@ -35,9 +31,10 @@ class QueryTimeoutSpec extends Specification with ConnectionHelper {
         connection.isTimeouted === false
         connection.isConnected === true
         val queryResultFuture = connection.sendQuery("select sleep(1)")
-        Await.result(queryResultFuture, Duration(10, SECONDS)) must throwA[
-          TimeoutException
-        ]()
+        a[TimeoutException] must be thrownBy Await.result(
+          queryResultFuture,
+          Duration(10, SECONDS)
+        )
         connection.isTimeouted === true
         Await.ready(pool.giveBack(connection), Duration(10, SECONDS))
         pool.availables.count(

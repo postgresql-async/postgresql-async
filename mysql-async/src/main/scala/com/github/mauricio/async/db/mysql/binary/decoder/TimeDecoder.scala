@@ -29,9 +29,9 @@ object TimeDecoder extends BinaryDecoder {
         val isNegative = buffer.readUnsignedByte() == 1
 
         val duration = buffer.readUnsignedInt().days +
-          buffer.readUnsignedByte().hours +
-          buffer.readUnsignedByte().minutes +
-          buffer.readUnsignedByte().seconds
+          buffer.readUnsignedByte().toInt.hours +
+          buffer.readUnsignedByte().toInt.minutes +
+          buffer.readUnsignedByte().toInt.seconds
 
         if (isNegative) {
           duration.neg()
@@ -45,10 +45,10 @@ object TimeDecoder extends BinaryDecoder {
         val isNegative = buffer.readUnsignedByte() == 1
 
         val duration = buffer.readUnsignedInt().days +
-          buffer.readUnsignedByte().hours +
-          buffer.readUnsignedByte().minutes +
-          buffer.readUnsignedByte().seconds +
-          buffer.readUnsignedInt().micros
+          buffer.readUnsignedByte().toInt.hours +
+          buffer.readUnsignedByte().toInt.minutes +
+          buffer.readUnsignedByte().toInt.seconds +
+          buffer.readUnsignedInt().toInt.micros
 
         if (isNegative) {
           duration.neg()

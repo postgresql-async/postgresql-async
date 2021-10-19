@@ -44,14 +44,13 @@ object ByteBufferUtils {
 
   def readCString(b: ByteBuf, charset: Charset): String = {
     b.markReaderIndex()
-
-    var byte: Byte = 0
-    var count      = 0
-
-    do {
+    var byte: Byte = 0.toByte
+    var count      = 1
+    byte = b.readByte
+    while (byte != 0.toByte) {
+      count = count + 1
       byte = b.readByte()
-      count += 1
-    } while (byte != 0)
+    }
 
     b.resetReaderIndex()
 

@@ -18,15 +18,15 @@ package com.github.mauricio.async.db.mysql.encoder
 
 import com.github.mauricio.async.db.mysql.binary.BinaryRowEncoder
 import io.netty.util.CharsetUtil
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 
-class PreparedStatementExecuteEncoderSpec extends Specification {
+class PreparedStatementExecuteEncoderSpec extends Spec {
 
   val encoder = new PreparedStatementExecuteEncoder(
     new BinaryRowEncoder(CharsetUtil.UTF_8)
   )
 
-  "binary row encoder" should {
+  "binary row encoder" - {
 
     "encode Some(value) like value" in {
       val actual = encoder.encodeValues(List(Some(1L), Some("foo")), Set(0, 1))

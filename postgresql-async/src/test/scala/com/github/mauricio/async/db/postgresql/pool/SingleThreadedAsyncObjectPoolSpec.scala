@@ -29,7 +29,7 @@ import com.github.mauricio.async.db.postgresql.{
 import java.nio.channels.ClosedChannelException
 import java.util.concurrent.TimeUnit
 
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
@@ -40,10 +40,10 @@ import com.github.mauricio.async.db.exceptions.ConnectionStillRunningQueryExcept
  * Pending
  */
 abstract class SingleThreadedAsyncObjectPoolSpec
-    extends Specification
+    extends Spec
     with DatabaseTestHelper {
 
-  "pool" should {
+  "pool" - {
 
     "give me a valid object when I ask for one" in {
 
@@ -65,14 +65,14 @@ abstract class SingleThreadedAsyncObjectPoolSpec
 
           pool.availables.size === 0
           pool.inUse.size === 1
-          pool.queued.size must be_<=(3)
+          pool.queued.size must be <= (3)
 
           /* pool.take call checkout that call this.mainPool.action,
           so enqueuePromise called in executorService,
           so there is no guaranties that all promises in queue at that moment
            */
           val deadline = 5.seconds.fromNow
-          while (pool.queued.size < 3 || deadline.hasTimeLeft) {
+          while (pool.queued.size < 3 || deadline.hasTimeLeft()) {
             Thread.sleep(50)
           }
 
@@ -110,7 +110,7 @@ abstract class SingleThreadedAsyncObjectPoolSpec
           1 to 2 foreach { _ =>
             pool.take
           }
-          await(pool.take) must throwA[PoolExhaustedException]
+          a[PoolExhaustedException] must be thrownBy await(pool.take)
         },
         1,
         1
@@ -134,7 +134,7 @@ abstract class SingleThreadedAsyncObjectPoolSpec
 
           Thread.sleep(2000)
 
-          pool.availables.isEmpty must beTrue
+          pool.availables.isEmpty must be(true)
 
         },
         validationInterval = 1000
@@ -150,7 +150,9 @@ abstract class SingleThreadedAsyncObjectPoolSpec
 
         pool.inUse.size === 1
 
-        await(pool.giveBack(connection)) must throwA[ClosedChannelException]
+        a[ClosedChannelException] must be thrownBy await(
+          pool.giveBack(connection)
+        )
 
         pool.availables.size === 0
         pool.inUse.size === 0
@@ -164,9 +166,9 @@ abstract class SingleThreadedAsyncObjectPoolSpec
         val connection = get(pool)
         connection.sendPreparedStatement("SELECT pg_sleep(3)")
 
-        await(pool.giveBack(connection)) must throwA[
-          ConnectionStillRunningQueryException
-        ]
+        a[ConnectionStillRunningQueryException] must be thrownBy await(
+          pool.giveBack(connection)
+        )
         pool.availables.size === 0
         pool.inUse.size === 0
       }

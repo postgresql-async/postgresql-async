@@ -16,9 +16,9 @@
 
 package com.github.mauricio.async.db.postgresql.column
 
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 
-class ByteArrayDecoderSpec extends Specification {
+class ByteArrayDecoderSpec extends Spec {
 
   val escapeTestData =
     """\000\001\002\003\004\005\006\007\010\011\012\013\014\015\016\017\020\021\022\023\024\025\026\027""" +
@@ -53,7 +53,7 @@ class ByteArrayDecoderSpec extends Specification {
 
   val originalData = ((0 to 255) ++ ((0 to 255).reverse)).map(_.toByte).toArray
 
-  "decoder" should {
+  "decoder" - {
 
     "parse escape data" in {
       ByteArrayEncoderDecoder.decode(escapeTestData) === originalData

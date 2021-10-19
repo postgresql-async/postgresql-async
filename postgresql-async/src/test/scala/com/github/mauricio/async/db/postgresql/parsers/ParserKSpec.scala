@@ -20,14 +20,14 @@ import com.github.mauricio.async.db.postgresql.messages.backend.{
   ServerMessage,
   ProcessData
 }
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import io.netty.buffer.Unpooled
 
-class ParserKSpec extends Specification {
+class ParserKSpec extends Spec {
 
   val parser = BackendKeyDataParser
 
-  "parserk" should {
+  "parserk" - {
 
     "correctly parse the message" in {
 

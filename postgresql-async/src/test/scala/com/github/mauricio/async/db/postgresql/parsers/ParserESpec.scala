@@ -20,13 +20,13 @@ import com.github.mauricio.async.db.postgresql.messages.backend.{
   ServerMessage,
   ErrorMessage
 }
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import io.netty.util.CharsetUtil
 import io.netty.buffer.Unpooled
 
-class ParserESpec extends Specification {
+class ParserESpec extends Spec {
 
-  "ErrorParser" should {
+  "ErrorParser" - {
 
     "correctly parse an error message" in {
 

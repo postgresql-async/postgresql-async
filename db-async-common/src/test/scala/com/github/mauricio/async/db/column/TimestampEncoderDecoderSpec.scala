@@ -16,13 +16,13 @@
 
 package com.github.mauricio.async.db.column
 
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import org.joda.time.DateTime
 import java.sql.Timestamp
 import org.joda.time.format.DateTimeFormatterBuilder
 import java.util.Calendar
 
-class TimestampEncoderDecoderSpec extends Specification {
+class TimestampEncoderDecoderSpec extends Spec {
 
   val encoder = TimestampEncoderDecoder.Instance
   val dateTime = new DateTime()
@@ -33,10 +33,8 @@ class TimestampEncoderDecoderSpec extends Specification {
   val formatter = new DateTimeFormatterBuilder().appendPattern("Z").toFormatter
   val resultWithTimezone =
     s"2013-12-27 08:40:50.800000${formatter.print(dateTime)}"
-
-  "decoder" should {
-
-    "should print a timestamp" in {
+  "doecoder" - {
+    "shouldprint a timestamp" in {
       val timestamp = new Timestamp(dateTime.toDate.getTime)
       encoder.encode(timestamp) === resultWithTimezone
     }
@@ -58,7 +56,5 @@ class TimestampEncoderDecoderSpec extends Specification {
     "should print a datetime" in {
       encoder.encode(dateTime) === resultWithTimezone
     }
-
   }
-
 }

@@ -72,8 +72,9 @@ class PostgreSQLConnectionHandler(
     "extra_float_digits" -> "2"
   )
 
-  private implicit final val _executionContext = executionContext
-  private final val bootstrap                  = new Bootstrap()
+  private implicit final val _executionContext: ExecutionContext =
+    executionContext
+  private final val bootstrap        = new Bootstrap()
   private final val connectionFuture = Promise[PostgreSQLConnectionHandler]()
   private final val disconnectionPromise =
     Promise[PostgreSQLConnectionHandler]()

@@ -16,13 +16,13 @@
 
 package com.github.mauricio.async.db.postgresql.util
 
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import com.github.mauricio.async.db.SSLConfiguration.Mode
 import com.github.mauricio.async.db.exceptions.UnableToParseURLException
 
-class URLParserSpec extends Specification {
+class URLParserSpec extends Spec {
 
-  "postgresql URLParser" should {
+  "postgresql URLParser" - {
     import URLParser.{parse, parseOrDie, DEFAULT}
 
     // Divided into sections
@@ -295,7 +295,7 @@ class URLParserSpec extends Specification {
       configuration.host === "localhost"
       configuration.port === 5432
 
-      parseOrDie(connectionUri) must throwA[UnableToParseURLException]
+      a[UnableToParseURLException] must be thrownBy parseOrDie(connectionUri)
     }
 
   }

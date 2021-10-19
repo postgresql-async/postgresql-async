@@ -16,11 +16,11 @@
 
 package com.github.mauricio.async.db.mysql
 
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 
-class BitSpec extends Specification with ConnectionHelper {
+class BitSpec extends Spec with ConnectionHelper {
 
-  "when processing bit columns" should {
+  "when processing bit columns" - {
 
     "result in binary data" in {
 

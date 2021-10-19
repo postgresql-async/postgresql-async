@@ -1,13 +1,13 @@
 package com.github.mauricio.async.db.postgresql
 
 import com.github.mauricio.async.db.postgresql.column.PostgreSQLColumnEncoderRegistry
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 
-class PostgreSQLColumnEncoderRegistrySpec extends Specification {
+class PostgreSQLColumnEncoderRegistrySpec extends Spec {
 
   val encoder = new PostgreSQLColumnEncoderRegistry
 
-  "column encoder registry" should {
+  "column encoder registry" - {
 
     "encode Some(value) like value" in {
 
