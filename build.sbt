@@ -68,7 +68,7 @@ def scalacOpts(v: String): Seq[String] = {
       "-Xsource:3",
       "-Ydelambdafy:method"
     )
-  } else {
+  } else { //  2.12.x & 2.13.x
     base ++ Seq(
       Opts.compile.deprecation,
       Opts.compile.unchecked,

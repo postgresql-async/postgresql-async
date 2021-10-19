@@ -22,7 +22,7 @@ import scala.concurrent.duration.Duration
 
 class TimeDecoderSpec extends Spec {
 
-  "decoder" in {
+  "decoder" - {
 
     "handle a time" in {
 
