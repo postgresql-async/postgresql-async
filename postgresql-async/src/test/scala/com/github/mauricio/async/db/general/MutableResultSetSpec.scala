@@ -20,13 +20,13 @@ import com.github.mauricio.async.db.postgresql.column.{
   PostgreSQLColumnDecoderRegistry,
   ColumnTypes
 }
+import com.github.mauricio.async.db.Spec
 import com.github.mauricio.async.db.postgresql.messages.backend.PostgreSQLColumnData
-import org.specs2.mutable.Specification
 import io.netty.util.CharsetUtil
 import io.netty.buffer.{Unpooled, ByteBuf}
 import scala.collection.compat.immutable.ArraySeq
 
-class MutableResultSetSpec extends Specification {
+class MutableResultSetSpec extends Spec {
 
   val charset = CharsetUtil.UTF_8
   val decoder = new PostgreSQLColumnDecoderRegistry
@@ -46,7 +46,7 @@ class MutableResultSetSpec extends Specification {
     fieldFormat = 0
   )
 
-  "result set" should {
+  "result set" - {
 
     "correctly map column data to fields" in {
 
@@ -98,9 +98,8 @@ class MutableResultSetSpec extends Specification {
       )
       val resultSet = new ResultSetBuilder(columns).build()
 
-      resultSet.columnNames must contain(
-        allOf("id", "name", "birthday", "created_at", "updated_at")
-      ).inOrder
+      resultSet.columnNames must contain inOrder("id", "name", "birthday", "created_at", "updated_at")
+
     }
 
   }

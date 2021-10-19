@@ -19,13 +19,13 @@ package com.github.mauricio.async.db.mysql
 import java.sql.Timestamp
 import java.util.concurrent.TimeUnit
 import org.joda.time._
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import scala.concurrent.duration.Duration
 import scala.Some
 
-class PreparedStatementsSpec extends Specification with ConnectionHelper {
+class PreparedStatementsSpec extends Spec with ConnectionHelper {
 
-  "connection" should {
+  "connection" - {
 
     "be able to execute prepared statements" in {
 
@@ -61,7 +61,7 @@ class PreparedStatementsSpec extends Specification with ConnectionHelper {
 
         result(0)("name") === "joe"
         result(0)("id") === 1
-        result(0)("null_value") must beNull
+        result(0)("null_value") must be(null)
         result.length === 1
 
       }
@@ -434,13 +434,13 @@ class PreparedStatementsSpec extends Specification with ConnectionHelper {
 
         row("id") === 1
         row("some_text") === "this is some text here"
-        row("some_date") must beNull
+        row("some_date") must be(null)
 
         val queryRow = executePreparedStatement(connection, select).rows.get(0)
 
         queryRow("id") === 1
         queryRow("some_text") === "this is some text here"
-        queryRow("some_date") must beNull
+        queryRow("some_date") must be(null)
 
       }
     }

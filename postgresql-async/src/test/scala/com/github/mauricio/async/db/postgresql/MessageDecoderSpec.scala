@@ -24,17 +24,17 @@ import com.github.mauricio.async.db.postgresql.messages.backend.{
   ServerMessage,
   ErrorMessage
 }
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import com.github.mauricio.async.db.exceptions.NegativeMessageSizeException
 import io.netty.util.CharsetUtil
 import io.netty.buffer.Unpooled
 import java.util
 
-class MessageDecoderSpec extends Specification {
+class MessageDecoderSpec extends Spec {
 
   val decoder = new MessageDecoder(false, CharsetUtil.UTF_8)
 
-  "message decoder" should {
+  "message decoder" - {
 
     "not try to decode if there is not enought data available" in {
 
@@ -87,8 +87,9 @@ class MessageDecoderSpec extends Specification {
       buffer.writeInt(2)
       val out = new util.ArrayList[Object]()
 
-      this.decoder
-        .decode(null, buffer, out) must throwA[NegativeMessageSizeException]
+      an[NegativeMessageSizeException] must be thrownBy {
+        this.decoder.decode(null, buffer, out)
+      }
     }
 
     "should raise an exception if the length is too big" in {
@@ -98,8 +99,10 @@ class MessageDecoderSpec extends Specification {
       buffer.writeInt(MessageDecoder.DefaultMaximumSize + 10)
       val out = new util.ArrayList[Object]()
 
-      this.decoder
-        .decode(null, buffer, out) must throwA[MessageTooLongException]
+      a[MessageTooLongException] must be thrownBy {
+        this.decoder
+          .decode(null, buffer, out)
+      }
     }
 
   }

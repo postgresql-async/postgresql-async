@@ -17,10 +17,10 @@
 package com.github.mauricio.async.db.mysql.column
 
 import java.util.concurrent.TimeUnit
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import scala.concurrent.duration.Duration
 
-class TimeDecoderSpec extends Specification {
+class TimeDecoderSpec extends Spec {
 
   "decoder" in {
 

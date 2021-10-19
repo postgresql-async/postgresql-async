@@ -16,11 +16,11 @@
 
 package com.github.mauricio.async.db.postgresql
 
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 
-class BitSpec extends Specification with DatabaseTestHelper {
+class BitSpec extends Spec with DatabaseTestHelper {
 
-  "when processing bit columns" should {
+  "when processing bit columns" - {
 
     "result in binary data" in {
 

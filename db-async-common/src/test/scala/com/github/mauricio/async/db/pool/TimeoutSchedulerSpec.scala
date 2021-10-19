@@ -16,8 +16,8 @@
 package com.github.mauricio.async.db.pool
 
 import java.util.concurrent.{ScheduledFuture, TimeoutException}
+import com.github.mauricio.async.db.Spec
 import com.github.mauricio.async.db.util.{ByteBufferUtils, ExecutorServiceUtils}
-import org.specs2.mutable.SpecificationWithJUnit
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Future, Promise}
@@ -25,7 +25,7 @@ import scala.concurrent.{Future, Promise}
 /**
  * Tests for TimeoutScheduler
  */
-class TimeoutSchedulerSpec extends SpecificationWithJUnit {
+class TimeoutSchedulerSpec extends Spec {
 
   val TIMEOUT_DID_NOT_PASS = "timeout did not pass"
 
@@ -56,9 +56,10 @@ class TimeoutSchedulerSpec extends SpecificationWithJUnit {
     scheduledFuture.get.isCancelled === false
     promise.trySuccess(TIMEOUT_DID_NOT_PASS)
     timeoutScheduler.timeoutCount === 1
-    promise.future.value.get.get must throwA[TimeoutException](
-      message =
-        s"Operation is timeouted after it took too long to return \\(${timeoutMillis} milliseconds\\)"
+    the[
+      TimeoutException
+    ] thrownBy promise.future.value.get.get must have message (
+      s"Operation is timeouted after it took too long to return (${timeoutMillis} milliseconds)"
     )
   }
 

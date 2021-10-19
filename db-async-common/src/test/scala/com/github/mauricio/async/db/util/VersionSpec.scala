@@ -45,7 +45,7 @@ class VersionSpec extends Spec {
 
     }
 
-    "correctly compare between major different versions" in {
+    "correctly compare between major same versions" in {
 
       val version1 = Version("8.2.0")
       val version2 = Version("8.2.0")
@@ -54,7 +54,7 @@ class VersionSpec extends Spec {
 
     }
 
-    "correctly compare between major different versions" in {
+    "correctly compare between minor different versions" in {
 
       val version1 = Version("8.2.8")
       val version2 = Version("8.2.87")

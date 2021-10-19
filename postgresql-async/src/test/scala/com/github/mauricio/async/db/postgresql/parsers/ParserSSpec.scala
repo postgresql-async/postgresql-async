@@ -21,15 +21,15 @@ import com.github.mauricio.async.db.postgresql.messages.backend.{
   ParameterStatusMessage
 }
 import java.nio.charset.Charset
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import io.netty.buffer.Unpooled
 import io.netty.util.CharsetUtil
 
-class ParserSSpec extends Specification {
+class ParserSSpec extends Spec {
 
   val parser = new ParameterStatusParser(CharsetUtil.UTF_8)
 
-  "ParameterStatusParser" should {
+  "ParameterStatusParser" - {
 
     "correctly parse a config pair" in {
 

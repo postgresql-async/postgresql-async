@@ -19,9 +19,9 @@ package com.github.mauricio.async.db.postgresql.column
 import com.github.mauricio.async.db.column.IntegerEncoderDecoder
 import io.netty.buffer.Unpooled
 import io.netty.util.CharsetUtil
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 
-class ArrayDecoderSpec extends Specification {
+class ArrayDecoderSpec extends Spec {
 
   def execute(data: String): Any = {
     val numbers = data.getBytes(CharsetUtil.UTF_8)
@@ -29,7 +29,7 @@ class ArrayDecoderSpec extends Specification {
     encoder.decode(null, Unpooled.wrappedBuffer(numbers), CharsetUtil.UTF_8)
   }
 
-  "encoder/decoder" should {
+  "encoder/decoder" - {
 
     "parse an array of numbers" in {
       execute("{1,2,3}") === List(1, 2, 3)

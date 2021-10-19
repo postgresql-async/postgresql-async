@@ -16,14 +16,14 @@
 
 package com.github.mauricio.async.db.postgresql.util
 
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import scala.collection.mutable.ArrayBuffer
 
-class ArrayStreamingParserSpec extends Specification {
+class ArrayStreamingParserSpec extends Spec {
 
   val parser = ArrayStreamingParser
 
-  "parser" should {
+  "parser" - {
 
     "generate the events correctly" in {
 

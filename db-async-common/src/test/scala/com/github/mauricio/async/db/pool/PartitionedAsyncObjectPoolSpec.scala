@@ -7,7 +7,6 @@ import scala.util.Try
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.concurrent.Future
-import org.specs2.mutable.SpecificationWithJUnit
 import language.reflectiveCalls
 import com.github.mauricio.async.db.util.ExecutorServiceUtils
 import scala.concurrent.ExecutionContext
@@ -61,7 +60,7 @@ abstract class PartitionedAsyncObjectPoolSpec extends Spec {
         takeAndWait(1)
         factory.reject += 1
 
-        await(pool.giveBack(1)) must throwA[IllegalStateException]
+        an[IllegalStateException] must be thrownBy await(pool.giveBack(1))
 
         pool.inUse.size mustEqual 0
         pool.queued.size mustEqual 0
@@ -70,7 +69,7 @@ abstract class PartitionedAsyncObjectPoolSpec extends Spec {
 
       "take one failed element" in {
         factory.failCreate = true
-        takeAndWait(1) must throwA[IllegalStateException]
+        an[IllegalStateException] must be thrownBy takeAndWait(1)
 
         pool.inUse.size mustEqual 0
         pool.queued.size mustEqual 0
@@ -89,7 +88,7 @@ abstract class PartitionedAsyncObjectPoolSpec extends Spec {
         takeAndWait(maxObjects - 1)
 
         factory.failCreate = true
-        takeAndWait(1) must throwA[IllegalStateException]
+        an[IllegalStateException] must be thrownBy takeAndWait(1)
 
         pool.inUse.size mustEqual maxObjects - 1
         pool.queued.size mustEqual 0
@@ -108,7 +107,7 @@ abstract class PartitionedAsyncObjectPoolSpec extends Spec {
       "take maxObjects and receive one invalid back" in {
         takeAndWait(maxObjects)
         factory.reject += 1
-        await(pool.giveBack(1)) must throwA[IllegalStateException]
+        an[IllegalStateException] must be thrownBy await(pool.giveBack(1))
 
         pool.inUse.size mustEqual maxObjects - 1
         pool.queued.size mustEqual 0
@@ -144,7 +143,7 @@ abstract class PartitionedAsyncObjectPoolSpec extends Spec {
         "one take queued and receive one invalid item back" in {
           val taking = pool.take
           factory.reject += 1
-          await(pool.giveBack(1)) must throwA[IllegalStateException]
+          an[IllegalStateException] must be thrownBy await(pool.giveBack(1))
 
           pool.inUse.size mustEqual maxObjects - 1
           pool.queued.size mustEqual 1
@@ -178,7 +177,7 @@ abstract class PartitionedAsyncObjectPoolSpec extends Spec {
             pool.take
 
           factory.reject += 11
-          await(pool.giveBack(11)) must throwA[IllegalStateException]
+          an[IllegalStateException] must be thrownBy await(pool.giveBack(11))
 
           pool.inUse.size mustEqual maxObjects - 1
           pool.queued.size mustEqual maxQueueSize
@@ -192,7 +191,7 @@ abstract class PartitionedAsyncObjectPoolSpec extends Spec {
           pool.take
 
         "start to reject takes" in {
-          await(pool.take) must throwA[PoolExhaustedException]
+          an[PoolExhaustedException] must be thrownBy await(pool.take)
 
           pool.inUse.size mustEqual maxObjects
           pool.queued.size mustEqual maxQueueSize
@@ -209,7 +208,7 @@ abstract class PartitionedAsyncObjectPoolSpec extends Spec {
 
         "receive an invalid object back" in {
           factory.reject += 1
-          await(pool.giveBack(1)) must throwA[IllegalStateException]
+          an[IllegalStateException] must be thrownBy await(pool.giveBack(1))
 
           pool.inUse.size mustEqual maxObjects - 1
           pool.queued.size mustEqual maxQueueSize
@@ -228,7 +227,7 @@ abstract class PartitionedAsyncObjectPoolSpec extends Spec {
         "receive maxQueueSize invalid objects back" in {
           for (i <- 1 to maxQueueSize) {
             factory.reject += i
-            await(pool.giveBack(i)) must throwA[IllegalStateException]
+            an[IllegalStateException] must be thrownBy await(pool.giveBack(i))
           }
 
           pool.inUse.size mustEqual maxObjects - maxQueueSize
@@ -251,7 +250,7 @@ abstract class PartitionedAsyncObjectPoolSpec extends Spec {
             await(pool.giveBack(i))
 
           factory.reject += 1
-          await(pool.giveBack(1)) must throwA[IllegalStateException]
+          an[IllegalStateException] must be thrownBy await(pool.giveBack(1))
           pool.inUse.size mustEqual maxObjects - 1
           pool.queued.size mustEqual 0
           pool.availables.size mustEqual 0
@@ -279,7 +278,7 @@ abstract class PartitionedAsyncObjectPoolSpec extends Spec {
     pool.inUse.size mustEqual 0
     pool.queued.size mustEqual 0
     pool.availables.size mustEqual 30
-  }.pendingUntilFixed
+  }
 
   private def takeAndWait(objects: Int) =
     for (_ <- 0 until objects)

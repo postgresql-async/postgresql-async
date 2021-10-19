@@ -18,12 +18,12 @@ package com.github.mauricio.async.db.mysql
 
 import com.github.mauricio.async.db.ResultSet
 import com.github.mauricio.async.db.util.FutureUtils._
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class StoredProceduresSpec extends Specification with ConnectionHelper {
+class StoredProceduresSpec extends Spec with ConnectionHelper {
 
-  "connection" should {
+  "connection" - {
 
     "be able to execute create stored procedure" in {
       withConnection { connection =>

@@ -20,12 +20,12 @@ import io.netty.buffer.Unpooled
 import io.netty.util.CharsetUtil
 import com.github.mauricio.async.db.mysql.column.ColumnTypes
 import com.github.mauricio.async.db.mysql.message.server.ColumnDefinitionMessage
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import java.nio.ByteOrder
 import com.github.mauricio.async.db.mysql.codec.DecoderRegistry
 import scala.collection.compat.immutable.ArraySeq
 
-class BinaryRowDecoderSpec extends Specification {
+class BinaryRowDecoderSpec extends Spec {
 
   val registry = new DecoderRegistry(CharsetUtil.UTF_8)
   val decoder  = new BinaryRowDecoder()
@@ -41,7 +41,7 @@ class BinaryRowDecoderSpec extends Specification {
     createColumn("null_value", ColumnTypes.FIELD_TYPE_NULL)
   )
 
-  "binary row decoder" should {
+  "binary row decoder" - {
 
     "decoder a long and a string from the byte array" in {
 
@@ -63,7 +63,7 @@ class BinaryRowDecoderSpec extends Specification {
       buffer.release()
       result(0) === 1L
       result(1) === "joe"
-      result(2) must beNull
+      result(2) must be(null)
     }
 
   }

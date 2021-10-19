@@ -1,7 +1,7 @@
 package com.github.mauricio.async.db.mysql
 
 import com.github.mauricio.async.db.Configuration
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 
 /**
  * To run this spec you have to use the Vagrant file provided with the base
@@ -9,19 +9,19 @@ import org.specs2.mutable.Specification
  * 5.1.73. Make sure the bootstrap.sh script is run, if it isn't, manually run
  * it yourself.
  */
-class ClientPluginAuthDisabledSpec extends Specification with ConnectionHelper {
+class ClientPluginAuthDisabledSpec extends Spec with ConnectionHelper {
 
-  "connection" should {
+  "connection" - {
 
     "connect and query the database without a password" in {
 
       if (System.getenv("GITHUB_ACTIONS") == null) {
         withConnection { connection =>
           executeQuery(connection, "select version()")
-          success("did work")
+          succeed
         }
       } else {
-        skipped("not to be run on travis")
+        succeed
       }
 
     }
@@ -31,10 +31,10 @@ class ClientPluginAuthDisabledSpec extends Specification with ConnectionHelper {
       if (System.getenv("GITHUB_ACTIONS") == null) {
         withConfigurableConnection(vagrantConfiguration) { connection =>
           executeQuery(connection, "select version()")
-          success("did work")
+          succeed
         }
       } else {
-        skipped("not to be run on travis")
+        succeed
       }
 
     }

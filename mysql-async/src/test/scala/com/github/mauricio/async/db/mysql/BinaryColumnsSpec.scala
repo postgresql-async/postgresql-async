@@ -1,15 +1,15 @@
 package com.github.mauricio.async.db.mysql
 
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import java.util.UUID
 import java.nio.ByteBuffer
 import io.netty.buffer.Unpooled
 import io.netty.util.CharsetUtil
 import com.github.mauricio.async.db.RowData
 
-class BinaryColumnsSpec extends Specification with ConnectionHelper {
+class BinaryColumnsSpec extends Spec with ConnectionHelper {
 
-  "connection" should {
+  "connection" - {
 
     "correctly load fields as byte arrays" in {
 

@@ -33,7 +33,7 @@ import com.github.mauricio.async.db.util.Log
 import com.github.mauricio.async.db.{Configuration, Connection, QueryResult}
 import io.netty.buffer.Unpooled
 import org.joda.time.LocalDateTime
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
@@ -43,7 +43,7 @@ object PostgreSQLConnectionSpec {
   val log = Log.get[PostgreSQLConnectionSpec]
 }
 
-class PostgreSQLConnectionSpec extends Specification with DatabaseTestHelper {
+class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
 
   import PostgreSQLConnectionSpec.log
 
@@ -115,12 +115,12 @@ class PostgreSQLConnectionSpec extends Specification with DatabaseTestHelper {
     " insert into prepared_statement_test (name) values ('John Doe') returning id"
   val preparedStatementSelect = "select * from prepared_statement_test"
 
-  "handler" should {
+  "handler" - {
 
     "connect to the database" in {
 
       withHandler { handler =>
-        handler.isReadyForQuery must beTrue
+        handler.isReadyForQuery must be(true)
       }
 
     }
@@ -339,19 +339,19 @@ class PostgreSQLConnectionSpec extends Specification with DatabaseTestHelper {
     }
 
     "execute an empty query" in {
-
-      withHandler { handler =>
-        executeQuery(handler, "").rows === None
-      } must throwA[QueryMustNotBeNullOrEmptyException]
-
+      a[QueryMustNotBeNullOrEmptyException] must be thrownBy {
+        withHandler { handler =>
+          executeQuery(handler, "").rows === None
+        }
+      }
     }
 
     "execute an whitespace query" in {
-
-      withHandler { handler =>
-        executeQuery(handler, "   ").rows === None
-      } must throwA[QueryMustNotBeNullOrEmptyException]
-
+      a[QueryMustNotBeNullOrEmptyException] must be thrownBy {
+        withHandler { handler =>
+          executeQuery(handler, "   ").rows === None
+        }
+      }
     }
 
     "execute multiple prepared statements" in {
@@ -359,7 +359,7 @@ class PostgreSQLConnectionSpec extends Specification with DatabaseTestHelper {
         executeDdl(handler, this.preparedStatementCreate)
         for (i <- 0 until 1000)
           executePreparedStatement(handler, this.preparedStatementInsert)
-        ok
+        succeed
       }
     }
 

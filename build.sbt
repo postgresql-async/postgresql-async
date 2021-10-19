@@ -5,18 +5,12 @@ val postgresqlName = "postgresql-async"
 val mysqlName      = "mysql-async"
 val nettyVersion   = "4.1.66.Final"
 
-def specs2Dependency(scalaVersion: String) = {
+def testDependency(scalaVersion: String) = {
   Seq(
     "org.scalatest" %% "scalatest"    % "3.2.10" % Test,
-    "org.mockito"    % "mockito-core" % "4.0.0"  % Test
+    "org.mockito"    % "mockito-core" % "4.0.0"  % Test,
+    "org.slf4j"      % "slf4j-simple" % "1.7.29" % Test
   )
-}
-val logbackDependency = "ch.qos.logback" % "logback-classic" % "1.2.3" % Test
-
-def specs2Version(scalaVersion: String) = {
-  if (scalaVersion.startsWith("2."))
-    "4.10.6"
-  else "5.0.0-RC-15"
 }
 
 lazy val root = (project in file("."))
@@ -39,18 +33,16 @@ lazy val common = (project in file("db-async-common"))
 lazy val postgresql = (project in file("postgresql-async"))
   .settings(baseSettings: _*)
   .settings(
-    name := postgresqlName,
-    libraryDependencies ++= implementationDependencies(scalaVersion.value)
+    name := postgresqlName
   )
-  .dependsOn(common)
+  .dependsOn(common % "compile->compile;test->test")
 
 lazy val mysql = (project in file("mysql-async"))
   .settings(baseSettings: _*)
   .settings(
-    name := mysqlName,
-    libraryDependencies ++= implementationDependencies(scalaVersion.value)
+    name := mysqlName
   )
-  .dependsOn(common)
+  .dependsOn(common % "compile->compile;test->test")
 
 def commonDependencies(scalaVersion: String) = Seq(
   "org.slf4j"                % "slf4j-api"               % "1.7.29",
@@ -61,26 +53,31 @@ def commonDependencies(scalaVersion: String) = Seq(
   "org.javassist"            % "javassist"               % "3.26.0-GA",
   "org.scala-lang.modules"  %% "scala-collection-compat" % "2.5.0",
   "com.google.code.findbugs" % "jsr305"                  % "3.0.1" % Provided
-) ++ specs2Dependency(scalaVersion)
+) ++ testDependency(scalaVersion)
 
-def implementationDependencies(scalaVersion: String) =
-  specs2Dependency(scalaVersion) ++ Seq(
-    logbackDependency
-  )
+def scalacOpts(v: String): Seq[String] = {
+  val base = Opts.compile.encoding("UTF8")
+  if (v.startsWith("3.")) {
+    base ++ Seq(
+      Opts.compile.deprecation,
+      Opts.compile.unchecked,
+      "-feature"
+    )
+  } else {
+    base ++ Seq(
+      Opts.compile.deprecation,
+      Opts.compile.unchecked,
+      "-Xsource:3",
+      "-Ydelambdafy:method"
+    )
+  }
+}
 
 val baseSettings = Seq(
   crossScalaVersions := Seq("2.11.12", "2.12.14", "2.13.6", "3.0.2"),
-  (Test / testOptions) += Tests.Argument("sequential"),
-  (Test / fork) := true,
-  scalaVersion  := "2.13.6",
-  scalacOptions :=
-    Opts.compile.encoding("UTF8")
-      :+ Opts.compile.deprecation
-      :+ Opts.compile.unchecked
-      :+ "-feature"
-      :+ "-Ydelambdafy:method"
-      :+ "-Xsource:3",
-  (Test / testOptions) += Tests.Argument(TestFrameworks.Specs2, "sequential"),
+  (Test / fork)      := true,
+  scalaVersion       := "2.13.6",
+  scalacOptions      := scalacOpts(scalaVersion.value),
   (doc / scalacOptions) := Seq(
     s"-doc-external-doc:scala=https://www.scala-lang.org/files/archive/api/${scalaVersion.value}/"
   ),

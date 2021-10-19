@@ -1,10 +1,10 @@
 package com.github.mauricio.async.db.mysql
 
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import scala.concurrent.duration.Duration
 import com.github.mauricio.async.db.RowData
 
-class ZeroDatesSpec extends Specification with ConnectionHelper {
+class ZeroDatesSpec extends Spec with ConnectionHelper {
 
   val createStatement =
     """CREATE TEMPORARY TABLE dates (
@@ -22,14 +22,14 @@ class ZeroDatesSpec extends Specification with ConnectionHelper {
 
   def matchValues(result: RowData) = {
     result("name") === "Joe"
-    result("timestamp_column") must beNull
-    result("datetime_column") must beNull
-    result("date_column") must beNull
+    result("timestamp_column") must be(null)
+    result("datetime_column") must be(null)
+    result("date_column") must be(null)
     result("year_column") === 0
     result("time_column") === Duration.Zero
   }
 
-  "client" should {
+  "client" - {
 
     "correctly parse the MySQL zeroed dates as NULL values in text protocol" in {
 

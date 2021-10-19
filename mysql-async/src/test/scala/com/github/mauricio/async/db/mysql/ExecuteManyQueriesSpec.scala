@@ -16,11 +16,11 @@
 
 package com.github.mauricio.async.db.mysql
 
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 
-class ExecuteManyQueriesSpec extends Specification with ConnectionHelper {
+class ExecuteManyQueriesSpec extends Spec with ConnectionHelper {
 
-  "connection" should {
+  "connection" - {
 
     "execute many queries one after the other" in {
 
@@ -39,7 +39,7 @@ class ExecuteManyQueriesSpec extends Specification with ConnectionHelper {
           row(1) === "this is some text"
         }
 
-        success
+        succeed
       }
 
     }
@@ -60,7 +60,7 @@ class ExecuteManyQueriesSpec extends Specification with ConnectionHelper {
           row(1) === "this is some text"
         }
 
-        success
+        succeed
       }
     }
 

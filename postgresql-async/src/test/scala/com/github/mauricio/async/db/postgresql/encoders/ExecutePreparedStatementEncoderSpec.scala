@@ -3,9 +3,9 @@ package com.github.mauricio.async.db.postgresql.encoders
 import com.github.mauricio.async.db.postgresql.column.PostgreSQLColumnEncoderRegistry
 import com.github.mauricio.async.db.postgresql.messages.frontend.PreparedStatementExecuteMessage
 import io.netty.util.CharsetUtil
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 
-class ExecutePreparedStatementEncoderSpec extends Specification {
+class ExecutePreparedStatementEncoderSpec extends Spec {
 
   val registry = new PostgreSQLColumnEncoderRegistry()
   val encoder = new ExecutePreparedStatementEncoder(CharsetUtil.UTF_8, registry)
@@ -13,7 +13,7 @@ class ExecutePreparedStatementEncoderSpec extends Specification {
     -1, -1, -1, 0, 0, 69, 0, 0, 0, 10, 49, 0, 0, 0, 0, 0, 83, 0, 0, 0, 4, 67, 0,
     0, 0, 7, 80, 49, 0)
 
-  "encoder" should {
+  "encoder" - {
 
     "correctly handle the case where an encoder returns null" in {
 

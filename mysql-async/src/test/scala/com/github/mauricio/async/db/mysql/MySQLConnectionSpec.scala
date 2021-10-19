@@ -18,9 +18,9 @@ package com.github.mauricio.async.db.mysql
 
 import com.github.mauricio.async.db.Configuration
 import com.github.mauricio.async.db.util.FutureUtils.awaitFuture
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 
-class MySQLConnectionSpec extends Specification {
+class MySQLConnectionSpec extends Spec {
 
   val configuration = new Configuration(
     "mysql_async",
@@ -54,7 +54,7 @@ class MySQLConnectionSpec extends Specification {
     database = None
   )
 
-  "connection" should {
+  "connection" - {
 
     "connect to a MySQL instance with a password" in {
 

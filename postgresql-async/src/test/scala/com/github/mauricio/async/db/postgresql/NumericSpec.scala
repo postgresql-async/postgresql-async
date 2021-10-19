@@ -1,10 +1,10 @@
 package com.github.mauricio.async.db.postgresql
 
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 
-class NumericSpec extends Specification with DatabaseTestHelper {
+class NumericSpec extends Spec with DatabaseTestHelper {
 
-  "when processing numeric columns" should {
+  "when processing numeric columns" - {
 
     "support first update of num column with floating" in {
 

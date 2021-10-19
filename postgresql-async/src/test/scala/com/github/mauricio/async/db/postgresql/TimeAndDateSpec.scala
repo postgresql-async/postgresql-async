@@ -16,12 +16,12 @@
 
 package com.github.mauricio.async.db.postgresql
 
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import org.joda.time._
 
-class TimeAndDateSpec extends Specification with DatabaseTestHelper {
+class TimeAndDateSpec extends Spec with DatabaseTestHelper {
 
-  "when processing times and dates" should {
+  "when processing times and dates" - {
 
     "support a time object" in {
 
@@ -84,7 +84,7 @@ class TimeAndDateSpec extends Specification with DatabaseTestHelper {
 
     "support a time with timezone object" in {
 
-      pending("need to find a way to implement this")
+      pending
 
       withHandler { handler =>
         val create = """CREATE TEMP TABLE messages
@@ -141,7 +141,7 @@ class TimeAndDateSpec extends Specification with DatabaseTestHelper {
 
     "support timestamp with timezone and microseconds" in {
 
-      foreach(1.until(6)) { index =>
+      forAll(1.until(6)) { index =>
         withHandler { handler =>
           val create = """CREATE TEMP TABLE messages
                          (
@@ -168,8 +168,8 @@ class TimeAndDateSpec extends Specification with DatabaseTestHelper {
 
           // Note: Since this assertion depends on Brazil locale, I think epoch time assertion is preferred
           // dateTime.getZone.toTimeZone.getRawOffset === -10800000
-          dateTime.getMillis must be_>=(915779106000L)
-          dateTime.getMillis must be_<(915779107000L)
+          dateTime.getMillis must be >=(915779106000L)
+          dateTime.getMillis must be <(915779107000L)
         }
       }
     }
@@ -197,7 +197,7 @@ class TimeAndDateSpec extends Specification with DatabaseTestHelper {
 
         val dateTime = rows(0)("moment").asInstanceOf[DateTime]
 
-        dateTime.getMillis must beCloseTo(millis, 500)
+        dateTime.getMillis must === (millis +- 500)
       }
     }
 
