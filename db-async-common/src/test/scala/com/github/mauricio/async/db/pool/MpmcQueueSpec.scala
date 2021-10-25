@@ -21,7 +21,7 @@ class MpmcQueueSpec extends Spec with ScalaCheckPropertyChecks {
     input <- Arbitrary.arbitrary[Vector[Int]]
   } yield Data(c, upper, input)
 
-  implicit val arbitraryData = Arbitrary(dataGen)
+  implicit val arbitraryData: Arbitrary[Data] = Arbitrary(dataGen)
 
   private def enqueueWithLatch[A](
     queue: MpmcQueue[A],
@@ -110,7 +110,7 @@ class MpmcQueueSpec extends Spec with ScalaCheckPropertyChecks {
 
   "MpmcQueue" - {
     "should eqneue/dequeue in fifo order without loss" in {
-      forAll { data: Data =>
+      forAll { (data: Data) =>
         val queue = MpmcQueue[Int](data.capacity, data.indexUpperBound)
 
         val r = data.input
@@ -133,13 +133,13 @@ class MpmcQueueSpec extends Spec with ScalaCheckPropertyChecks {
       }
     }
     "should enqueue/dequeue concurrently" in {
-      forAll { data: Data =>
+      forAll { (data: Data) =>
         val rr = runParallel(data, _.take())
         rr.verify()
       }
     }
     "should eqneue/dequeue with peak concurrently" in {
-      forAll { data: Data =>
+      forAll { (data: Data) =>
         val rr = runParallel(
           data,
           q => {
@@ -152,7 +152,7 @@ class MpmcQueueSpec extends Spec with ScalaCheckPropertyChecks {
     }
 
     "should peek last element" in {
-      forAll { data: Data =>
+      forAll { (data: Data) =>
         val queue = MpmcQueue[Int](data.capacity)
         data.input.map { i =>
           (queue.offer(i), queue.peek() == Some(i), queue.take() == Some(i))
@@ -163,7 +163,7 @@ class MpmcQueueSpec extends Spec with ScalaCheckPropertyChecks {
     }
 
     "should enqure capacity" in {
-      forAll { data: Data =>
+      forAll { (data: Data) =>
         val rr = runParallel(data, _ => None) // do nothing for dequeue
         val enqueueCount = rr.enqueueR.collect { case (i, true) =>
           i

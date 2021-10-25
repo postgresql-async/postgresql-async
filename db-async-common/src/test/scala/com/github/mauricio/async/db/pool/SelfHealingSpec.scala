@@ -35,7 +35,7 @@ class SelfHealingSpec
     } yield Data(a, r, c)
   }
 
-  implicit val arbitraryData = Arbitrary(dataGen)
+  implicit val arbitraryData: Arbitrary[Data] = Arbitrary(dataGen)
 
   case class RunResult(
     createCount: Int,
@@ -131,7 +131,7 @@ class SelfHealingSpec
 
   "SelfHealing item" - {
     "should always release created resource" in {
-      forAll { data: Data =>
+      forAll { (data: Data) =>
         val r = runPropTest(data) { sh =>
           Future.sequence(Seq.fill(1000)(sh.get())).recover { case e =>
             println(s"Failed get resource ${e}")
@@ -146,7 +146,7 @@ class SelfHealingSpec
     }
 
     "should recreate resoure if check return false" in {
-      forAll { data: Data =>
+      forAll { (data: Data) =>
         val nd = data.copy(
           check = () => Future.successful(false),
           acquire = () => Future(System.currentTimeMillis().toInt)
@@ -160,7 +160,7 @@ class SelfHealingSpec
               (config.checkInterval + 10).millis
             )
             end = System.currentTimeMillis
-            _ <- sh.get().recover {case  e: Throwable => }
+            _ <- sh.get().recover { case e: Throwable => }
           } yield {}
         }
         rr.checkCount mustEqual (1)
@@ -169,23 +169,21 @@ class SelfHealingSpec
     }
 
     "should recreate resoure if check failure" in {
-      forAll { data: Data =>
+      forAll { (data: Data) =>
         val nd = data.copy(
           check = () => Future.failed(new Exception(s"Check failed")),
           acquire = () => Future(System.currentTimeMillis().toInt)
         )
         val rr = runPropTest(nd) { sh =>
           for {
-            _ <- sh.get().recover {
-              case e: Throwable =>
+            _ <- sh.get().recover { case e: Throwable =>
             }
             start = System.currentTimeMillis()
             _ <- FutureGenInstance.timer.sleep(
               (config.checkInterval + 10).millis
             )
             end = System.currentTimeMillis
-            _ <- sh.get().recover {
-              case e: Throwable =>
+            _ <- sh.get().recover { case e: Throwable =>
             }
           } yield {}
         }
