@@ -7,7 +7,6 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-
 class MpmcQueueSpec extends Spec with ScalaCheckPropertyChecks {
 
   case class Data(
@@ -23,8 +22,6 @@ class MpmcQueueSpec extends Spec with ScalaCheckPropertyChecks {
   } yield Data(c, upper, input)
 
   implicit val arbitraryData = Arbitrary(dataGen)
-
-
 
   private def enqueueWithLatch[A](
     queue: MpmcQueue[A],
@@ -160,7 +157,7 @@ class MpmcQueueSpec extends Spec with ScalaCheckPropertyChecks {
         data.input.map { i =>
           (queue.offer(i), queue.peek() == Some(i), queue.take() == Some(i))
         }.forall { case (r1, r2, r3) =>
-            r1 && r2 && r3
+          r1 && r2 && r3
         }
       }
     }

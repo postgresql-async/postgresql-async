@@ -6,11 +6,16 @@ val mysqlName      = "mysql-async"
 val nettyVersion   = "4.1.66.Final"
 
 def testDependency(scalaVersion: String) = {
+  val scalacheckPlusV = if (scalaVersion.startsWith("2.11")) {
+    "3.2.3.0"
+  } else {
+    "3.2.10.0"
+  }
   Seq(
-    "org.scalatest"     %% "scalatest"       % "3.2.10"   % Test,
-    "org.scalatestplus" %% "scalacheck-1-15" % "3.2.10.0" % Test,
-    "org.mockito"        % "mockito-core"    % "4.0.0"    % Test,
-    "org.slf4j"          % "slf4j-simple"    % "1.7.29"   % Test
+    "org.scalatest"     %% "scalatest"       % "3.2.10"        % Test,
+    "org.scalatestplus" %% "scalacheck-1-15" % scalacheckPlusV % Test,
+    "org.mockito"        % "mockito-core"    % "4.0.0"         % Test,
+    "org.slf4j"          % "slf4j-simple"    % "1.7.29"        % Test
   )
 }
 

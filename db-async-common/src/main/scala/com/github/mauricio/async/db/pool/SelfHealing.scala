@@ -106,8 +106,9 @@ object SelfHealing {
       if (state.compareAndSet(s, newState)) {
         acquireNew.completeWith(timeoutAcquire())
         releaseOld.completeWith(
-          s.promise.future.flatMap(timeoutRelease).recover { e =>
-            logger.warn(s"Failed to release resource", e)
+          s.promise.future.flatMap(timeoutRelease).recover {
+            case e: Throwable =>
+              logger.warn(s"Failed to release resource", e)
           }
         )
         releaseOld.future.onComplete { r =>
@@ -146,7 +147,7 @@ object SelfHealing {
           for {
             isAlive <- curr.promise.future
               .flatMap(timeoutCheck)
-              .recover(e => false)
+              .recover { case e: Throwable => false }
             isOk = isAlive || (now - curr.createTime) < config.minHealInterval
             r <- if (isOk) curr.promise.future else healed(newState)
           } yield r

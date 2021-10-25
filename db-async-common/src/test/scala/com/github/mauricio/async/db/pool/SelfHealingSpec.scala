@@ -153,13 +153,14 @@ class SelfHealingSpec
         )
         val rr = runPropTest(nd) { sh =>
           for {
-            _ <- sh.get().recover(e => {})
+            _ <- sh.get().recover { case e: Throwable =>
+            }
             start = System.currentTimeMillis()
             _ <- FutureGenInstance.timer.sleep(
               (config.checkInterval + 10).millis
             )
             end = System.currentTimeMillis
-            _ <- sh.get().recover(e => {})
+            _ <- sh.get().recover {case  e: Throwable => }
           } yield {}
         }
         rr.checkCount mustEqual (1)
@@ -167,7 +168,7 @@ class SelfHealingSpec
       }
     }
 
-     "should recreate resoure if check failure" in {
+    "should recreate resoure if check failure" in {
       forAll { data: Data =>
         val nd = data.copy(
           check = () => Future.failed(new Exception(s"Check failed")),
@@ -175,13 +176,17 @@ class SelfHealingSpec
         )
         val rr = runPropTest(nd) { sh =>
           for {
-            _ <- sh.get().recover(e => {})
+            _ <- sh.get().recover {
+              case e: Throwable =>
+            }
             start = System.currentTimeMillis()
             _ <- FutureGenInstance.timer.sleep(
               (config.checkInterval + 10).millis
             )
             end = System.currentTimeMillis
-            _ <- sh.get().recover(e => {})
+            _ <- sh.get().recover {
+              case e: Throwable =>
+            }
           } yield {}
         }
         rr.checkCount mustEqual (1)
