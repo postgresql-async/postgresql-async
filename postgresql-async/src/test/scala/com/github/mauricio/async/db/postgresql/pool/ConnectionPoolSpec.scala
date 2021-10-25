@@ -24,18 +24,18 @@ import com.github.mauricio.async.db.postgresql.{
   PostgreSQLConnection,
   DatabaseTestHelper
 }
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object ConnectionPoolSpec {
   val Insert = "insert into transaction_test (id) values (?)"
 }
 
-class ConnectionPoolSpec extends Specification with DatabaseTestHelper {
+class ConnectionPoolSpec extends Spec with DatabaseTestHelper {
 
   import ConnectionPoolSpec.Insert
 
-  "pool" should {
+  "pool" - {
 
     "give you a connection when sending statements" in {
 
@@ -74,7 +74,7 @@ class ConnectionPoolSpec extends Specification with DatabaseTestHelper {
           }
         }
 
-        await(operations) must throwA[GenericDatabaseException]
+        a[GenericDatabaseException] must be thrownBy await(operations)
 
       }
 

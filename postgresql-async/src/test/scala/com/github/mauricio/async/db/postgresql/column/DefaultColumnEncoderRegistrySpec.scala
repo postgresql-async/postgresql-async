@@ -16,13 +16,13 @@
 
 package com.github.mauricio.async.db.postgresql.column
 
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 
-class DefaultColumnEncoderRegistrySpec extends Specification {
+class DefaultColumnEncoderRegistrySpec extends Spec {
 
   val registry = new PostgreSQLColumnEncoderRegistry()
 
-  "registry" should {
+  "registry" - {
 
     "correctly render an array of strings with nulls" in {
       val items =
@@ -33,7 +33,8 @@ class DefaultColumnEncoderRegistrySpec extends Specification {
     }
 
     "correctly render an array of numbers" in {
-      val items = Array(Array(1, 2, 3), Array(4, 5, 6), Array(7, null, 8))
+      val items =
+        Array(Array[Any](1, 2, 3), Array[Any](4, 5, 6), Array[Any](7, null, 8))
       registry.encode(items) === "{{1,2,3},{4,5,6},{7,NULL,8}}"
     }
 

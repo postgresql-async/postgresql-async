@@ -1,6 +1,6 @@
 package com.github.mauricio.async.db.util
 
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import io.netty.util.CharsetUtil
 import io.netty.buffer.Unpooled
 
@@ -20,11 +20,11 @@ import io.netty.buffer.Unpooled
  * under the License.
  */
 
-class ChannelUtilsSpec extends Specification {
+class ChannelUtilsSpec extends Spec {
 
   val charset = CharsetUtil.UTF_8
 
-  "utils" should {
+  "utils" - {
 
     "correctly write and read a string" in {
       val content = "some text"

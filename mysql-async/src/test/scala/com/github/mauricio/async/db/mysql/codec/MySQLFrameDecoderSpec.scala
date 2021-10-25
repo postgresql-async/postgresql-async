@@ -21,16 +21,16 @@ import io.netty.util.CharsetUtil
 import com.github.mauricio.async.db.mysql.message.server._
 import com.github.mauricio.async.db.util.ByteBufferUtils
 import com.github.mauricio.async.db.util.ChannelWrapper.bufferToWrapper
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import com.github.mauricio.async.db.mysql.message.server.OkMessage
 import com.github.mauricio.async.db.mysql.column.ColumnTypes
 import io.netty.channel.embedded.EmbeddedChannel
 
-class MySQLFrameDecoderSpec extends Specification {
+class MySQLFrameDecoderSpec extends Spec {
 
   final val charset = CharsetUtil.UTF_8
 
-  "decoder" should {
+  "decoder" - {
 
     "decode an OK message correctly" in {
 
@@ -75,19 +75,19 @@ class MySQLFrameDecoderSpec extends Specification {
 
       decoder.queryProcessStarted()
 
-      decoder.isInQuery must beTrue
-      decoder.processingColumns must beTrue
+      decoder.isInQuery must be(true)
+      decoder.processingColumns must be(true)
 
       val buffer = createOkPacket()
 
-      embedder.writeInbound(buffer) must beTrue
+      embedder.writeInbound(buffer) must be(true)
       embedder
         .readInbound()
         .asInstanceOf[OkMessage]
         .message === "this is a test"
 
-      decoder.isInQuery must beFalse
-      decoder.processingColumns must beFalse
+      decoder.isInQuery must be(false)
+      decoder.processingColumns must be(false)
     }
 
     "on query process it should correctly send an error" in {
@@ -99,18 +99,18 @@ class MySQLFrameDecoderSpec extends Specification {
 
       decoder.queryProcessStarted()
 
-      decoder.isInQuery must beTrue
-      decoder.processingColumns must beTrue
+      decoder.isInQuery must be(true)
+      decoder.processingColumns must be(true)
 
       val content = "this is a crazy error"
 
       val buffer = createErrorPacket(content)
 
-      embedder.writeInbound(buffer) must beTrue
+      embedder.writeInbound(buffer) must be(true)
       embedder.readInbound().asInstanceOf[ErrorMessage].errorMessage === content
 
-      decoder.isInQuery must beFalse
-      decoder.processingColumns must beFalse
+      decoder.isInQuery must be(false)
+      decoder.processingColumns must be(false)
 
     }
 
@@ -160,7 +160,7 @@ class MySQLFrameDecoderSpec extends Specification {
         .eofMessage
         .flags === 8765
 
-      decoder.processingColumns must beFalse
+      decoder.processingColumns must be(false)
 
       val row = ByteBufferUtils.packetBuffer()
       row.writeLenghtEncodedString("1", charset)
@@ -169,11 +169,11 @@ class MySQLFrameDecoderSpec extends Specification {
 
       embedder.writeInbound(row)
 
-      embedder.readInbound().isInstanceOf[ResultSetRowMessage] must beTrue
+      embedder.readInbound().isInstanceOf[ResultSetRowMessage] must be(true)
 
       embedder.writeInbound(this.createEOFPacket())
 
-      decoder.isInQuery must beFalse
+      decoder.isInQuery must be(false)
     }
 
   }

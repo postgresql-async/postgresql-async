@@ -16,14 +16,14 @@
 
 package com.github.mauricio.async.db.postgresql.util
 
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import scala.collection.mutable.ArrayBuffer
 
-class ArrayStreamingParserSpec extends Specification {
+class ArrayStreamingParserSpec extends Spec {
 
   val parser = ArrayStreamingParser
 
-  "parser" should {
+  "parser" - {
 
     "generate the events correctly" in {
 
@@ -105,21 +105,21 @@ class LoggingDelegate extends ArrayStreamingParserDelegate {
   var starts = 0
   var ends   = 0
 
-  override def arrayStarted {
+  override def arrayStarted = {
     items += "{"
     starts += 1
   }
 
-  override def arrayEnded {
+  override def arrayEnded = {
     items += "}"
     ends += 1
   }
 
-  override def elementFound(element: String) {
+  override def elementFound(element: String) = {
     items += element
   }
 
-  override def nullElementFound {
+  override def nullElementFound = {
     items += null
   }
 }

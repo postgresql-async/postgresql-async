@@ -1,11 +1,11 @@
 package com.github.mauricio.async.db.postgresql
 
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import com.github.mauricio.async.db.util.Log
 import scala.concurrent.ExecutionContext.Implicits.global
 import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException
 
-class TransactionSpec extends Specification with DatabaseTestHelper {
+class TransactionSpec extends Spec with DatabaseTestHelper {
 
   val log = Log.get[TransactionSpec]
 
@@ -16,7 +16,7 @@ class TransactionSpec extends Specification with DatabaseTestHelper {
 
   val tableSelect = "SELECT x FROM transaction_test ORDER BY x"
 
-  "transactions" should {
+  "transactions" - {
 
     "commit simple inserts" in {
       withHandler { handler =>
@@ -60,7 +60,7 @@ class TransactionSpec extends Specification with DatabaseTestHelper {
               conn.sendQuery(tableInsert(1))
             }
           })
-          failure("Should not have come here")
+          fail("Should not have come here")
         } catch {
           case e: GenericDatabaseException => {
             e.errorMessage.message === "duplicate key value violates unique constraint \"transaction_test_pkey\""

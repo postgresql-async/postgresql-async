@@ -103,9 +103,7 @@ object SelfHealing {
       val releaseOld  = Promise[Unit]()
       val acquireNew  = Promise[A]()
       val newState    = State.Swapping(s.promise, acquireNew, releaseOld)
-      println(s" ${state.get()} -> ${newState}")
       if (state.compareAndSet(s, newState)) {
-        println(s"start replace old res ${s}")
         acquireNew.completeWith(timeoutAcquire())
         releaseOld.completeWith(
           s.promise.future.flatMap(timeoutRelease).recover { e =>
@@ -124,7 +122,6 @@ object SelfHealing {
         }
         Some(acquireNew.future)
       } else {
-        println(s"try heal failed")
         None
       }
     }
@@ -151,9 +148,6 @@ object SelfHealing {
               .flatMap(timeoutCheck)
               .recover(e => false)
             isOk = isAlive || (now - curr.createTime) < config.minHealInterval
-            _ = println(
-              s"isAlive: ${isAlive} , duration: ${now - curr.createTime}, isOk: ${isOk}................"
-            )
             r <- if (isOk) curr.promise.future else healed(newState)
           } yield r
         } else { // under checking, return old resource

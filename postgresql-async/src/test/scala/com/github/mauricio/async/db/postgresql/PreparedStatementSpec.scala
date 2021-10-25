@@ -16,7 +16,7 @@
 
 package com.github.mauricio.async.db.postgresql
 
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import org.joda.time.LocalDate
 import com.github.mauricio.async.db.util.Log
 import com.github.mauricio.async.db.exceptions.InsufficientParametersException
@@ -29,7 +29,7 @@ import scala.concurrent.duration.{Duration, SECONDS}
 import scala.util.Random
 import scala.collection.compat.immutable.ArraySeq
 
-class PreparedStatementSpec extends Specification with DatabaseTestHelper {
+class PreparedStatementSpec extends Spec with DatabaseTestHelper {
 
   val log = Log.get[PreparedStatementSpec]
 
@@ -56,7 +56,7 @@ class PreparedStatementSpec extends Specification with DatabaseTestHelper {
   val messagesSelectEscaped =
     "SELECT id, content, moment FROM messages WHERE content LIKE '%??%' AND id > ?"
 
-  "prepared statements" should {
+  "prepared statements" - {
 
     "support prepared statement with more than 64 characters" in {
       withHandler { handler =>
@@ -104,7 +104,7 @@ class PreparedStatementSpec extends Specification with DatabaseTestHelper {
           handler,
           "UPDATE messages SET content = content"
         )
-        ok
+        succeed
       }
 
     }
@@ -113,9 +113,12 @@ class PreparedStatementSpec extends Specification with DatabaseTestHelper {
 
       withHandler { handler =>
         executeDdl(handler, this.messagesCreate)
-        executePreparedStatement(handler, this.messagesSelectOne) must throwAn[
+        a[
           InsufficientParametersException
-        ]
+        ] must be thrownBy executePreparedStatement(
+          handler,
+          this.messagesSelectOne
+        )
       }
 
     }
@@ -145,7 +148,7 @@ class PreparedStatementSpec extends Specification with DatabaseTestHelper {
         executeDdl(handler, this.messagesCreate)
         executeDdl(handler, create)
 
-        foreach(1.until(4)) { x =>
+        forAll((1 until 4).toList) { (x: Int) =>
           executePreparedStatement(
             handler,
             this.messagesInsert,
@@ -160,17 +163,14 @@ class PreparedStatementSpec extends Specification with DatabaseTestHelper {
           val result =
             executePreparedStatement(handler, this.messagesSelectAll).rows.get
           result.size === x
-          result.columnNames must contain(
-            allOf("id", "content", "moment")
-          ).inOrder
+          result.columnNames must contain inOrder ("id", "content", "moment")
           result(x - 1)("moment") === moment
           result(x - 1)("content") === message
 
           val otherResult = executePreparedStatement(handler, select).rows.get
           otherResult.size === x
-          otherResult.columnNames must contain(
-            allOf("id", "other_moment", "other_content")
-          ).inOrder
+          otherResult.columnNames must contain inOrder ("id", "other_moment", "other_content")
+
           otherResult(x - 1)("other_moment") === otherMoment
           otherResult(x - 1)("other_content") === otherMessage
         }
@@ -343,7 +343,7 @@ class PreparedStatementSpec extends Specification with DatabaseTestHelper {
           result(0)("addresses") === addresses
           result(0)("phones") === phones
         }
-        success
+        succeed
       } else {
         pending
       }
@@ -364,11 +364,12 @@ class PreparedStatementSpec extends Specification with DatabaseTestHelper {
     "fail if prepared statement has more variables than it was given" in {
       withHandler { handler =>
         executeDdl(handler, messagesCreate)
-
-        handler.sendPreparedStatement(
-          "SELECT * FROM messages WHERE content = ? AND moment = ?",
-          List("some content")
-        ) must throwAn[InsufficientParametersException]
+        an[InsufficientParametersException] must be thrownBy {
+          handler.sendPreparedStatement(
+            "SELECT * FROM messages WHERE content = ? AND moment = ?",
+            List("some content")
+          )
+        }
       }
     }
 
@@ -384,14 +385,13 @@ class PreparedStatementSpec extends Specification with DatabaseTestHelper {
           this.messagesInsert,
           Array(Some(content), None)
         )
-
-        executePreparedStatement(
-          handler,
-          query,
-          Array("undefined")
-        ) must throwA[
-          GenericDatabaseException
-        ]
+        a[GenericDatabaseException] must be thrownBy {
+          executePreparedStatement(
+            handler,
+            query,
+            Array("undefined")
+          )
+        }
         val result = executePreparedStatement(handler, query, Array(1)).rows.get
         result(0)(0) === content
       }
@@ -417,7 +417,7 @@ class PreparedStatementSpec extends Specification with DatabaseTestHelper {
 
           result(0)("my_id").asInstanceOf[UUID] === uuid
         }
-        success
+        succeed
       } else {
         pending
       }
@@ -446,7 +446,7 @@ class PreparedStatementSpec extends Specification with DatabaseTestHelper {
             uuid2
           )
         }
-        success
+        succeed
       } else {
         pending
       }
@@ -491,7 +491,7 @@ class PreparedStatementSpec extends Specification with DatabaseTestHelper {
         }
         val plainQueryTime = System.nanoTime() - plainQueryStartTime
 
-        preparedStatementTime must beLessThan(plainQueryTime * 2)
+        preparedStatementTime must be < (plainQueryTime * 2)
       }
     }
   }

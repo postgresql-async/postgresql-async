@@ -17,11 +17,11 @@
 
 package com.github.mauricio.async.db.postgresql.column
 
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 
-class IntervalSpec extends Specification {
+class IntervalSpec extends Spec {
 
-  "interval encoder/decoder" should {
+  "interval encoder/decoder" - {
 
     def decode(s: String): Any  = PostgreSQLIntervalEncoderDecoder.decode(s)
     def encode(i: Any): String  = PostgreSQLIntervalEncoderDecoder.encode(i)
@@ -63,12 +63,13 @@ class IntervalSpec extends Specification {
       both("-4:05:06") === "PT-4H-5M-6S"
     }
 
-    "parse and encode example intervals" in {
-      Seq("-1-2 +3 -4:05:06", "-1 year -2 mons +3 days -04:05:06") forall {
-        both(_) === "P-1Y-2M3DT-4H-5M-6S"
+    "parse and encode example intervals (pending)" in {
+      pendingUntilFixed {
+        Seq("-1-2 +3 -4:05:06", "-1 year -2 mons +3 days -04:05:06") forall {
+          both(_) === "P-1Y-2M3DT-4H-5M-6S"
+        }
       }
-    }.pendingUntilFixed("with mixed/grouped negations")
-
+    }
   }
 
 }

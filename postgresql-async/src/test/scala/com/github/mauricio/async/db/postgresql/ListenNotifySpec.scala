@@ -16,16 +16,16 @@
 
 package com.github.mauricio.async.db.postgresql
 
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import java.util.UUID
 import com.github.mauricio.async.db.postgresql.messages.backend.NotificationResponse
 
-class ListenNotifySpec extends Specification with DatabaseTestHelper {
+class ListenNotifySpec extends Spec with DatabaseTestHelper {
 
   def generateQueueName() =
     "scala_pg_async_test_" + UUID.randomUUID().toString.replaceAll("-", "")
 
-  "connection" should {
+  "connection" - {
 
     "should be able to receive a notification if listening" in {
 
@@ -49,7 +49,7 @@ class ListenNotifySpec extends Specification with DatabaseTestHelper {
         payload === "this-is-some-data"
         channel === queue
 
-        connection.hasRecentError must beFalse
+        connection.hasRecentError must be(false)
       }
 
     }

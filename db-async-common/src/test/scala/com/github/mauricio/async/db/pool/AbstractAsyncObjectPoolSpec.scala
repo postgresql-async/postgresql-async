@@ -1,17 +1,18 @@
 package com.github.mauricio.async.db.pool
 
 import com.github.mauricio.async.db.pool.AbstractAsyncObjectPoolSpec.Widget
-import org.mockito.Mockito.reset
-import org.specs2.mock.Mockito
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
+
+import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers._
 
 import scala.concurrent.{Await, Future}
 import scala.util.Failure
 
-import scala.reflect.runtime.universe.TypeTag
 import scala.util.Try
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
+import scala.language.postfixOps
 
 /**
  * This spec is designed abstract to allow testing of any implementation of
@@ -21,9 +22,8 @@ import scala.concurrent.duration._
  *   the AsyncObjectPool being tested.
  */
 abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](
-  implicit tag: TypeTag[T]
-) extends Specification
-    with Mockito {
+  label: String
+) extends Spec {
 
   import AbstractAsyncObjectPoolSpec._
 
@@ -33,13 +33,13 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](
   ): T
 
   // Evaluates to the type of AsyncObjectPool
-  s"the ${tag.tpe.erasure} variant of AsyncObjectPool" should {
+  s"the ${label} variant of AsyncObjectPool" - {
 
     "successfully retrieve and return a Widget" in {
       val p      = pool()
       val widget = Await.result(p.take, Duration.Inf)
 
-      widget must not beNull
+      widget must not be (null)
 
       val thePool = Await.result(p.giveBack(widget), Duration.Inf)
       thePool must be(p)
@@ -47,14 +47,12 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](
 
     "reject Widgets that did not come from it" in {
       val p = pool()
-
-      Await.result(p.giveBack(Widget(null)), Duration.Inf) must throwAn[
-        IllegalArgumentException
-      ]
+      assertThrows[IllegalArgumentException] {
+        Await.result(p.giveBack(Widget(null)), Duration.Inf)
+      }
     }
 
-    "scale contents" >> {
-      sequential
+    "scale contents" - {
 
       val factory = spy(new TestWidgetFactory)
 
@@ -76,16 +74,16 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](
         )
 
         taken must have size 5
-        taken.head must not beNull;
-        taken(1) must not beNull;
-        taken(2) must not beNull;
-        taken(3) must not beNull;
-        taken(4) must not beNull
+        taken.head must not be null
+        taken(1) must not be null
+        taken(2) must not be null
+        taken(3) must not be null
+        taken(4) must not be null
       }
 
       "does not attempt to expire taken items" in {
         // Wait 3 seconds to ensure idle check has run at least once
-        there was after(3.seconds).no(factory).destroy(any[Widget])
+        verify(factory, timeout(3000).times(0)).destroy(any[Widget])
       }
 
       reset(
@@ -108,15 +106,14 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](
 
       "protest returning an item that was already returned" in {
         val resultFuture = p.giveBack(taken.head)
-
-        Await.result(resultFuture, Duration.Inf) must throwAn[
-          IllegalStateException
-        ]
+        assertThrows[IllegalStateException] {
+          Await.result(resultFuture, Duration.Inf)
+        }
       }
 
       "destroy down to maxIdle widgets" in {
         Thread.sleep(3000)
-        there were 5.times(factory).destroy(any[Widget])
+        verify(factory, times(5)).destroy(any[Widget])
       }
     }
 
@@ -138,14 +135,12 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](
       val failedFuture = p.take
 
       // Cannot be done, would exceed maxObjects
-      future.isCompleted must beFalse
+      future.isCompleted mustEqual (false)
 
-      Await.result(failedFuture, Duration.Inf) must throwA[
-        PoolExhaustedException
-      ]
-
+      assertThrows[PoolExhaustedException] {
+        Await.result(failedFuture, Duration.Inf)
+      }
       Await.result(p.giveBack(widgets.head), Duration.Inf) must be(p)
-
       Await.result(future, Duration(5, SECONDS)) must be(widgets.head)
     }
 
@@ -154,9 +149,9 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](
 
       Await.result(p.close, Duration.Inf) must be(p)
 
-      Await.result(p.take, Duration.Inf) must throwA[
-        PoolAlreadyTerminatedException
-      ]
+      an[PoolAlreadyTerminatedException] must be thrownBy {
+        Await.result(p.take, Duration.Inf)
+      }
     }
 
     "allow being closed more than once" in {
@@ -173,17 +168,19 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](
 
       val widget = Await.result(p.take, Duration.Inf)
 
-      widget must not beNull
+      widget must not be null
 
-      factory.validate(widget) returns Failure(
-        new RuntimeException("This is a bad widget!")
-      )
+      when(factory.validate(widget)).thenReturn {
+        Failure(
+          new RuntimeException("This is a bad widget!")
+        )
+      }
 
-      Await.result(p.giveBack(widget), Duration.Inf) must throwA[
-        RuntimeException
-      ](message = "This is a bad widget!")
-
-      there was atLeastOne(factory).destroy(widget)
+      the[RuntimeException] thrownBy Await.result(
+        p.giveBack(widget),
+        Duration.Inf
+      ) must have message "This is a bad widget!"
+      verify(factory, atLeastOnce()).destroy(widget)
     }
 
     "clean up widgets that die in the pool" in {
@@ -197,24 +194,20 @@ abstract class AbstractAsyncObjectPoolSpec[T <: AsyncObjectPool[Widget]](
 
       val widget = Await.result(p.take, Duration.Inf)
 
-      widget must not beNull
+      widget must not be null
 
       Await.result(p.giveBack(widget), Duration.Inf) must be(p)
 
-      there was atLeastOne(factory).validate(widget)
-      there were no(factory).destroy(widget)
+      verify(factory, atLeastOnce()).validate(widget)
+      verify(factory, never()).destroy(widget)
+      verify(factory, timeout(3000).atLeast(2)).validate(widget)
+      when(factory.validate(widget)).thenReturn {
+        Failure(new RuntimeException("Test Exception, Not an Error"))
+      }
 
-      there was after(3.seconds).atLeastTwo(factory).validate(widget)
-
-      factory.validate(widget) returns Failure(
-        new RuntimeException("Test Exception, Not an Error")
-      )
-
-      there was after(3.seconds).one(factory).destroy(widget)
-
+      verify(factory, timeout(3000).times(1)).destroy(widget)
       Await.ready(p.take, Duration.Inf)
-
-      there was two(factory).create
+      verify(factory, times(2)).create
     }
 
   }
@@ -242,7 +235,9 @@ object AbstractAsyncObjectPoolSpec {
 }
 
 class SingleThreadedAsyncObjectPoolSpec
-    extends AbstractAsyncObjectPoolSpec[SingleThreadedAsyncObjectPool[Widget]] {
+    extends AbstractAsyncObjectPoolSpec[SingleThreadedAsyncObjectPool[Widget]](
+      "SingleThread"
+    ) {
 
   import AbstractAsyncObjectPoolSpec._
 
@@ -252,13 +247,13 @@ class SingleThreadedAsyncObjectPoolSpec
   ) =
     new SingleThreadedAsyncObjectPool(factory, conf)
 
-  "SingleThreadedAsyncObjectPool" should {
+  "SingleThreadedAsyncObjectPool" - {
     "successfully record a closed state" in {
       val p = pool()
 
-      Await.result(p.close, Duration.Inf) must be(p)
+      Await.result(p.close, Duration.Inf) mustEqual (p)
 
-      p.isClosed must beTrue
+      p.isClosed must be(true)
     }
 
   }

@@ -22,7 +22,8 @@ import scala.language.implicitConversions
 import io.netty.buffer.ByteBuf
 
 object ChannelWrapper {
-  implicit def bufferToWrapper(buffer: ByteBuf) = new ChannelWrapper(buffer)
+  implicit def bufferToWrapper(buffer: ByteBuf): ChannelWrapper =
+    new ChannelWrapper(buffer)
 
   final val MySQL_NULL = 0xfb
   final val log        = Log.get[ChannelWrapper]

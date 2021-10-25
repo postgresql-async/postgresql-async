@@ -20,9 +20,9 @@ import java.util.concurrent.{ExecutorService, Executors}
 import scala.concurrent.ExecutionContext
 
 object ExecutorServiceUtils {
-  implicit val CachedThreadPool =
+  implicit val CachedThreadPool: ExecutorService =
     Executors.newCachedThreadPool(DaemonThreadsFactory("db-async-default"))
-  implicit val CachedExecutionContext =
+  implicit val CachedExecutionContext: ExecutionContext =
     ExecutionContext.fromExecutor(CachedThreadPool)
 
   def newFixedPool(count: Int, name: String): ExecutorService = {

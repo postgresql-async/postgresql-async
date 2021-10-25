@@ -1,13 +1,14 @@
 package com.github.mauricio.async.db.pool
 
-import org.specs2.mutable.Specification
-import org.specs2.ScalaCheck
-import org.scalacheck._
+import com.github.mauricio.async.db.Spec
 import java.util.concurrent.{CountDownLatch, Semaphore}
+import org.scalacheck._
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class MpmcQueueSpec extends Specification with ScalaCheck {
+
+class MpmcQueueSpec extends Spec with ScalaCheckPropertyChecks {
 
   case class Data(
     capacity: Int,
@@ -23,27 +24,7 @@ class MpmcQueueSpec extends Specification with ScalaCheck {
 
   implicit val arbitraryData = Arbitrary(dataGen)
 
-  val fifoNoOverflow = Prop.forAll { data: Data =>
-    val queue = MpmcQueue[Int](data.capacity, data.indexUpperBound)
 
-    val r = data.input
-      .grouped(data.capacity)
-      .flatMap { batch =>
-        val enqueueResult = batch.map(queue.offer).toList
-        val dequeueResult = Vector.fill(batch.size)(queue.take())
-        enqueueResult.zip(dequeueResult)
-      }
-      .toList
-
-    val allMatches = r
-      .zip(data.input)
-      .map { case ((success, dequeue), e) =>
-        success && dequeue == Some(e)
-      }
-      .toList
-    r.size == data.input.size && allMatches.forall(_ == true)
-
-  }
 
   private def enqueueWithLatch[A](
     queue: MpmcQueue[A],
@@ -130,52 +111,71 @@ class MpmcQueueSpec extends Specification with ScalaCheck {
     RunResult(r2, dequeueR, remain)
   }
 
-  val parallelEnqueueDequeue = {
-    Prop.forAll { data: Data =>
-      val rr = runParallel(data, _.take())
-      rr.verify()
-    }
-  }
+  "MpmcQueue" - {
+    "should eqneue/dequeue in fifo order without loss" in {
+      forAll { data: Data =>
+        val queue = MpmcQueue[Int](data.capacity, data.indexUpperBound)
 
-  val runParallelWithPeek = {
-    Prop.forAll { data: Data =>
-      val rr = runParallel(
-        data,
-        q => {
-          q.peek()
-          q.take()
+        val r = data.input
+          .grouped(data.capacity)
+          .flatMap { batch =>
+            val enqueueResult = batch.map(queue.offer).toList
+            val dequeueResult = Vector.fill(batch.size)(queue.take())
+            enqueueResult.zip(dequeueResult)
+          }
+          .toList
+
+        val allMatches = r
+          .zip(data.input)
+          .map { case ((success, dequeue), e) =>
+            success && dequeue == Some(e)
+          }
+          .toList
+        r.size == data.input.size && allMatches.forall(_ == true)
+
+      }
+    }
+    "should enqueue/dequeue concurrently" in {
+      forAll { data: Data =>
+        val rr = runParallel(data, _.take())
+        rr.verify()
+      }
+    }
+    "should eqneue/dequeue with peak concurrently" in {
+      forAll { data: Data =>
+        val rr = runParallel(
+          data,
+          q => {
+            q.peek()
+            q.take()
+          }
+        )
+        rr.verify()
+      }
+    }
+
+    "should peek last element" in {
+      forAll { data: Data =>
+        val queue = MpmcQueue[Int](data.capacity)
+        data.input.map { i =>
+          (queue.offer(i), queue.peek() == Some(i), queue.take() == Some(i))
+        }.forall { case (r1, r2, r3) =>
+            r1 && r2 && r3
         }
-      )
-      rr.verify()
+      }
     }
-  }
 
-  val peekLastElem = {
-    Prop.forAll { data: Data =>
-      val queue = MpmcQueue[Int](data.capacity)
-      data.input.map { i =>
-        (queue.offer(i), queue.peek() == Some(i), queue.take() == Some(i))
-      }.forall { case (r1, r2, r3) =>
-        r1 && r2 && r3
+    "should enqure capacity" in {
+      forAll { data: Data =>
+        val rr = runParallel(data, _ => None) // do nothing for dequeue
+        val enqueueCount = rr.enqueueR.collect { case (i, true) =>
+          i
+        }.size
+        if (data.input.size > data.capacity) {
+          enqueueCount === data.capacity
+        } else enqueueCount === data.input.size
       }
     }
   }
 
-  val notExceedCapacity = {
-    Prop.forAll { data: Data =>
-      val rr = runParallel(data, _ => None) // do nothing for dequeue
-      val enqueueCount = rr.enqueueR.collect { case (i, true) =>
-        i
-      }.size
-      if (data.input.size > data.capacity) {
-        enqueueCount === data.capacity
-      } else enqueueCount === data.input.size
-    }
-  }
-
-  s2"queue must enqueue / dequeue in fifo order ${fifoNoOverflow}"
-  s2"enqueue/deuque correctly during parallel access ${parallelEnqueueDequeue}"
-  s2"peek should always return last enqueued element ${peekLastElem}"
-  s2"peek should not affect enqueue/dequeue during parallel access ${runParallelWithPeek}"
-  s2"enqueue should not exceed max capacity ${notExceedCapacity}"
 }

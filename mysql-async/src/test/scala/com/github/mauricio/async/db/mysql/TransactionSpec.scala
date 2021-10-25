@@ -3,7 +3,7 @@ package com.github.mauricio.async.db.mysql
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import com.github.mauricio.async.db.util.FutureUtils.awaitFuture
 import com.github.mauricio.async.db.mysql.exceptions.MySQLException
 import com.github.mauricio.async.db.Connection
@@ -22,11 +22,11 @@ object TransactionSpec {
 
 }
 
-class TransactionSpec extends Specification with ConnectionHelper {
+class TransactionSpec extends Spec with ConnectionHelper {
 
   import TransactionSpec._
 
-  "connection in transaction" should {
+  "connection in transaction" - {
 
     "correctly store the values of the transaction" in {
       withConnection { connection =>
@@ -59,7 +59,7 @@ class TransactionSpec extends Specification with ConnectionHelper {
 
         try {
           awaitFuture(future)
-          failure("should not have arrived here")
+          fail("should not have arrived here")
         } catch {
           case e: MySQLException => {
 
@@ -70,7 +70,7 @@ class TransactionSpec extends Specification with ConnectionHelper {
               executePreparedStatement(connection, this.select).rows.get
             result.size === 1
             result(0)("name") === "Maurício Aragão"
-            success("correct result")
+            succeed
           }
         }
       }
@@ -92,7 +92,7 @@ class TransactionSpec extends Specification with ConnectionHelper {
 
         try {
           awaitFuture(future)
-          failure("this should not be reached")
+          fail("this should not be reached")
         } catch {
           case e: MySQLException => {
 
@@ -100,7 +100,7 @@ class TransactionSpec extends Specification with ConnectionHelper {
             pool.availables must not contain (connection
               .asInstanceOf[MySQLConnection])
 
-            success("success")
+            succeed
           }
         }
 
@@ -128,7 +128,7 @@ class TransactionSpec extends Specification with ConnectionHelper {
         Await.ready(operations, Duration(5, TimeUnit.SECONDS))
 
         operations.value.get match {
-          case Success(e) => failure("should not have executed")
+          case Success(e) => fail("should not have executed")
           case Failure(e) => {
             e.asInstanceOf[MySQLException].errorMessage.errorCode === 1062
             executePreparedStatement(
@@ -136,7 +136,7 @@ class TransactionSpec extends Specification with ConnectionHelper {
               "select * from transaction_test where id = ?",
               id
             ).rows.get.size === 0
-            success("ok")
+            succeed
           }
         }
 

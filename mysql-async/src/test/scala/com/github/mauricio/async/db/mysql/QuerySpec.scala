@@ -18,17 +18,17 @@ package com.github.mauricio.async.db.mysql
 
 import com.github.mauricio.async.db.mysql.exceptions.MySQLException
 import org.joda.time._
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
 import io.netty.util.CharsetUtil
 import com.github.mauricio.async.db.exceptions.InsufficientParametersException
-import org.specs2.matcher.MatchResult
 import com.github.mauricio.async.db.{QueryResult, ResultSet}
+import org.scalatest.Assertion
 
-class QuerySpec extends Specification with ConnectionHelper {
+class QuerySpec extends Spec with ConnectionHelper {
 
-  "connection" should {
+  "connection" - {
 
     "be able to run a DML query" in {
 
@@ -40,11 +40,11 @@ class QuerySpec extends Specification with ConnectionHelper {
 
     "raise an exception upon a bad statement" in {
       withConnection { connection =>
-        executeQuery(connection, "this is not SQL") must throwA[
-          MySQLException
-        ].like { case e =>
-          e.asInstanceOf[MySQLException].errorMessage.sqlState === "#42000"
-        }
+        val e = the[MySQLException] thrownBy executeQuery(
+          connection,
+          "this is not SQL"
+        )
+        e.asInstanceOf[MySQLException].errorMessage.sqlState === "#42000"
       }
     }
 
@@ -157,22 +157,20 @@ class QuerySpec extends Specification with ConnectionHelper {
       val select      = "SELECT * FROM posts"
       val selectIdeas = "SELECT * FROM ideas"
 
-      val matcher: QueryResult => List[MatchResult[IndexedSeq[String]]] = {
-        result =>
-          val columns = result.rows.get.columnNames
-          List(
-            columns must contain(allOf("id", "some_bytes")).inOrder,
-            columns must have size (2)
-          )
+      val matcher: QueryResult => List[Assertion] = { result =>
+        val columns = result.rows.get.columnNames
+        List(
+          columns must contain inOrder ("id", "some_bytes"),
+          columns must have size (2)
+        )
       }
 
-      val ideasMatcher: QueryResult => List[MatchResult[IndexedSeq[String]]] = {
-        result =>
-          val columns = result.rows.get.columnNames
-          List(
-            columns must contain(allOf("id", "some_idea")).inOrder,
-            columns must have size (2)
-          )
+      val ideasMatcher: QueryResult => List[Assertion] = { result =>
+        val columns = result.rows.get.columnNames
+        List(
+          columns must contain inOrder ("id", "some_idea"),
+          columns must have size (2)
+        )
       }
 
       withConnection { connection =>
@@ -188,7 +186,7 @@ class QuerySpec extends Specification with ConnectionHelper {
         matcher(executeQuery(connection, select))
         ideasMatcher(executeQuery(connection, selectIdeas))
 
-        success("completed")
+        succeed
       }
 
     }
@@ -221,13 +219,15 @@ class QuerySpec extends Specification with ConnectionHelper {
     "fail if number of args required is different than the number of provided parameters" in {
 
       withConnection { connection =>
-        executePreparedStatement(
-          connection,
-          "select * from some_table where c = ? and b = ?",
-          "one",
-          "two",
-          "three"
-        ) must throwAn[InsufficientParametersException]
+        an[InsufficientParametersException] must be thrownBy {
+          executePreparedStatement(
+            connection,
+            "select * from some_table where c = ? and b = ?",
+            "one",
+            "two",
+            "three"
+          )
+        }
       }
 
     }

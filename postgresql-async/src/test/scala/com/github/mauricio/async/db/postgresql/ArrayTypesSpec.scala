@@ -20,10 +20,10 @@ import com.github.mauricio.async.db.column.{
   TimestampWithTimezoneEncoderDecoder,
   InetAddressEncoderDecoder
 }
-import org.specs2.mutable.Specification
+import com.github.mauricio.async.db.Spec
 import java.net.InetAddress
 
-class ArrayTypesSpec extends Specification with DatabaseTestHelper {
+class ArrayTypesSpec extends Spec with DatabaseTestHelper {
   // `uniq` allows sbt to run the tests concurrently as there is no CREATE TEMP TYPE
   def simpleCreate(uniq: String) = s"""DROP TYPE IF EXISTS dir_$uniq;
                                        CREATE TYPE direction_$uniq AS ENUM ('in','out');
@@ -60,7 +60,7 @@ class ArrayTypesSpec extends Specification with DatabaseTestHelper {
                                                  (smallint_column, text_column, inet_column, direction_column, endpoint_column, timestamp_column)
                                                  values (?,?,?,?,?,?)"""
 
-  "connection" should {
+  "connection" - {
 
     "correctly parse the array type" in {
 

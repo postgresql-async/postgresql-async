@@ -1,16 +1,16 @@
 package com.github.mauricio.async.db.pool
 
-import org.specs2.mutable.Specification
-import org.specs2.ScalaCheck
-import org.scalacheck._
 import java.util.concurrent.atomic._
+import com.github.mauricio.async.db.Spec
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import org.scalacheck._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import scala.concurrent.duration._
 
 class SelfHealingSpec
-    extends Specification
-    with ScalaCheck
+    extends Spec
+    with ScalaCheckPropertyChecks
     with FutureGenInstance {
 
   case class Data(
@@ -102,7 +102,7 @@ class SelfHealingSpec
         .get() // always release success creation
       val checkTime =
         ((end - start) / config.checkInterval).toInt // check at min interval
-      checkCount.get() should (be >= (checkTime) and be <= (checkTime + 1))
+      checkCount.get() must (be >= (checkTime) and be <= (checkTime + 1))
     }
 
     val start = System.currentTimeMillis()
@@ -129,36 +129,65 @@ class SelfHealingSpec
     Await.result(call, Duration.Inf)
   }
 
-  val alwaysReleasedResources = Prop.forAll { data: Data =>
-    val r = runPropTest(data) { sh =>
-      Future.sequence(Seq.fill(1000)(sh.get())).recover { case e =>
-        println(s"Failed get resource ${e}")
+  "SelfHealing item" - {
+    "should always release created resource" in {
+      forAll { data: Data =>
+        val r = runPropTest(data) { sh =>
+          Future.sequence(Seq.fill(1000)(sh.get())).recover { case e =>
+            println(s"Failed get resource ${e}")
+          }
+        }
+        val maxGap = (r.endAt - r.startAt) / 10 + 1
+        r.successCreate === r.releaseCount
+        r.checkCount <= maxGap
+        r.createCount <= maxGap
+        r.createCount <= (r.checkCount - r.successCheck) + 1
       }
     }
-    val maxGap = (r.endAt - r.startAt) / 10 + 1
-    //println(s"successCreate: ${r.successCreate} , createCount: ${r.createCount} , release: ${r.releaseCount} , checkCount: ${r.checkCount} , maxGap: ${maxGap}")
-    r.successCreate === r.releaseCount
-    r.checkCount <= maxGap
-    r.createCount <= maxGap
-    r.createCount <= (r.checkCount - r.successCheck) + 1
-  }
 
-  val recreateIfDead = Prop.forAll { data: Data =>
-    val nd = data.copy(check = () => Future.successful(false))
-    val rr = runPropTest(nd) { sh =>
-      for {
-        _ <- sh.get().recover(e => {})
-        start = System.currentTimeMillis()
-        _ <- FutureGenInstance.timer.sleep((config.checkInterval + 10).millis)
-        end = System.currentTimeMillis
-        _   = println(s"${end - start}.......")
-        _ <- sh.get().recover(e => {})
-      } yield {}
+    "should recreate resoure if check return false" in {
+      forAll { data: Data =>
+        val nd = data.copy(
+          check = () => Future.successful(false),
+          acquire = () => Future(System.currentTimeMillis().toInt)
+        )
+        val rr = runPropTest(nd) { sh =>
+          for {
+            _ <- sh.get().recover(e => {})
+            start = System.currentTimeMillis()
+            _ <- FutureGenInstance.timer.sleep(
+              (config.checkInterval + 10).millis
+            )
+            end = System.currentTimeMillis
+            _ <- sh.get().recover(e => {})
+          } yield {}
+        }
+        rr.checkCount mustEqual (1)
+        rr.createCount mustEqual (2)
+      }
     }
-    rr.checkCount shouldEqual (1)
-    rr.createCount shouldEqual (2)
+
+     "should recreate resoure if check failure" in {
+      forAll { data: Data =>
+        val nd = data.copy(
+          check = () => Future.failed(new Exception(s"Check failed")),
+          acquire = () => Future(System.currentTimeMillis().toInt)
+        )
+        val rr = runPropTest(nd) { sh =>
+          for {
+            _ <- sh.get().recover(e => {})
+            start = System.currentTimeMillis()
+            _ <- FutureGenInstance.timer.sleep(
+              (config.checkInterval + 10).millis
+            )
+            end = System.currentTimeMillis
+            _ <- sh.get().recover(e => {})
+          } yield {}
+        }
+        rr.checkCount mustEqual (1)
+        rr.createCount mustEqual (2)
+      }
+    }
   }
 
-  s2"Always release created resource ${alwaysReleasedResources}"
-  s2"Recreate if resource is dead ${recreateIfDead}"
 }
