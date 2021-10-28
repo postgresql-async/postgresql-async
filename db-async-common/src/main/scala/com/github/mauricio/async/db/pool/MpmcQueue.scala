@@ -29,20 +29,14 @@ private[db] trait MpmcQueue[A] {
 
 private[db] object MpmcQueue {
 
-  def apply[A](capacity: Int): MpmcQueue[A] = {
-    apply(capacity, Long.MaxValue)
-  }
-
-  private[db] def apply[A](
-    capacity: Int,
-    indexUpperBound: Long
+  def apply[A](
+    capacity: Int
   ): MpmcQueue[A] = {
-    new ArrayQueueImpl(capacity, indexUpperBound)
+    new ArrayQueueImpl(capacity)
   }
 
   private class ArrayQueueImpl[A](
-    capacity: Int,
-    indexUpperBound: Long
+    capacity: Int
   ) extends MpmcQueue[A] {
 
     // ensure reader index != writerIndex if queue is full
@@ -53,16 +47,6 @@ private[db] object MpmcQueue {
     private final val enqueueSemaphore = new Semaphore(capacity)
     private final val readerIndex      = new AtomicLong(0)
     private final val writerIndex      = new AtomicLong(0)
-    private final val maxIdx = indexUpperBound - indexUpperBound % arraySize - 1
-
-    @annotation.tailrec
-    private def getAndIncrWriteIndex(): Long = {
-      val curr = writerIndex.get()
-      val next = if (curr == maxIdx) 0 else curr + 1
-      if (writerIndex.compareAndSet(curr, next)) {
-        curr
-      } else getAndIncrWriteIndex()
-    }
 
     @inline
     private def arrayOffsetOfIdx(index: Long) = {
@@ -75,7 +59,7 @@ private[db] object MpmcQueue {
     def offer(a: A): Boolean = {
       val before = enqueueSemaphore.availablePermits()
       if (enqueueSemaphore.tryAcquire()) {
-        val currIndex = getAndIncrWriteIndex()
+        val currIndex = writerIndex.getAndIncrement()
         elements.set(arrayOffsetOfIdx(currIndex), Some(a))
         true
       } else false
@@ -115,7 +99,7 @@ private[db] object MpmcQueue {
         val currReader = readerIndex.get()
         val currWriter = writerIndex.get()
         if (currReader != currWriter) {
-          val nextReader = if (currReader == maxIdx) 0 else currReader + 1
+          val nextReader = currReader + 1
           if (readerIndex.compareAndSet(currReader, nextReader)) {
             val e = readUntilDefined(arrayOffsetOfIdx(currReader))
             enqueueSemaphore.release()

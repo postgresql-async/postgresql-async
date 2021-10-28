@@ -80,7 +80,7 @@ class MpmcQueueSpec extends Spec with ScalaCheckPropertyChecks {
     data: Data,
     dequeueFunc: MpmcQueue[Int] => Option[Int]
   ): RunResult = {
-    val queue             = MpmcQueue[Int](data.capacity, data.indexUpperBound)
+    val queue             = MpmcQueue[Int](data.capacity)
     val elems             = data.input
     val latch             = new CountDownLatch(1)
     val consumeSemaphore  = new Semaphore(data.capacity)
@@ -111,7 +111,7 @@ class MpmcQueueSpec extends Spec with ScalaCheckPropertyChecks {
   "MpmcQueue" - {
     "should eqneue/dequeue in fifo order without loss" in {
       forAll { (data: Data) =>
-        val queue = MpmcQueue[Int](data.capacity, data.indexUpperBound)
+        val queue = MpmcQueue[Int](data.capacity)
 
         val r = data.input
           .grouped(data.capacity)
