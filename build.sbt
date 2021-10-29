@@ -92,34 +92,21 @@ val baseSettings = Seq(
 ) ++ publishSettings
 
 lazy val publishSettings = Seq(
-  // Add sonatype repository settings
-  publishTo := Some(
-    if (isSnapshot.value)
-      Opts.resolver.sonatypeSnapshots
-    else
-      Opts.resolver.sonatypeStaging
-  ),
-  releaseCrossBuild             := true,
-  releasePublishArtifactsAction := PgpKeys.publishSigned.value,
-  releaseProcess := Seq[ReleaseStep](
-    checkSnapshotDependencies,
-    inquireVersions,
-    runClean,
-    runTest,
-    setReleaseVersion,
-    commitReleaseVersion,
-    tagRelease,
-    publishArtifacts,
-    setNextVersion,
-    commitNextVersion,
-    releaseStepCommand("sonatypeReleaseAll"),
-    pushChanges
-  ),
   scmInfo := Some(
     ScmInfo(
       url("https://github.com/postgresql-async/postgresql-async"),
       "git@github.com:postgresql-async/postgresql-async.git"
     )
+  ),
+  releaseProcess := Seq[ReleaseStep]( // release was run by github action, just make a tag here
+    checkSnapshotDependencies,
+    inquireVersions,
+    setReleaseVersion,
+    commitReleaseVersion,
+    tagRelease,
+    setNextVersion,
+    commitNextVersion,
+    pushChanges
   ),
   developers += Developer(
     "jilen",
@@ -128,7 +115,6 @@ lazy val publishSettings = Seq(
     url("https://github.com/jilen")
   ),
   licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0")),
-  pomIncludeRepository := (_ => false),
   homepage := Some(url("https://github.com/postgresql-async/postgresql-async"))
 )
 
