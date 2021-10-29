@@ -98,7 +98,9 @@ lazy val publishSettings = Seq(
       "git@github.com:postgresql-async/postgresql-async.git"
     )
   ),
-  releaseProcess := Seq[ReleaseStep]( // release was run by github action, just make a tag here
+  releaseProcess := Seq[
+    ReleaseStep
+  ]( // release was run by github action, just make a tag here
     checkSnapshotDependencies,
     inquireVersions,
     setReleaseVersion,
