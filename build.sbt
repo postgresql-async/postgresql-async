@@ -3,13 +3,13 @@ import ReleaseTransformations._
 val commonName     = "db-async-common"
 val postgresqlName = "postgresql-async"
 val mysqlName      = "mysql-async"
-val nettyVersion   = "4.1.66.Final"
+val nettyVersion   = "4.1.69.Final"
 
 def testDependency(scalaVersion: String) = {
   Seq(
     "org.scalatest" %% "scalatest"    % "3.2.10" % Test,
     "org.mockito"    % "mockito-core" % "4.0.0"  % Test,
-    "org.slf4j"      % "slf4j-simple" % "1.7.29" % Test
+    "org.slf4j"      % "slf4j-simple" % "1.7.32" % Test
   )
 }
 
@@ -45,14 +45,14 @@ lazy val mysql = (project in file("mysql-async"))
   .dependsOn(common % "compile->compile;test->test")
 
 def commonDependencies(scalaVersion: String) = Seq(
-  "org.slf4j"                % "slf4j-api"               % "1.7.29",
-  "joda-time"                % "joda-time"               % "2.10.13",
+  "org.slf4j"                % "slf4j-api"               % "1.7.32",
+  "joda-time"                % "joda-time"               % "2.10.5",
   "org.joda"                 % "joda-convert"            % "2.2.1",
   "io.netty"                 % "netty-codec"             % nettyVersion,
   "io.netty"                 % "netty-handler"           % nettyVersion,
   "org.javassist"            % "javassist"               % "3.26.0-GA",
   "org.scala-lang.modules"  %% "scala-collection-compat" % "2.5.0",
-  "com.google.code.findbugs" % "jsr305"                  % "3.0.1" % Provided
+  "com.google.code.findbugs" % "jsr305"                  % "3.0.2" % Provided
 ) ++ testDependency(scalaVersion)
 
 def scalacOpts(v: String): Seq[String] = {
@@ -78,7 +78,7 @@ def scalacOpts(v: String): Seq[String] = {
 }
 
 val baseSettings = Seq(
-  crossScalaVersions := Seq("2.11.12", "2.12.14", "2.13.6", "3.0.2"),
+  crossScalaVersions := Seq("2.11.12", "2.12.14", "2.13.6", "3.1.0"),
   (Test / fork)      := true,
   scalaVersion       := "2.13.6",
   scalacOptions      := scalacOpts(scalaVersion.value),
@@ -98,7 +98,9 @@ lazy val publishSettings = Seq(
       "git@github.com:postgresql-async/postgresql-async.git"
     )
   ),
-  releaseProcess := Seq[ReleaseStep]( // release was run by github action, just make a tag here
+  releaseProcess := Seq[
+    ReleaseStep
+  ]( // release was run by github action, just make a tag here
     checkSnapshotDependencies,
     inquireVersions,
     setReleaseVersion,
