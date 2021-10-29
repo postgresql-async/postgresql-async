@@ -160,7 +160,7 @@ class QuerySpec extends Spec with ConnectionHelper {
       val matcher: QueryResult => List[Assertion] = { result =>
         val columns = result.rows.get.columnNames
         List(
-          columns must contain inOrder("id", "some_bytes"),
+          columns must contain inOrder ("id", "some_bytes"),
           columns must have size (2)
         )
       }
@@ -168,7 +168,7 @@ class QuerySpec extends Spec with ConnectionHelper {
       val ideasMatcher: QueryResult => List[Assertion] = { result =>
         val columns = result.rows.get.columnNames
         List(
-          columns must contain inOrder("id", "some_idea"),
+          columns must contain inOrder ("id", "some_idea"),
           columns must have size (2)
         )
       }
