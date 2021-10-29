@@ -10,10 +10,12 @@ jobs:
   scala-steward:
     runs-on: ubuntu-latest
     name: Scala Steward
-    author-email: scala-steward@users.noreply.github.com
-    author-name: Scala Steward
+
     steps:
+
       - name: Launch Scala Steward
         uses: scala-steward-org/scala-steward-action@v2
         with:
+          author-email: scala-steward@users.noreply.github.com
+          author-name: Scala Steward
           github-token: ${{ secrets.PAT }}
