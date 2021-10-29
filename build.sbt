@@ -9,7 +9,7 @@ def testDependency(scalaVersion: String) = {
   Seq(
     "org.scalatest" %% "scalatest"    % "3.2.10" % Test,
     "org.mockito"    % "mockito-core" % "4.0.0"  % Test,
-    "org.slf4j"      % "slf4j-simple" % "1.7.29" % Test
+    "org.slf4j"      % "slf4j-simple" % "1.7.32" % Test
   )
 }
 
@@ -45,7 +45,7 @@ lazy val mysql = (project in file("mysql-async"))
   .dependsOn(common % "compile->compile;test->test")
 
 def commonDependencies(scalaVersion: String) = Seq(
-  "org.slf4j"                % "slf4j-api"               % "1.7.29",
+  "org.slf4j"                % "slf4j-api"               % "1.7.32",
   "joda-time"                % "joda-time"               % "2.10.5",
   "org.joda"                 % "joda-convert"            % "2.2.1",
   "io.netty"                 % "netty-codec"             % nettyVersion,
