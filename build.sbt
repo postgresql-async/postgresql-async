@@ -52,7 +52,7 @@ def commonDependencies(scalaVersion: String) = Seq(
   "io.netty"                 % "netty-handler"           % nettyVersion,
   "org.javassist"            % "javassist"               % "3.26.0-GA",
   "org.scala-lang.modules"  %% "scala-collection-compat" % "2.5.0",
-  "com.google.code.findbugs" % "jsr305"                  % "3.0.1" % Provided
+  "com.google.code.findbugs" % "jsr305"                  % "3.0.2" % Provided
 ) ++ testDependency(scalaVersion)
 
 def scalacOpts(v: String): Seq[String] = {
