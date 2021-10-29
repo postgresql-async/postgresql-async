@@ -46,7 +46,7 @@ Or Maven:
 
 ```xml
 <dependency>
-  <groupId>com.github.postgresql</groupId>
+  <groupId>com.github.postgresql-async</groupId>
   <artifactId>postgresql-async_<scalaMajorVersion></artifactId>
   <version>0.3.1</version>
 </dependency>
@@ -55,14 +55,14 @@ Or Maven:
 And if you're into MySQL:
 
 ```scala
-"com.github.postgresql" %% "mysql-async" % "0.3.1"
+"com.github.postgresql-async" %% "mysql-async" % "0.3.1"
 ```
 
 Or Maven:
 
 ```xml
 <dependency>
-  <groupId>com.github.postgresql</groupId>
+  <groupId>com.github.postgresql-async</groupId>
   <artifactId>mysql-async_<scalaMajorVersion></artifactId>
   <version>0.3.1</version>
 </dependency>
@@ -218,10 +218,10 @@ it [here](http://postgresql.github.io/2013/04/29/async-database-access-with-post
 
 In short, what you would usually do is:
 ```scala
-import com.github.postgresql.async.db.postgresql.PostgreSQLConnection
-import com.github.postgresql.async.db.postgresql.util.URLParser
-import com.github.postgresql.async.db.util.ExecutorServiceUtils.CachedExecutionContext
-import com.github.postgresql.async.db.{RowData, QueryResult, Connection}
+import com.github.mauricio.async.db.postgresql.PostgreSQLConnection
+import com.github.mauricio.async.db.postgresql.util.URLParser
+import com.github.mauricio.async.db.util.ExecutorServiceUtils.CachedExecutionContext
+import com.github.mauricio.async.db.{RowData, QueryResult, Connection}
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 
