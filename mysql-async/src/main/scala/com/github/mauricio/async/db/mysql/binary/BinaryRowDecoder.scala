@@ -29,16 +29,16 @@ object BinaryRowDecoder {
 
 class BinaryRowDecoder {
 
-  //import BinaryRowDecoder._
+  // import BinaryRowDecoder._
 
   def decode(
     buffer: ByteBuf,
     columns: Seq[ColumnDefinitionMessage]
   ): Array[Any] = {
 
-    //log.debug("columns are {} - {}", buffer.readableBytes(), columns)
-    //log.debug( "decoding row\n{}", MySQLHelper.dumpAsHex(buffer))
-    //PrintUtils.printArray("bitmap", buffer)
+    // log.debug("columns are {} - {}", buffer.readableBytes(), columns)
+    // log.debug( "decoding row\n{}", MySQLHelper.dumpAsHex(buffer))
+    // PrintUtils.printArray("bitmap", buffer)
 
     val nullCount = (columns.size + 9) / 8
 
@@ -60,8 +60,8 @@ class BinaryRowDecoder {
 
         val column = columns(index)
 
-        //log.debug(s"${decoder.getClass.getSimpleName} - ${buffer.readableBytes()}")
-        //log.debug("Column value [{}] - {}", value, column.name)
+        // log.debug(s"${decoder.getClass.getSimpleName} - ${buffer.readableBytes()}")
+        // log.debug("Column value [{}] - {}", value, column.name)
 
         row += column.binaryDecoder.decode(buffer)
       }
@@ -76,7 +76,7 @@ class BinaryRowDecoder {
       index += 1
     }
 
-    //log.debug("values are {}", row)
+    // log.debug("values are {}", row)
 
     if (buffer.readableBytes() != 0) {
       throw new BufferNotFullyConsumedException(buffer)
