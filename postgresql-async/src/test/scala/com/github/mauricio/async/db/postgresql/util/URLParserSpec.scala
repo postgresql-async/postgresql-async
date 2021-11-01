@@ -72,7 +72,7 @@ class URLParserSpec extends Spec {
       configuration.port === 9987
     }
 
-    //========== postgresql:// ==============
+    // ========== postgresql:// ==============
 
     "create a connection from a heroku like URL using 'postgresql' protocol" in {
       val connectionUri = "postgresql://john:doe@128.167.54.90:9987/my_database"
