@@ -19,7 +19,11 @@ lazy val root = (project in file("."))
     name            := "db-async-base",
     publish         := {},
     publishLocal    := {},
-    publishArtifact := false
+    publishArtifact := false,
+    jacocoAggregateReportSettings := JacocoReportSettings(
+      title = "PostgresAsync Coverage",
+      formats = Seq(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML)
+    )
   )
   .aggregate(common, postgresql, mysql)
 
@@ -119,16 +123,7 @@ lazy val publishSettings = Seq(
   licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0")),
   homepage := Some(url("https://github.com/postgresql-async/postgresql-async"))
 )
-(ThisBuild / jacocoReportSettings) := JacocoReportSettings(
-  "Jacoco Coverage Report",
-  None,
-  JacocoThresholds(),
-  Seq(
-    JacocoReportFormats.ScalaHTML,
-    JacocoReportFormats.XML
-  ), // note XML formatter
-  "utf-8"
-)
+
 
 (ThisBuild / scalafmtOnCompile) := true
 (Compile / compile) := {
