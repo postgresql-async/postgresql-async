@@ -119,6 +119,16 @@ lazy val publishSettings = Seq(
   licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0")),
   homepage := Some(url("https://github.com/postgresql-async/postgresql-async"))
 )
+(ThisBuild / jacocoReportSettings) := JacocoReportSettings(
+  "Jacoco Coverage Report",
+  None,
+  JacocoThresholds(),
+  Seq(
+    JacocoReportFormats.ScalaHTML,
+    JacocoReportFormats.XML
+  ), // note XML formatter
+  "utf-8"
+)
 
 (ThisBuild / scalafmtOnCompile) := true
 (Compile / compile) := {
