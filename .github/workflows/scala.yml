@@ -49,7 +49,7 @@ jobs:
         if: ${{ !startsWith(matrix.scala, '2.13') }}
 
       - name: Tests with Coverage
-        run: sbt ++${{matrix.scala}} coverage test coverageReport
+        run: sbt ++${{matrix.scala}} jacocoAggregate
         if: ${{ startsWith(matrix.scala, '2.13') }}
 
       - name: Upload codecov
