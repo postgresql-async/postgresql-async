@@ -89,7 +89,7 @@ val baseSettings = Seq(
   (Test / javaOptions) ++= Seq(
     "-Dio.netty.leakDetection.level=paranoid",
     "-Dorg.slf4j.simpleLogger.defaultLogLevel=INFO",
-    "org.slf4j.simpleLogger.logFile=System.out"
+    "-Dorg.slf4j.simpleLogger.logFile=System.out"
   ),
   organization               := "com.github.postgresql-async",
   (Test / parallelExecution) := false
