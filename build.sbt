@@ -88,7 +88,7 @@ val baseSettings = Seq(
   javacOptions := Seq("-source", "1.8", "-target", "1.8", "-encoding", "UTF8"),
   (Test / javaOptions) ++= Seq(
     "-Dio.netty.leakDetection.level=paranoid",
-    "-Dorg.slf4j.simpleLogger.defaultLogLevel=DEBUG"
+    "-Dorg.slf4j.simpleLogger.log.io.netty=DEBUG"
   ),
   organization               := "com.github.postgresql-async",
   (Test / parallelExecution) := false
