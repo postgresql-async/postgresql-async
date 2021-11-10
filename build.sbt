@@ -25,11 +25,7 @@ lazy val root = (project in file("."))
     name            := "db-async-base",
     publish         := {},
     publishLocal    := {},
-    publishArtifact := false,
-    jacocoAggregateReportSettings := JacocoReportSettings(
-      title = "PostgresAsync Coverage",
-      formats = Seq(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML)
-    )
+    publishArtifact := false
   )
   .aggregate(common, postgresql, mysql)
 
@@ -96,7 +92,10 @@ val baseSettings = Seq(
     s"-doc-external-doc:scala=https://www.scala-lang.org/files/archive/api/${scalaVersion.value}/"
   ),
   javacOptions := Seq("-source", "1.8", "-target", "1.8", "-encoding", "UTF8"),
-  (Test / javaOptions) ++= Seq("-Dio.netty.leakDetection.level=paranoid"),
+  (Test / javaOptions) ++= Seq(
+    "-Dio.netty.leakDetection.level=paranoid",
+    "-Dorg.slf4j.simpleLogger.log.io.netty=DEBUG"
+  ),
   organization               := "com.github.postgresql-async",
   (Test / parallelExecution) := false
 ) ++ publishSettings
