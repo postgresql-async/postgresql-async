@@ -94,15 +94,6 @@ class SelfHealingSpec
       FutureGenInstance.timer
     )
 
-    def verifyResult(start: Long, end: Long) = {
-      createCount.get <= (checkCount.get() - successCheck.get()) + 1
-      successCreate.get() mustEqual releaseCount
-        .get() // always release success creation
-      val checkTime =
-        ((end - start) / config.checkInterval).toInt // check at min interval
-      checkCount.get() must (be >= (checkTime) and be <= (checkTime + 1))
-    }
-
     val start = System.currentTimeMillis()
     val call = func(sh)
       .flatMap(_ =>
@@ -129,17 +120,22 @@ class SelfHealingSpec
 
   "SelfHealing item" - {
     "should always release created resource" in {
-      forAll { (data: Data) =>
+      forAll { (data: Data, i: Int) =>
         val r = runPropTest(data) { sh =>
-          Future.sequence(Seq.fill(1000)(sh.get())).recover { case e =>
+          def act() = {
+            FutureGenInstance.timer
+              .sleep(
+                (math.abs(i) % (config.checkInterval * 2)).millis
+              )
+              .flatMap { _ =>
+                sh.get()
+              }
+          }
+          Future.sequence(Seq.fill(1000)(act())).recover { case e =>
             println(s"Failed get resource ${e}")
           }
         }
-        val maxGap = ((r.endAt - r.startAt) / 10 + 1).toInt
         r.successCreate mustEqual r.releaseCount
-        r.checkCount must be <= maxGap
-        r.createCount must be <= (maxGap)
-        r.createCount must be <= (r.checkCount - r.successCheck) + 1
       }
     }
 
