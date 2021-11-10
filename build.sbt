@@ -8,7 +8,8 @@ val nettyVersion   = "4.1.70.Final"
 def testDependency(scalaVersion: String) = {
   Seq(
     "org.scalatest" %% "scalatest"    % "3.2.10" % Test,
-    "org.mockito"    % "mockito-core" % "4.0.0"  % Test
+    "org.mockito"    % "mockito-core" % "4.0.0"  % Test,
+    "org.slf4j"      % "slf4j-simple" % "1.7.32" % Test
   )
 }
 
@@ -85,7 +86,11 @@ val baseSettings = Seq(
     s"-doc-external-doc:scala=https://www.scala-lang.org/files/archive/api/${scalaVersion.value}/"
   ),
   javacOptions := Seq("-source", "1.8", "-target", "1.8", "-encoding", "UTF8"),
-  (Test / javaOptions) ++= Seq("-Dio.netty.leakDetection.level=paranoid"),
+  (Test / javaOptions) ++= Seq(
+    "-Dio.netty.leakDetection.level=paranoid",
+    "-Dorg.slf4j.simpleLogger.defaultLogLevel=INFO",
+    "org.slf4j.simpleLogger.logFile=System.out"
+  ),
   organization               := "com.github.postgresql-async",
   (Test / parallelExecution) := false
 ) ++ publishSettings
