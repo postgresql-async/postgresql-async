@@ -50,8 +50,8 @@ class BinaryRowDecoderSpec extends Spec {
       val result =
         decoder.decode(buffer, ArraySeq.unsafeWrapArray(idAndNameColumns))
       buffer.release()
-      result(0) === 1L
-      result(1) === "joe"
+      result(0) mustEqual 1L
+      result(1) mustEqual "joe"
 
     }
 
@@ -61,8 +61,8 @@ class BinaryRowDecoderSpec extends Spec {
       val result =
         decoder.decode(buffer, ArraySeq.unsafeWrapArray(idNameAndNullColumns))
       buffer.release()
-      result(0) === 1L
-      result(1) === "joe"
+      result(0) mustEqual 1L
+      result(1) mustEqual "joe"
       result(2) must be(null: Any)
     }
 

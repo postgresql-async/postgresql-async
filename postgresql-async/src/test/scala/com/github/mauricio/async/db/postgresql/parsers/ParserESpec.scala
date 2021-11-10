@@ -41,8 +41,8 @@ class ParserESpec extends Spec {
         .parseMessage(buffer)
         .asInstanceOf[ErrorMessage]
 
-      message.message === content
-      message.kind === ServerMessage.Error
+      message.message mustEqual content
+      message.kind mustEqual ServerMessage.Error
     }
 
   }

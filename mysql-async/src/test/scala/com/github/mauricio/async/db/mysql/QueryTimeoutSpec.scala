@@ -28,18 +28,18 @@ class QueryTimeoutSpec extends Spec with ConnectionHelper {
     withConfigurablePool(shortTimeoutConfiguration) { pool =>
       {
         val connection = Await.result(pool.take, Duration(10, SECONDS))
-        connection.isTimeouted === false
-        connection.isConnected === true
+        connection.isTimeouted mustEqual false
+        connection.isConnected mustEqual true
         val queryResultFuture = connection.sendQuery("select sleep(1)")
         a[TimeoutException] must be thrownBy Await.result(
           queryResultFuture,
           Duration(10, SECONDS)
         )
-        connection.isTimeouted === true
+        connection.isTimeouted mustEqual true
         Await.ready(pool.giveBack(connection), Duration(10, SECONDS))
         pool.availables.count(
           _ == connection
-        ) === 0 // connection removed from pool
+        ) mustEqual 0 // connection removed from pool
         // we do not know when the connection will be closed.
       }
     }
@@ -49,20 +49,20 @@ class QueryTimeoutSpec extends Spec with ConnectionHelper {
     withConfigurablePool(longTimeoutConfiguration) { pool =>
       {
         val connection = Await.result(pool.take, Duration(10, SECONDS))
-        connection.isTimeouted === false
-        connection.isConnected === true
+        connection.isTimeouted mustEqual false
+        connection.isConnected mustEqual true
         val queryResultFuture = connection.sendQuery("select sleep(1)")
         Await
           .result(queryResultFuture, Duration(10, SECONDS))
           .rows
           .get
-          .size === 1
-        connection.isTimeouted === false
-        connection.isConnected === true
+          .size mustEqual 1
+        connection.isTimeouted mustEqual false
+        connection.isConnected mustEqual true
         Await.ready(pool.giveBack(connection), Duration(10, SECONDS))
         pool.availables.count(
           _ == connection
-        ) === 1 // connection returned to pool
+        ) mustEqual 1 // connection returned to pool
       }
     }
   }

@@ -128,7 +128,7 @@ class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
     "create a table in the database" in {
 
       withHandler { handler =>
-        executeDdl(handler, this.create) === 0
+        executeDdl(handler, this.create) mustEqual 0
       }
 
     }
@@ -137,7 +137,7 @@ class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
 
       withHandler { handler =>
         executeDdl(handler, this.create)
-        executeDdl(handler, this.insert, 1) === 1
+        executeDdl(handler, this.insert, 1) mustEqual 1
 
       }
 
@@ -152,21 +152,21 @@ class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
 
         val row = result.rows.get(0)
 
-        row(0) === 1
-        row(1) === 10
-        row(2) === 11
-        row(3).toString === "14.9990"
-        row(4).toString === 78.34.toString
-        row(5) === 15.68
-        row(6) === 1
-        row(7) === "this is a varchar field"
-        row(8) === "this is a long text field"
-        row(9) === TimestampEncoderDecoder.Instance.decode(
+        row(0) mustEqual 1
+        row(1) mustEqual 10
+        row(2) mustEqual 11
+        row(3).toString mustEqual "14.9990"
+        row(4).toString mustEqual 78.34.toString
+        row(5) mustEqual 15.68
+        row(6) mustEqual 1
+        row(7) mustEqual "this is a varchar field"
+        row(8) mustEqual "this is a long text field"
+        row(9) mustEqual TimestampEncoderDecoder.Instance.decode(
           "1984-08-06 22:13:45.888888"
         )
-        row(10) === DateEncoderDecoder.decode("1984-08-06")
-        row(11) === TimeEncoderDecoder.Instance.decode("22:13:45.888888")
-        row(12) === true
+        row(10) mustEqual DateEncoderDecoder.decode("1984-08-06")
+        row(11) mustEqual TimeEncoderDecoder.Instance.decode("22:13:45.888888")
+        row(12) mustEqual true
       }
 
     }
@@ -178,8 +178,8 @@ class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
 
         val row = result.rows.get(0)
 
-        row(0) === 1
-        row(1) === 2
+        row(0) mustEqual 1
+        row(1) mustEqual 2
 
       }
 
@@ -195,8 +195,8 @@ class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
 
         val row = result.rows.get(0)
 
-        row(0) === 1
-        row(1) === "John Doe"
+        row(0) mustEqual 1
+        row(1) mustEqual "John Doe"
 
       }
 
@@ -220,11 +220,11 @@ class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
           executePreparedStatement(handler, select, Array("Mary Jane"))
         val row2 = queryResult2.rows.get(0)
 
-        row(0) === 3
-        row(1) === "Peter Parker"
+        row(0) mustEqual 3
+        row(1) mustEqual "Peter Parker"
 
-        row2(0) === 2
-        row2(1) === "Mary Jane"
+        row2(0) mustEqual 2
+        row2(1) mustEqual "Mary Jane"
 
       }
 
@@ -243,7 +243,7 @@ class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
         configuration,
         { handler =>
           val result = executeQuery(handler, "SELECT 0")
-          result.rows.get.apply(0)(0) === 0
+          result.rows.get.apply(0)(0) mustEqual 0
         }
       )
 
@@ -262,7 +262,7 @@ class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
         configuration,
         { handler =>
           val result = executeQuery(handler, "SELECT 0")
-          result.rows.get(0)(0) === 0
+          result.rows.get(0)(0) mustEqual 0
         }
       )
 
@@ -286,7 +286,9 @@ class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
         )
       } catch {
         case e: GenericDatabaseException =>
-          e.errorMessage.fields(InformationMessage.Routine) === "auth_failed"
+          e.errorMessage.fields(
+            InformationMessage.Routine
+          ) mustEqual "auth_failed"
       }
 
     }
@@ -305,7 +307,7 @@ class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
 
       val queryResult: QueryResult = Await.result(result, Duration(5, SECONDS))
 
-      queryResult.rows.get(0)(0) === 0
+      queryResult.rows.get(0)(0) mustEqual 0
 
     }
 
@@ -315,7 +317,7 @@ class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
         executeDdl(connection, this.preparedStatementCreate)
         val result =
           executeQuery(connection, this.preparedStatementInsertReturning)
-        result.rows.get(0)("id") === 1
+        result.rows.get(0)("id") mustEqual 1
       }
 
     }
@@ -333,7 +335,7 @@ class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
           "select * from prepared_statement_test LIMIT 1"
         ).rows.get(0)
 
-        result("name") === "John Doe"
+        result("name") mustEqual "John Doe"
       }
 
     }
@@ -341,7 +343,7 @@ class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
     "execute an empty query" in {
       a[QueryMustNotBeNullOrEmptyException] must be thrownBy {
         withHandler { handler =>
-          executeQuery(handler, "").rows === None
+          executeQuery(handler, "").rows mustEqual None
         }
       }
     }
@@ -349,7 +351,7 @@ class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
     "execute an whitespace query" in {
       a[QueryMustNotBeNullOrEmptyException] must be thrownBy {
         withHandler { handler =>
-          executeQuery(handler, "   ").rows === None
+          executeQuery(handler, "   ").rows mustEqual None
         }
       }
     }
@@ -380,7 +382,7 @@ class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
         executeQuery(handler, insert)
         val rows = executeQuery(handler, select).rows.get
 
-        rows(0)("content").asInstanceOf[Array[Byte]] === sampleArray
+        rows(0)("content").asInstanceOf[Array[Byte]] mustEqual sampleArray
 
       }
 
@@ -414,9 +416,9 @@ class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
         log.debug("executed prepared statement")
         val rows = executeQuery(handler, select).rows.get
 
-        rows(0)("content").asInstanceOf[Array[Byte]] === sampleArray
-        rows(1)("content").asInstanceOf[Array[Byte]] === sampleArray
-        rows(2)("content").asInstanceOf[Array[Byte]] === sampleArray
+        rows(0)("content").asInstanceOf[Array[Byte]] mustEqual sampleArray
+        rows(1)("content").asInstanceOf[Array[Byte]] mustEqual sampleArray
+        rows(2)("content").asInstanceOf[Array[Byte]] mustEqual sampleArray
       }
 
     }
@@ -433,7 +435,7 @@ class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
         )
         val result = executePreparedStatement(handler, "SELECT t FROM test")
         val date2  = result.rows.get.head(0)
-        date1 === date2
+        date1 mustEqual date2
       }
 
     }
@@ -446,7 +448,7 @@ class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
         executeDdl(handler, this.preparedStatementSelect, 1)
         val result = executeQuery(handler, this.preparedStatementInsert2)
 
-        result.rows === None
+        result.rows mustEqual None
       }
 
     }

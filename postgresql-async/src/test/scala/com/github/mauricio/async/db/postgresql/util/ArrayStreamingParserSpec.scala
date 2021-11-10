@@ -32,9 +32,9 @@ class ArrayStreamingParserSpec extends Spec {
       val delegate = new LoggingDelegate()
       parser.parse(content, delegate)
 
-      delegate.starts === 3
-      delegate.ends === 3
-      delegate.items === ArrayBuffer(
+      delegate.starts mustEqual 3
+      delegate.ends mustEqual 3
+      delegate.items mustEqual ArrayBuffer(
         "{",
         "{",
         "1",
@@ -57,7 +57,7 @@ class ArrayStreamingParserSpec extends Spec {
       val delegate = new LoggingDelegate()
       parser.parse(content, delegate)
 
-      delegate.items === ArrayBuffer(
+      delegate.items mustEqual ArrayBuffer(
         "{",
         "{",
         "item",
@@ -73,8 +73,8 @@ class ArrayStreamingParserSpec extends Spec {
         "}",
         "}"
       )
-      delegate.starts === 4
-      delegate.ends === 4
+      delegate.starts mustEqual 4
+      delegate.ends mustEqual 4
     }
 
     "should parse a varchar array with nulls correctly" in {
@@ -83,7 +83,7 @@ class ArrayStreamingParserSpec extends Spec {
       val delegate = new LoggingDelegate()
       parser.parse(content, delegate)
 
-      delegate.items === ArrayBuffer(
+      delegate.items mustEqual ArrayBuffer(
         "{",
         null,
         "first",

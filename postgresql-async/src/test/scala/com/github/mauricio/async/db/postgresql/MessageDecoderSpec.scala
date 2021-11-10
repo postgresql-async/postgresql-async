@@ -59,7 +59,7 @@ class MessageDecoderSpec extends Spec {
 
       val out = new util.ArrayList[Object]()
       this.decoder.decode(null, buffer, out)
-      buffer.readerIndex() === 0
+      buffer.readerIndex() mustEqual 0
     }
 
     "should correctly decode a message" in {
@@ -75,10 +75,10 @@ class MessageDecoderSpec extends Spec {
       buffer.writeByte(0)
       val out = new util.ArrayList[Object]()
       this.decoder.decode(null, buffer, out)
-      out.size === 1
+      out.size mustEqual 1
       val result = out.get(0).asInstanceOf[ErrorMessage]
-      result.message === text
-      buffer.readerIndex() === (textBytes.length + 4 + 1 + 1 + 1)
+      result.message mustEqual text
+      buffer.readerIndex() mustEqual (textBytes.length + 4 + 1 + 1 + 1)
     }
 
     "should raise an exception if the length is negative" in {

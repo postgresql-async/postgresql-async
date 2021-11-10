@@ -24,16 +24,16 @@ class VersionSpec extends Spec {
 
     "correctly parse versions" in {
       val version = Version("9.1.4")
-      version.major === 9
-      version.minor === 1
-      version.maintenance === 4
+      version.major mustEqual 9
+      version.minor mustEqual 1
+      version.maintenance mustEqual 4
     }
 
     "correctly parse with missing fields" in {
       val version = Version("8.7")
-      version.major === 8
-      version.minor === 7
-      version.maintenance === 0
+      version.major mustEqual 8
+      version.minor mustEqual 7
+      version.maintenance mustEqual 0
     }
 
     "correctly compare between major different versions" in {
@@ -50,7 +50,7 @@ class VersionSpec extends Spec {
       val version1 = Version("8.2.0")
       val version2 = Version("8.2.0")
 
-      version2 === version1
+      version2 mustEqual version1
 
     }
 

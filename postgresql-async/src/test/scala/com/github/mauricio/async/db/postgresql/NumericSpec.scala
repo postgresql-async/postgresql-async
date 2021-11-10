@@ -34,7 +34,7 @@ class NumericSpec extends Spec with DatabaseTestHelper {
           Array[Any](123.123, id)
         )
 
-        id === 1
+        id mustEqual 1
       }
 
     }
@@ -57,7 +57,7 @@ class NumericSpec extends Spec with DatabaseTestHelper {
           Array[Any](1234, id)
         )
 
-        id === 1
+        id mustEqual 1
       }
 
     }
@@ -83,7 +83,7 @@ class NumericSpec extends Spec with DatabaseTestHelper {
           s"UPDATE numeric_test SET numcol = 123.123 WHERE id = $id"
         )
 
-        id === 1
+        id mustEqual 1
       }
 
     }

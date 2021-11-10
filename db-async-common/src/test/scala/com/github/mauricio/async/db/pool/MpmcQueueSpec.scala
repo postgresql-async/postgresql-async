@@ -169,8 +169,8 @@ class MpmcQueueSpec extends Spec with ScalaCheckPropertyChecks {
           i
         }.size
         if (data.input.size > data.capacity) {
-          enqueueCount === data.capacity
-        } else enqueueCount === data.input.size
+          enqueueCount mustEqual data.capacity
+        } else enqueueCount mustEqual data.input.size
       }
     }
   }

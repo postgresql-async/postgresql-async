@@ -72,15 +72,15 @@ class ArrayTypesSpec extends Spec with DatabaseTestHelper {
             handler,
             "select * from type_test_table_cptat"
           ).rows.get
-          result(0)("smallint_column") === List(1, 2, 3, 4)
-          result(0)("text_column") === List(
+          result(0)("smallint_column") mustEqual List(1, 2, 3, 4)
+          result(0)("text_column") mustEqual List(
             "some,\"comma,separated,text",
             "another line of text",
             "fake,backslash",
             "real\\,backslash\\",
             null
           )
-          result(0)("timestamp_column") === List(
+          result(0)("timestamp_column") mustEqual List(
             TimestampWithTimezoneEncoderDecoder.decode(
               "2013-04-06 01:15:10.528-03"
             ),
@@ -136,16 +136,16 @@ class ArrayTypesSpec extends Spec with DatabaseTestHelper {
             "select * from type_test_table_csaups"
           ).rows.get
 
-          result(0)("smallint_column") === numbers
-          result(0)("text_column") === texts
-          result(0)("inet_column") === inets
+          result(0)("smallint_column") mustEqual numbers
+          result(0)("text_column") mustEqual texts
+          result(0)("inet_column") mustEqual inets
           result(0)(
             "direction_column"
-          ) === "{in,out}" // user type decoding not supported
+          ) mustEqual "{in,out}" // user type decoding not supported
           result(0)(
             "endpoint_column"
-          ) === """{"(127.0.0.1,80)","(2002:15::1,443)"}""" // user type decoding not supported
-          result(0)("timestamp_column") === timestamps
+          ) mustEqual """{"(127.0.0.1,80)","(2002:15::1,443)"}""" // user type decoding not supported
+          result(0)("timestamp_column") mustEqual timestamps
         } finally {
           executeDdl(handler, simpleDrop("csaups"))
         }

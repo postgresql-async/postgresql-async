@@ -46,10 +46,10 @@ class ParserSSpec extends Spec {
       val content =
         this.parser.parseMessage(buffer).asInstanceOf[ParameterStatusMessage]
 
-      content.key === key
-      content.value === value
-      content.kind === ServerMessage.ParameterStatus
-      buffer.readerIndex() === buffer.writerIndex()
+      content.key mustEqual key
+      content.value mustEqual value
+      content.kind mustEqual ServerMessage.ParameterStatus
+      buffer.readerIndex() mustEqual buffer.writerIndex()
     }
 
   }

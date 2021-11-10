@@ -35,18 +35,18 @@ class PreparedStatementsSpec extends Spec with ConnectionHelper {
           "select 1 as id , 'joe' as name"
         ).rows.get
 
-        result(0)("name") === "joe"
-        result(0)("id") === 1
-        result.length === 1
+        result(0)("name") mustEqual "joe"
+        result(0)("id") mustEqual 1
+        result.length mustEqual 1
 
         val otherResult = executePreparedStatement(
           connection,
           "select 1 as id , 'joe' as name"
         ).rows.get
 
-        otherResult(0)("name") === "joe"
-        otherResult(0)("id") === 1
-        otherResult.length === 1
+        otherResult(0)("name") mustEqual "joe"
+        otherResult(0)("id") mustEqual 1
+        otherResult.length mustEqual 1
       }
 
     }
@@ -59,10 +59,10 @@ class PreparedStatementsSpec extends Spec with ConnectionHelper {
           "select 1 as id , 'joe' as name, NULL as null_value"
         ).rows.get
 
-        result(0)("name") === "joe"
-        result(0)("id") === 1
+        result(0)("name") mustEqual "joe"
+        result(0)("id") mustEqual 1
         result(0)("null_value") must be(null: Any)
-        result.length === 1
+        result.length mustEqual 1
 
       }
 
@@ -77,14 +77,15 @@ class PreparedStatementsSpec extends Spec with ConnectionHelper {
           executePreparedStatement(connection, "SELECT * FROM numbers").rows
             .get(0)
 
-        result("number_tinyint").asInstanceOf[Byte] === -100
-        result("number_smallint").asInstanceOf[Short] === 32766
-        result("number_mediumint").asInstanceOf[Int] === 8388607
-        result("number_int").asInstanceOf[Int] === 2147483647
-        result("number_bigint").asInstanceOf[Long] === 9223372036854775807L
-        result("number_decimal") === BigDecimal(450.764491)
-        result("number_float") === 14.7f
-        result("number_double") === 87650.9876
+        result("number_tinyint").asInstanceOf[Byte] mustEqual -100
+        result("number_smallint").asInstanceOf[Short] mustEqual 32766
+        result("number_mediumint").asInstanceOf[Int] mustEqual 8388607
+        result("number_int").asInstanceOf[Int] mustEqual 2147483647
+        result("number_bigint")
+          .asInstanceOf[Long] mustEqual 9223372036854775807L
+        result("number_decimal") mustEqual BigDecimal(450.764491)
+        result("number_float") mustEqual 14.7f
+        result("number_double") mustEqual 87650.9876
       }
 
     }
@@ -100,35 +101,38 @@ class PreparedStatementsSpec extends Spec with ConnectionHelper {
 
         val date = result("created_at_date").asInstanceOf[LocalDate]
 
-        date.getYear === 2038
-        date.getMonthOfYear === 1
-        date.getDayOfMonth === 19
+        date.getYear mustEqual 2038
+        date.getMonthOfYear mustEqual 1
+        date.getDayOfMonth mustEqual 19
 
         val dateTime = result("created_at_datetime").asInstanceOf[LocalDateTime]
-        dateTime.getYear === 2013
-        dateTime.getMonthOfYear === 1
-        dateTime.getDayOfMonth === 19
-        dateTime.getHourOfDay === 3
-        dateTime.getMinuteOfHour === 14
-        dateTime.getSecondOfMinute === 7
+        dateTime.getYear mustEqual 2013
+        dateTime.getMonthOfYear mustEqual 1
+        dateTime.getDayOfMonth mustEqual 19
+        dateTime.getHourOfDay mustEqual 3
+        dateTime.getMinuteOfHour mustEqual 14
+        dateTime.getSecondOfMinute mustEqual 7
 
         val timestamp =
           result("created_at_timestamp").asInstanceOf[LocalDateTime]
-        timestamp.getYear === 2020
-        timestamp.getMonthOfYear === 1
-        timestamp.getDayOfMonth === 19
-        timestamp.getHourOfDay === 3
-        timestamp.getMinuteOfHour === 14
-        timestamp.getSecondOfMinute === 7
+        timestamp.getYear mustEqual 2020
+        timestamp.getMonthOfYear mustEqual 1
+        timestamp.getDayOfMonth mustEqual 19
+        timestamp.getHourOfDay mustEqual 3
+        timestamp.getMinuteOfHour mustEqual 14
+        timestamp.getSecondOfMinute mustEqual 7
 
-        result("created_at_time") === Duration(3, TimeUnit.HOURS) + Duration(
+        result("created_at_time") mustEqual Duration(
+          3,
+          TimeUnit.HOURS
+        ) + Duration(
           14,
           TimeUnit.MINUTES
         ) + Duration(7, TimeUnit.SECONDS)
 
         val year = result("created_at_year").asInstanceOf[Short]
 
-        year === 1999
+        year mustEqual 1999
       }
 
     }
@@ -186,14 +190,14 @@ class PreparedStatementsSpec extends Spec with ConnectionHelper {
           executePreparedStatement(connection, "SELECT * FROM numbers").rows
             .get(0)
 
-        row("number_tinyint") === byte
-        row("number_smallint") === short
-        row("number_mediumint") === mediumInt
-        row("number_int") === int
-        row("number_bigint") === bigInt
-        row("number_decimal") === bigDecimal
-        row("number_float") === float
-        row("number_double") === double
+        row("number_tinyint") mustEqual byte
+        row("number_smallint") mustEqual short
+        row("number_mediumint") mustEqual mediumInt
+        row("number_int") mustEqual int
+        row("number_bigint") mustEqual bigInt
+        row("number_decimal") mustEqual bigDecimal
+        row("number_float") mustEqual float
+        row("number_double") mustEqual double
 
       }
 
@@ -214,13 +218,13 @@ class PreparedStatementsSpec extends Spec with ConnectionHelper {
         executePreparedStatement(connection, insert, "this is some text here")
         val row = executePreparedStatement(connection, select).rows.get(0)
 
-        row("id") === 1
-        row("some_text") === "this is some text here"
+        row("id") mustEqual 1
+        row("some_text") mustEqual "this is some text here"
 
         val queryRow = executeQuery(connection, select).rows.get(0)
 
-        queryRow("id") === 1
-        queryRow("some_text") === "this is some text here"
+        queryRow("id") mustEqual 1
+        queryRow("some_text") mustEqual "this is some text here"
 
       }
     }
@@ -260,14 +264,16 @@ class PreparedStatementsSpec extends Spec with ConnectionHelper {
           2011
         ).rows.get
 
-        rows.length === 1
+        rows.length mustEqual 1
         val row = rows(0)
 
-        row("created_at_date") === date
-        row("created_at_timestamp") === new LocalDateTime(timestamp.getTime)
-        row("created_at_time") === time
-        row("created_at_year") === year
-        row("created_at_datetime") === dateTime
+        row("created_at_date") mustEqual date
+        row("created_at_timestamp") mustEqual new LocalDateTime(
+          timestamp.getTime
+        )
+        row("created_at_time") mustEqual time
+        row("created_at_year") mustEqual year
+        row("created_at_datetime") mustEqual dateTime
 
       }
     }
@@ -296,7 +302,7 @@ class PreparedStatementsSpec extends Spec with ConnectionHelper {
 
       withConnection { connection =>
         if (connection.version < MySQLConnection.MicrosecondsVersion) {
-          true === true // no op
+          true mustEqual true // no op
         } else {
           executeQuery(connection, create)
           executeQuery(connection, insert)
@@ -304,13 +310,13 @@ class PreparedStatementsSpec extends Spec with ConnectionHelper {
 
           val row = rows(0)
 
-          row("created_at_time") === time
-          row("created_at_timestamp") === timestamp
+          row("created_at_time") mustEqual time
+          row("created_at_timestamp") mustEqual timestamp
 
           val otherRow = executeQuery(connection, select).rows.get(0)
 
-          otherRow("created_at_time") === time
-          otherRow("created_at_timestamp") === timestamp
+          otherRow("created_at_time") mustEqual time
+          otherRow("created_at_timestamp") mustEqual timestamp
         }
 
       }
@@ -342,9 +348,9 @@ class PreparedStatementsSpec extends Spec with ConnectionHelper {
           connection,
           "SELECT STRING, id FROM BIGSTRING"
         ).rows.get(0)
-        row("id") === 1
+        row("id") mustEqual 1
         val result = row("STRING").asInstanceOf[String]
-        result === bigString
+        result mustEqual bigString
       }
     }
 
@@ -364,8 +370,8 @@ class PreparedStatementsSpec extends Spec with ConnectionHelper {
           connection,
           "SELECT moment, id FROM timestamps"
         ).rows.get(0)
-        row("id") === 10
-        row("moment") === null
+        row("id") mustEqual 10
+        row("moment") mustEqual (null: Any)
       }
     }
 
@@ -385,8 +391,8 @@ class PreparedStatementsSpec extends Spec with ConnectionHelper {
           connection,
           "SELECT moment, id FROM timestamps"
         ).rows.get(0)
-        row("id") === 10
-        row("moment") === null
+        row("id") mustEqual 10
+        row("moment") mustEqual (null: Any)
       }
     }
 
@@ -409,8 +415,8 @@ class PreparedStatementsSpec extends Spec with ConnectionHelper {
           connection,
           "SELECT moment, id FROM timestamps"
         ).rows.get(0)
-        row("id") === 10
-        row("moment") === moment
+        row("id") mustEqual 10
+        row("moment") mustEqual moment
       }
     }
 
@@ -432,14 +438,14 @@ class PreparedStatementsSpec extends Spec with ConnectionHelper {
 
         val row = executeQuery(connection, select).rows.get(0)
 
-        row("id") === 1
-        row("some_text") === "this is some text here"
+        row("id") mustEqual 1
+        row("some_text") mustEqual "this is some text here"
         row("some_date") must be(null: Any)
 
         val queryRow = executePreparedStatement(connection, select).rows.get(0)
 
-        queryRow("id") === 1
-        queryRow("some_text") === "this is some text here"
+        queryRow("id") mustEqual 1
+        queryRow("some_text") mustEqual "this is some text here"
         queryRow("some_date") mustEqual (null: Any)
 
       }
@@ -452,9 +458,9 @@ class PreparedStatementsSpec extends Spec with ConnectionHelper {
         executePreparedStatement(connection, this.insert)
 
         val result = executePreparedStatement(connection, this.select).rows.get
-        result.size === 1
+        result.size mustEqual 1
 
-        result(0)("name") === "Maurício Aragão"
+        result(0)("name") mustEqual "Maurício Aragão"
       }
 
     }

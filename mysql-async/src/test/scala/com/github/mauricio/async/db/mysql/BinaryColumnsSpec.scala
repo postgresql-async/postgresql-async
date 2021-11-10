@@ -67,8 +67,8 @@ class BinaryColumnsSpec extends Spec with ConnectionHelper {
         executeQuery(connection, create)
         executePreparedStatement(connection, insert, bytes)
         val row = executeQuery(connection, select).rows.get(0)
-        row("id") === 1
-        row("binary_column") === bytes ++ padding
+        row("id") mustEqual 1
+        row("binary_column") mustEqual bytes ++ padding
       }
 
     }
@@ -90,8 +90,8 @@ class BinaryColumnsSpec extends Spec with ConnectionHelper {
         executeQuery(connection, create)
         executePreparedStatement(connection, insert, bytes)
         val row = executeQuery(connection, select).rows.get(0)
-        row("id") === 1
-        row("varbinary_column") === bytes
+        row("id") mustEqual 1
+        row("varbinary_column") mustEqual bytes
       }
 
     }
@@ -137,18 +137,18 @@ class BinaryColumnsSpec extends Spec with ConnectionHelper {
       )
 
       val Some(rows) = executeQuery(connection, select).rows
-      rows(0)("id") === 1
-      rows(0)("blob_column") === bytes
-      rows(1)("id") === 2
-      rows(1)("blob_column") === bytes
-      rows(2)("id") === 3
-      rows(2)("blob_column") === bytes
-      rows.size === 3
+      rows(0)("id") mustEqual 1
+      rows(0)("blob_column") mustEqual bytes
+      rows(1)("id") mustEqual 2
+      rows(1)("blob_column") mustEqual bytes
+      rows(2)("id") mustEqual 3
+      rows(2)("blob_column") mustEqual bytes
+      rows.size mustEqual 3
     }
 
   }
 
   def compareBytes(row: RowData, column: String, expected: String) =
-    row(column) === expected.getBytes(CharsetUtil.UTF_8)
+    row(column) mustEqual expected.getBytes(CharsetUtil.UTF_8)
 
 }

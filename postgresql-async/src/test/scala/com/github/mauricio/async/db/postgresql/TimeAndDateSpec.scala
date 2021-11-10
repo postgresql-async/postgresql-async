@@ -45,9 +45,9 @@ class TimeAndDateSpec extends Spec with DatabaseTestHelper {
 
         val time = rows(0)("moment").asInstanceOf[LocalTime]
 
-        time.getHourOfDay === 4
-        time.getMinuteOfHour === 5
-        time.getSecondOfMinute === 6
+        time.getHourOfDay mustEqual 4
+        time.getMinuteOfHour mustEqual 5
+        time.getSecondOfMinute mustEqual 6
       }
 
     }
@@ -74,10 +74,10 @@ class TimeAndDateSpec extends Spec with DatabaseTestHelper {
 
         val time = rows(0)("moment").asInstanceOf[LocalTime]
 
-        time.getHourOfDay === 4
-        time.getMinuteOfHour === 5
-        time.getSecondOfMinute === 6
-        time.getMillisOfSecond === 134
+        time.getHourOfDay mustEqual 4
+        time.getMinuteOfHour mustEqual 5
+        time.getSecondOfMinute mustEqual 6
+        time.getMillisOfSecond mustEqual 134
       }
 
     }
@@ -105,9 +105,9 @@ class TimeAndDateSpec extends Spec with DatabaseTestHelper {
 
         val time = rows(0)("moment").asInstanceOf[LocalTime]
 
-        time.getHourOfDay === 4
-        time.getMinuteOfHour === 5
-        time.getSecondOfMinute === 6
+        time.getHourOfDay mustEqual 4
+        time.getMinuteOfHour mustEqual 5
+        time.getSecondOfMinute mustEqual 6
       }
 
     }
@@ -129,13 +129,13 @@ class TimeAndDateSpec extends Spec with DatabaseTestHelper {
         val rows =
           executePreparedStatement(handler, "SELECT * FROM messages").rows.get
 
-        rows.length === 1
+        rows.length mustEqual 1
 
         val dateTime = rows(0)("moment").asInstanceOf[DateTime]
 
         // Note: Since this assertion depends on Brazil locale, I think epoch time assertion is preferred
-        // dateTime.getZone.toTimeZone.getRawOffset === -10800000
-        dateTime.getMillis === 915779106000L
+        // dateTime.getZone.toTimeZone.getRawOffset mustEqual -10800000
+        dateTime.getMillis mustEqual 915779106000L
       }
     }
 
@@ -162,12 +162,12 @@ class TimeAndDateSpec extends Spec with DatabaseTestHelper {
           val rows =
             executePreparedStatement(handler, "SELECT * FROM messages").rows.get
 
-          rows.length === 1
+          rows.length mustEqual 1
 
           val dateTime = rows(0)("moment").asInstanceOf[DateTime]
 
           // Note: Since this assertion depends on Brazil locale, I think epoch time assertion is preferred
-          // dateTime.getZone.toTimeZone.getRawOffset === -10800000
+          // dateTime.getZone.toTimeZone.getRawOffset mustEqual -10800000
           dateTime.getMillis must be >= (915779106000L)
           dateTime.getMillis must be < (915779107000L)
         }
@@ -193,7 +193,7 @@ class TimeAndDateSpec extends Spec with DatabaseTestHelper {
         val rows =
           executePreparedStatement(handler, "SELECT * FROM messages").rows.get
 
-        rows.length === 1
+        rows.length mustEqual 1
 
         val dateTime = rows(0)("moment").asInstanceOf[DateTime]
 
@@ -214,7 +214,7 @@ class TimeAndDateSpec extends Spec with DatabaseTestHelper {
         )
         val result = executePreparedStatement(conn, "SELECT T FROM TEST")
         val date2  = result.rows.get.head(0)
-        date2 === date.toDateTime(DateTimeZone.UTC).toLocalDateTime
+        date2 mustEqual date.toDateTime(DateTimeZone.UTC).toLocalDateTime
       }
 
     }
@@ -235,7 +235,7 @@ class TimeAndDateSpec extends Spec with DatabaseTestHelper {
           "SELECT T FROM TEST WHERE T  = ?",
           Array(date)
         )
-        result.rows.get.size === 1
+        result.rows.get.size mustEqual 1
 
         val dateTime = new LocalDateTime(2016, 3, 5, 0, 0, 0, 0)
         val dateTimeResult = executePreparedStatement(
@@ -243,7 +243,7 @@ class TimeAndDateSpec extends Spec with DatabaseTestHelper {
           "SELECT T FROM TEST WHERE T  = ?",
           Array(dateTime)
         )
-        dateTimeResult.rows.get.size === 1
+        dateTimeResult.rows.get.size mustEqual 1
       }
 
     }
@@ -261,7 +261,7 @@ class TimeAndDateSpec extends Spec with DatabaseTestHelper {
         val result = await(conn.sendPreparedStatement("SELECT T FROM TEST"))
         val date2  = result.rows.get.head(0)
 
-        date2 === date1
+        date2 mustEqual date1
       }
 
     }
@@ -283,7 +283,7 @@ class TimeAndDateSpec extends Spec with DatabaseTestHelper {
         val result = await(conn.sendPreparedStatement("SELECT T FROM TEST"))
         val date2  = result.rows.get.head(0)
 
-        date2 === date1
+        date2 mustEqual date1
       }
     }
 
@@ -304,9 +304,9 @@ class TimeAndDateSpec extends Spec with DatabaseTestHelper {
         val rows =
           executeQuery(handler, "SELECT duration FROM intervals").rows.get
 
-        rows.length === 1
+        rows.length mustEqual 1
 
-        rows(0)(0) === p
+        rows(0)(0) mustEqual p
       }
     }
 

@@ -52,7 +52,7 @@ class MySQLConnectionFactorySpec extends Spec with ConnectionHelper {
       withPool { pool =>
         val connection = awaitFuture(pool.take)
 
-        pool.inUse.size === 1
+        pool.inUse.size mustEqual 1
 
         awaitFuture(connection.disconnect)
 
@@ -64,14 +64,14 @@ class MySQLConnectionFactorySpec extends Spec with ConnectionHelper {
           }
         }
 
-        pool.inUse.size === 0
+        pool.inUse.size mustEqual 0
 
       }
     }
 
     "be able to provide connections to the pool" in {
       withPool { pool =>
-        executeQuery(pool, "SELECT 0").rows.get(0)(0) === 0
+        executeQuery(pool, "SELECT 0").rows.get(0)(0) mustEqual 0
       }
     }
 
@@ -94,7 +94,7 @@ class MySQLConnectionFactorySpec extends Spec with ConnectionHelper {
         case Success(c) => fail("should not have come here")
       }
 
-      awaitFuture(connection.close) === connection
+      awaitFuture(connection.close) mustEqual connection
     }
 
     "accept a good connection" in {
@@ -105,7 +105,7 @@ class MySQLConnectionFactorySpec extends Spec with ConnectionHelper {
         case Failure(e) => fail("should not have come here")
       }
 
-      awaitFuture(connection.close) === connection
+      awaitFuture(connection.close) mustEqual connection
     }
 
     "test a valid connection and say it is ok" in {
@@ -117,7 +117,7 @@ class MySQLConnectionFactorySpec extends Spec with ConnectionHelper {
         case Failure(e) => fail("should not have come here")
       }
 
-      awaitFuture(connection.close) === connection
+      awaitFuture(connection.close) mustEqual connection
 
     }
 

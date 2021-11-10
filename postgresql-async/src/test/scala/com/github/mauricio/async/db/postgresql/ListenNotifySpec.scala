@@ -46,8 +46,8 @@ class ListenNotifySpec extends Spec with DatabaseTestHelper {
 
         Thread.sleep(1000)
 
-        payload === "this-is-some-data"
-        channel === queue
+        payload mustEqual "this-is-some-data"
+        channel mustEqual queue
 
         connection.hasRecentError must be(false)
       }
@@ -77,8 +77,8 @@ class ListenNotifySpec extends Spec with DatabaseTestHelper {
 
         Thread.sleep(1000)
 
-        payload === "notifying-again"
-        channel === queue
+        payload mustEqual "notifying-again"
+        channel mustEqual queue
       }
 
     }
@@ -107,8 +107,8 @@ class ListenNotifySpec extends Spec with DatabaseTestHelper {
 
         Thread.sleep(1000)
 
-        payload === ""
-        channel === ""
+        payload mustEqual ""
+        channel mustEqual ""
       }
 
     }
@@ -134,8 +134,8 @@ class ListenNotifySpec extends Spec with DatabaseTestHelper {
 
         Thread.sleep(1000)
 
-        payload === ""
-        channel === ""
+        payload mustEqual ""
+        channel mustEqual ""
       }
 
     }
@@ -162,8 +162,8 @@ class ListenNotifySpec extends Spec with DatabaseTestHelper {
 
         Thread.sleep(1000)
 
-        payload === ""
-        channel === ""
+        payload mustEqual ""
+        channel mustEqual ""
       }
 
     }
@@ -188,8 +188,8 @@ class ListenNotifySpec extends Spec with DatabaseTestHelper {
 
         Thread.sleep(1000)
 
-        payload === ""
-        channel === queue
+        payload mustEqual ""
+        channel mustEqual queue
       }
     }
 

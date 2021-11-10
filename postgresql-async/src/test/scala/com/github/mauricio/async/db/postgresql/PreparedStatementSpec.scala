@@ -79,15 +79,15 @@ class PreparedStatementSpec extends Spec with DatabaseTestHelper {
         val rows =
           executePreparedStatement(handler, this.messagesSelectAll).rows.get
 
-        rows.length === 2
+        rows.length mustEqual 2
 
-        rows(0)("id") === 1
-        rows(0)("content") === firstContent
-        rows(0)("moment") === date
+        rows(0)("id") mustEqual 1
+        rows(0)("content") mustEqual firstContent
+        rows(0)("moment") mustEqual date
 
-        rows(1)("id") === 2
-        rows(1)("content") === secondContent
-        rows(1)("moment") === date
+        rows(1)("id") mustEqual 2
+        rows(1)("content") mustEqual secondContent
+        rows(1)("moment") mustEqual date
 
       }
     }
@@ -162,17 +162,17 @@ class PreparedStatementSpec extends Spec with DatabaseTestHelper {
 
           val result =
             executePreparedStatement(handler, this.messagesSelectAll).rows.get
-          result.size === x
+          result.size mustEqual x
           result.columnNames must contain inOrder ("id", "content", "moment")
-          result(x - 1)("moment") === moment
-          result(x - 1)("content") === message
+          result(x - 1)("moment") mustEqual moment
+          result(x - 1)("content") mustEqual message
 
           val otherResult = executePreparedStatement(handler, select).rows.get
-          otherResult.size === x
+          otherResult.size mustEqual x
           otherResult.columnNames must contain inOrder ("id", "other_moment", "other_content")
 
-          otherResult(x - 1)("other_moment") === otherMoment
-          otherResult(x - 1)("other_content") === otherMessage
+          otherResult(x - 1)("other_moment") mustEqual otherMoment
+          otherResult(x - 1)("other_content") mustEqual otherMessage
         }
 
       }
@@ -200,15 +200,15 @@ class PreparedStatementSpec extends Spec with DatabaseTestHelper {
         val rows =
           executePreparedStatement(handler, this.messagesSelectAll).rows.get
 
-        rows.length === 2
+        rows.length mustEqual 2
 
-        rows(0)("id") === 1
-        rows(0)("content") === firstContent
-        rows(0)("moment") === null
+        rows(0)("id") mustEqual 1
+        rows(0)("content") mustEqual firstContent
+        rows(0)("moment") mustEqual (null: Any)
 
-        rows(1)("id") === 2
-        rows(1)("content") === secondContent
-        rows(1)("moment") === date
+        rows(1)("id") mustEqual 2
+        rows(1)("content") mustEqual secondContent
+        rows(1)("moment") mustEqual date
       }
     }
 
@@ -235,17 +235,17 @@ class PreparedStatementSpec extends Spec with DatabaseTestHelper {
           this.messagesSelectByMoment,
           Array(null)
         ).rows.get
-        rows.size === 0
+        rows.size mustEqual 0
 
         /*
           PostgreSQL does not know how to handle NULL parameters for a query in a prepared statement,
           you have to use IS NULL if you want to make use of it.
 
-          rows.length === 1
+          rows.length mustEqual 1
 
-          rows(0)("id") === 1
-          rows(0)("content") === firstContent
-          rows(0)("moment") === null
+          rows(0)("id") mustEqual 1
+          rows(0)("content") mustEqual firstContent
+          rows(0)("moment") mustEqual null
          */
 
         val rowsWithoutNull = executePreparedStatement(
@@ -253,10 +253,10 @@ class PreparedStatementSpec extends Spec with DatabaseTestHelper {
           this.messagesSelectByMoment,
           Array(date)
         ).rows.get
-        rowsWithoutNull.size === 1
-        rowsWithoutNull(0)("id") === 2
-        rowsWithoutNull(0)("content") === secondContent
-        rowsWithoutNull(0)("moment") === date
+        rowsWithoutNull.size mustEqual 1
+        rowsWithoutNull(0)("id") mustEqual 2
+        rowsWithoutNull(0)("content") mustEqual secondContent
+        rowsWithoutNull(0)("moment") mustEqual date
       }
     }
 
@@ -284,11 +284,11 @@ class PreparedStatementSpec extends Spec with DatabaseTestHelper {
           Array(0)
         ).rows.get
 
-        rows.length === 1
+        rows.length mustEqual 1
 
-        rows(0)("id") === 1
-        rows(0)("content") === firstContent
-        rows(0)("moment") === null
+        rows(0)("id") mustEqual 1
+        rows(0)("content") mustEqual firstContent
+        rows(0)("moment") mustEqual (null: Any)
 
       }
     }
@@ -311,9 +311,9 @@ class PreparedStatementSpec extends Spec with DatabaseTestHelper {
 
         val result = executePreparedStatement(handler, select).rows.get
 
-        result.size === 1
-        result(0)("id") === 1L
-        result(0)("feeling") === "sad"
+        result.size mustEqual 1
+        result(0)("id") mustEqual 1L
+        result(0)("feeling") mustEqual "sad"
       }
 
     }
@@ -340,8 +340,8 @@ class PreparedStatementSpec extends Spec with DatabaseTestHelper {
           executePreparedStatement(handler, insert, Array(addresses, phones))
           val result = executePreparedStatement(handler, select).rows.get
 
-          result(0)("addresses") === addresses
-          result(0)("phones") === phones
+          result(0)("addresses") mustEqual addresses
+          result(0)("phones") mustEqual phones
         }
         succeed
       } else {
@@ -357,7 +357,7 @@ class PreparedStatementSpec extends Spec with DatabaseTestHelper {
           "SELECT CAST(? AS VARCHAR)",
           Array(string)
         ).rows.get
-        result(0)(0) === string
+        result(0)(0) mustEqual string
       }
     }
 
@@ -393,7 +393,7 @@ class PreparedStatementSpec extends Spec with DatabaseTestHelper {
           )
         }
         val result = executePreparedStatement(handler, query, Array(1)).rows.get
-        result(0)(0) === content
+        result(0)(0) mustEqual content
       }
     }
 
@@ -415,7 +415,7 @@ class PreparedStatementSpec extends Spec with DatabaseTestHelper {
           executePreparedStatement(handler, insert, Array(uuid))
           val result = executePreparedStatement(handler, select).rows.get
 
-          result(0)("my_id").asInstanceOf[UUID] === uuid
+          result(0)("my_id").asInstanceOf[UUID] mustEqual uuid
         }
         succeed
       } else {
@@ -441,7 +441,7 @@ class PreparedStatementSpec extends Spec with DatabaseTestHelper {
           executeDdl(handler, create)
           executePreparedStatement(handler, insert, Array(Array(uuid1, uuid2)))
           val result = executePreparedStatement(handler, select).rows.get
-          result(0)("my_id").asInstanceOf[Seq[Any]] === Seq(
+          result(0)("my_id").asInstanceOf[Seq[Any]] mustEqual Seq(
             uuid1,
             uuid2
           )

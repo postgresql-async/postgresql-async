@@ -36,25 +36,25 @@ class TimestampEncoderDecoderSpec extends Spec {
   "doecoder" - {
     "shouldprint a timestamp" in {
       val timestamp = new Timestamp(dateTime.toDate.getTime)
-      encoder.encode(timestamp) === resultWithTimezone
+      encoder.encode(timestamp) mustEqual resultWithTimezone
     }
 
     "should print a LocalDateTime" in {
-      encoder.encode(dateTime.toLocalDateTime) === result
+      encoder.encode(dateTime.toLocalDateTime) mustEqual result
     }
 
     "should print a date" in {
-      encoder.encode(dateTime.toDate) === resultWithTimezone
+      encoder.encode(dateTime.toDate) mustEqual resultWithTimezone
     }
 
     "should print a calendar" in {
       val calendar = Calendar.getInstance()
       calendar.setTime(dateTime.toDate)
-      encoder.encode(calendar) === resultWithTimezone
+      encoder.encode(calendar) mustEqual resultWithTimezone
     }
 
     "should print a datetime" in {
-      encoder.encode(dateTime) === resultWithTimezone
+      encoder.encode(dateTime) mustEqual resultWithTimezone
     }
   }
 }

@@ -28,9 +28,9 @@ class TransactionSpec extends Spec with DatabaseTestHelper {
         })
 
         val rows = executeQuery(handler, tableSelect).rows.get
-        rows.length === 2
-        rows(0)(0) === 1
-        rows(1)(0) === 2
+        rows.length mustEqual 2
+        rows(0)(0) mustEqual 1
+        rows(1)(0) mustEqual 2
       }
     }
 
@@ -44,9 +44,9 @@ class TransactionSpec extends Spec with DatabaseTestHelper {
         })
 
         val rows = executePreparedStatement(handler, tableSelect).rows.get
-        rows.length === 2
-        rows(0)(0) === 1
-        rows(1)(0) === 2
+        rows.length mustEqual 2
+        rows(0)(0) mustEqual 1
+        rows(1)(0) mustEqual 2
       }
     }
 
@@ -63,12 +63,12 @@ class TransactionSpec extends Spec with DatabaseTestHelper {
           fail("Should not have come here")
         } catch {
           case e: GenericDatabaseException => {
-            e.errorMessage.message === "duplicate key value violates unique constraint \"transaction_test_pkey\""
+            e.errorMessage.message mustEqual "duplicate key value violates unique constraint \"transaction_test_pkey\""
           }
         }
 
         val rows = executeQuery(handler, tableSelect).rows.get
-        rows.length === 0
+        rows.length mustEqual 0
       }
 
     }
@@ -83,7 +83,7 @@ class TransactionSpec extends Spec with DatabaseTestHelper {
         })
 
         val rows = executeQuery(handler, tableSelect).rows.get
-        rows.length === 0
+        rows.length mustEqual 0
       }
 
     }
@@ -102,8 +102,8 @@ class TransactionSpec extends Spec with DatabaseTestHelper {
         })
 
         val rows = executeQuery(handler, tableSelect).rows.get
-        rows.length === 1
-        rows(0)(0) === 1
+        rows.length mustEqual 1
+        rows(0)(0) mustEqual 1
       }
 
     }

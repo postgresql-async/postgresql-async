@@ -40,24 +40,24 @@ class ConnectionPoolSpec extends Spec with DatabaseTestHelper {
     "give you a connection when sending statements" in {
 
       withPool { pool =>
-        executeQuery(pool, "SELECT 8").rows.get(0)(0) === 8
+        executeQuery(pool, "SELECT 8").rows.get(0)(0) mustEqual 8
         Thread.sleep(1000)
-        pool.availables.size === 1
+        pool.availables.size mustEqual 1
       }
 
     }
 
     "give you a connection for prepared statements" in {
       withPool { pool =>
-        executePreparedStatement(pool, "SELECT 8").rows.get(0)(0) === 8
+        executePreparedStatement(pool, "SELECT 8").rows.get(0)(0) mustEqual 8
         Thread.sleep(1000)
-        pool.availables.size === 1
+        pool.availables.size mustEqual 1
       }
     }
 
     "return an empty map when connect is called" in {
       withPool { pool =>
-        await(pool.connect) === pool
+        await(pool.connect) mustEqual pool
       }
     }
 

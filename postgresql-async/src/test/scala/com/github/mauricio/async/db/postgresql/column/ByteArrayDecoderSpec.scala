@@ -56,11 +56,11 @@ class ByteArrayDecoderSpec extends Spec {
   "decoder" - {
 
     "parse escape data" in {
-      ByteArrayEncoderDecoder.decode(escapeTestData) === originalData
+      ByteArrayEncoderDecoder.decode(escapeTestData) mustEqual originalData
     }
 
     "parse hex data" in {
-      ByteArrayEncoderDecoder.decode(hexTestData) === originalData
+      ByteArrayEncoderDecoder.decode(hexTestData) mustEqual originalData
     }
   }
 

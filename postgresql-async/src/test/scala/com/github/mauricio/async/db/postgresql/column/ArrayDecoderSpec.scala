@@ -32,11 +32,11 @@ class ArrayDecoderSpec extends Spec {
   "encoder/decoder" - {
 
     "parse an array of numbers" in {
-      execute("{1,2,3}") === List(1, 2, 3)
+      execute("{1,2,3}") mustEqual List(1, 2, 3)
     }
 
     "parse an array of array of numbers" in {
-      execute("{{1,2,3},{4,5,6}}") === List(List(1, 2, 3), List(4, 5, 6))
+      execute("{{1,2,3},{4,5,6}}") mustEqual List(List(1, 2, 3), List(4, 5, 6))
     }
 
   }

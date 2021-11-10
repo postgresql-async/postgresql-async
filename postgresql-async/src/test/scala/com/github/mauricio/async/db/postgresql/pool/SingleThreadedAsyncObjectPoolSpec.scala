@@ -63,8 +63,8 @@ abstract class SingleThreadedAsyncObjectPoolSpec
           val promises: List[Future[PostgreSQLConnection]] =
             List(pool.take, pool.take, pool.take)
 
-          pool.availables.size === 0
-          pool.inUse.size === 1
+          pool.availables.size mustEqual 0
+          pool.inUse.size mustEqual 1
           pool.queued.size must be <= (3)
 
           /* pool.take call checkout that call this.mainPool.action,
@@ -76,7 +76,7 @@ abstract class SingleThreadedAsyncObjectPoolSpec
             Thread.sleep(50)
           }
 
-          pool.queued.size === 3
+          pool.queued.size mustEqual 3
 
           executeTest(connection)
 
@@ -92,9 +92,9 @@ abstract class SingleThreadedAsyncObjectPoolSpec
 
           Await.ready(pools.last, Duration(5, TimeUnit.SECONDS))
 
-          pool.availables.size === 1
-          pool.inUse.size === 0
-          pool.queued.size === 0
+          pool.availables.size mustEqual 1
+          pool.inUse.size mustEqual 0
+          pool.queued.size mustEqual 0
 
         },
         1,
@@ -130,7 +130,7 @@ abstract class SingleThreadedAsyncObjectPoolSpec
 
           connections.foreach(connection => await(pool.giveBack(connection)))
 
-          pool.availables.size === 5
+          pool.availables.size mustEqual 5
 
           Thread.sleep(2000)
 
@@ -148,14 +148,14 @@ abstract class SingleThreadedAsyncObjectPoolSpec
         val connection = get(pool)
         await(connection.disconnect)
 
-        pool.inUse.size === 1
+        pool.inUse.size mustEqual 1
 
         a[ClosedChannelException] must be thrownBy await(
           pool.giveBack(connection)
         )
 
-        pool.availables.size === 0
-        pool.inUse.size === 0
+        pool.availables.size mustEqual 0
+        pool.inUse.size mustEqual 0
       }
 
     }
@@ -169,8 +169,8 @@ abstract class SingleThreadedAsyncObjectPoolSpec
         a[ConnectionStillRunningQueryException] must be thrownBy await(
           pool.giveBack(connection)
         )
-        pool.availables.size === 0
-        pool.inUse.size === 0
+        pool.availables.size mustEqual 0
+        pool.inUse.size mustEqual 0
       }
 
     }
@@ -205,7 +205,7 @@ abstract class SingleThreadedAsyncObjectPoolSpec
   }
 
   def executeTest(connection: PostgreSQLConnection) =
-    executeQuery(connection, "SELECT 0").rows.get(0)(0) === 0
+    executeQuery(connection, "SELECT 0").rows.get(0)(0) mustEqual 0
 
   def get(
     pool: SingleThreadedAsyncObjectPool[PostgreSQLConnection]

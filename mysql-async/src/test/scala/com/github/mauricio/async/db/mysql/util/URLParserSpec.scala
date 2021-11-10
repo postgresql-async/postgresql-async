@@ -34,7 +34,7 @@ class URLParserSpec extends Spec {
       // This is a deliberate extra step, protecting the DEFAULT from frivilous changes.
       // Any change to DEFAULT should require a change to this test.
 
-      DEFAULT === Configuration(
+      DEFAULT mustEqual Configuration(
         username = "root",
         host = "127.0.0.1", // Matched JDBC default
         port = 3306,
@@ -50,7 +50,7 @@ class URLParserSpec extends Spec {
       val connectionUri =
         "jdbc:mysql://128.167.54.90:9987/my_database?user=john&password=doe"
 
-      parse(connectionUri) === DEFAULT.copy(
+      parse(connectionUri) mustEqual DEFAULT.copy(
         username = "john",
         password = Some("doe"),
         database = Some("my_database"),
@@ -63,7 +63,7 @@ class URLParserSpec extends Spec {
       val connectionUri =
         "jdbc:mysql://128.167.54.90/my_database?user=john&password=doe"
 
-      parse(connectionUri) === DEFAULT.copy(
+      parse(connectionUri) mustEqual DEFAULT.copy(
         username = "john",
         password = Some("doe"),
         database = Some("my_database"),
@@ -74,7 +74,7 @@ class URLParserSpec extends Spec {
     "create a connection without username and password" in {
       val connectionUri = "jdbc:mysql://128.167.54.90:9987/my_database"
 
-      parse(connectionUri) === DEFAULT.copy(
+      parse(connectionUri) mustEqual DEFAULT.copy(
         database = Some("my_database"),
         host = "128.167.54.90",
         port = 9987
@@ -84,7 +84,7 @@ class URLParserSpec extends Spec {
     "create a connection from a heroku like URL using 'mysql' protocol" in {
       val connectionUri = "mysql://john:doe@128.167.54.90:9987/my_database"
 
-      parse(connectionUri) === DEFAULT.copy(
+      parse(connectionUri) mustEqual DEFAULT.copy(
         username = "john",
         password = Some("doe"),
         database = Some("my_database"),
@@ -97,7 +97,7 @@ class URLParserSpec extends Spec {
       val connectionUri =
         "jdbc:mysql://localhost:9987/my_database?user=john&password=doe"
 
-      parse(connectionUri) === DEFAULT.copy(
+      parse(connectionUri) mustEqual DEFAULT.copy(
         username = "john",
         password = Some("doe"),
         database = Some("my_database"),
@@ -110,11 +110,11 @@ class URLParserSpec extends Spec {
       val connectionUri = "mysql://john:doe@psql.heroku.com:9987/my_database"
 
       val configuration = parse(connectionUri)
-      configuration.username === "john"
-      configuration.password === Some("doe")
-      configuration.database === Some("my_database")
-      configuration.host === "psql.heroku.com"
-      configuration.port === 9987
+      configuration.username mustEqual "john"
+      configuration.password mustEqual Some("doe")
+      configuration.database mustEqual Some("my_database")
+      configuration.host mustEqual "psql.heroku.com"
+      configuration.port mustEqual 9987
     }
 
     "create a connection with the available fields and ipv6" in {
@@ -123,28 +123,28 @@ class URLParserSpec extends Spec {
 
       val configuration = parse(connectionUri)
 
-      configuration.username === "john"
-      configuration.password === Some("doe")
-      configuration.database === Some("my_database")
-      configuration.host === "::1"
-      configuration.port === 9987
+      configuration.username mustEqual "john"
+      configuration.password mustEqual Some("doe")
+      configuration.database mustEqual Some("my_database")
+      configuration.host mustEqual "::1"
+      configuration.port mustEqual 9987
     }
 
     "create a connection from a heroku like URL and with ipv6" in {
       val connectionUri = "mysql://john:doe@[::1]:9987/my_database"
 
       val configuration = parse(connectionUri)
-      configuration.username === "john"
-      configuration.password === Some("doe")
-      configuration.database === Some("my_database")
-      configuration.host === "::1"
-      configuration.port === 9987
+      configuration.username mustEqual "john"
+      configuration.password mustEqual Some("doe")
+      configuration.database mustEqual Some("my_database")
+      configuration.host mustEqual "::1"
+      configuration.port mustEqual 9987
     }
 
     "create a connection with a missing hostname" in {
       val connectionUri = "jdbc:mysql:/my_database?user=john&password=doe"
 
-      parse(connectionUri) === DEFAULT.copy(
+      parse(connectionUri) mustEqual DEFAULT.copy(
         username = "john",
         password = Some("doe"),
         database = Some("my_database")
@@ -156,11 +156,11 @@ class URLParserSpec extends Spec {
 
       val configuration = parse(connectionUri)
 
-      configuration.username === "john"
-      configuration.password === Some("doe")
-      configuration.database === None
-      configuration.host === "::1"
-      configuration.port === 9987
+      configuration.username mustEqual "john"
+      configuration.password mustEqual Some("doe")
+      configuration.database mustEqual None
+      configuration.host mustEqual "::1"
+      configuration.port mustEqual 9987
     }
 
     "create a connection with all default fields" in {
@@ -168,11 +168,11 @@ class URLParserSpec extends Spec {
 
       val configuration = parse(connectionUri)
 
-      configuration.username === "root"
-      configuration.password === None
-      configuration.database === None
-      configuration.host === "127.0.0.1"
-      configuration.port === 3306
+      configuration.username mustEqual "root"
+      configuration.password mustEqual None
+      configuration.database mustEqual None
+      configuration.host mustEqual "127.0.0.1"
+      configuration.port mustEqual 3306
     }
 
     "create a connection with an empty (invalid) url" in {
@@ -180,11 +180,11 @@ class URLParserSpec extends Spec {
 
       val configuration = parse(connectionUri)
 
-      configuration.username === "root"
-      configuration.password === None
-      configuration.database === None
-      configuration.host === "127.0.0.1"
-      configuration.port === 3306
+      configuration.username mustEqual "root"
+      configuration.password mustEqual None
+      configuration.database mustEqual None
+      configuration.host mustEqual "127.0.0.1"
+      configuration.port mustEqual 3306
     }
 
     "recognise a mysql:// uri" in {
@@ -258,11 +258,11 @@ class URLParserSpec extends Spec {
       val connectionUri = "mysql://john:doe@128.567.54.90:9987/my_database"
 
       val configuration = parse(connectionUri)
-      configuration.username === "root"
-      configuration.password === None
-      configuration.database === None
-      configuration.host === "127.0.0.1"
-      configuration.port === 3306
+      configuration.username mustEqual "root"
+      configuration.password mustEqual None
+      configuration.database mustEqual None
+      configuration.host mustEqual "127.0.0.1"
+      configuration.port mustEqual 3306
 
       a[UnableToParseURLException] must be thrownBy parseOrDie(connectionUri)
     }

@@ -31,7 +31,7 @@ class TimeDecoderSpec extends Spec {
         Duration(10, TimeUnit.MINUTES) +
         Duration(7, TimeUnit.SECONDS)
 
-      TimeDecoder.decode(time) === duration
+      TimeDecoder.decode(time) mustEqual duration
     }
 
     "handle a time with millis" in {
@@ -42,7 +42,7 @@ class TimeDecoderSpec extends Spec {
         Duration(7, TimeUnit.SECONDS) +
         Duration(98, TimeUnit.MILLISECONDS)
 
-      TimeDecoder.decode(time) === duration
+      TimeDecoder.decode(time) mustEqual duration
 
     }
 

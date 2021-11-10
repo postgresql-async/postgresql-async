@@ -29,7 +29,7 @@ class ExecutePreparedStatementEncoderSpec extends Spec {
       val bytes = new Array[Byte](result.readableBytes())
       result.readBytes(bytes)
 
-      bytes === sampleMessage
+      bytes mustEqual sampleMessage
     }
 
   }

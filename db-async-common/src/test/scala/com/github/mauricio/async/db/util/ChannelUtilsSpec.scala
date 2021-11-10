@@ -32,8 +32,8 @@ class ChannelUtilsSpec extends Spec {
 
       ByteBufferUtils.writeCString(content, buffer, charset)
 
-      ByteBufferUtils.readCString(buffer, charset) === content
-      buffer.readableBytes() === 0
+      ByteBufferUtils.readCString(buffer, charset) mustEqual content
+      buffer.readableBytes() mustEqual 0
     }
 
     "correctly read the buggy MySQL EOF string when there is an EOF" in {
@@ -42,8 +42,8 @@ class ChannelUtilsSpec extends Spec {
 
       ByteBufferUtils.writeCString(content, buffer, charset)
 
-      ByteBufferUtils.readUntilEOF(buffer, charset) === content
-      buffer.readableBytes() === 0
+      ByteBufferUtils.readUntilEOF(buffer, charset) mustEqual content
+      buffer.readableBytes() mustEqual 0
     }
 
     "correctly read the buggy MySQL EOF string when there is no EOF" in {
@@ -53,8 +53,8 @@ class ChannelUtilsSpec extends Spec {
 
       buffer.writeBytes(content.getBytes(charset))
 
-      ByteBufferUtils.readUntilEOF(buffer, charset) === content
-      buffer.readableBytes() === 0
+      ByteBufferUtils.readUntilEOF(buffer, charset) mustEqual content
+      buffer.readableBytes() mustEqual 0
 
     }
 

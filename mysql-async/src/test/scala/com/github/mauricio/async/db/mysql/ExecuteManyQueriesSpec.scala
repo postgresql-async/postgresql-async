@@ -31,12 +31,12 @@ class ExecuteManyQueriesSpec extends Spec with ConnectionHelper {
             "SELECT 6578, 'this is some text'"
           ).rows.get
 
-          rows.size === 1
+          rows.size mustEqual 1
 
           val row = rows(0)
 
-          row(0) === 6578
-          row(1) === "this is some text"
+          row(0) mustEqual 6578
+          row(1) mustEqual "this is some text"
         }
 
         succeed
@@ -52,12 +52,12 @@ class ExecuteManyQueriesSpec extends Spec with ConnectionHelper {
             "SELECT 6578, 'this is some text'"
           ).rows.get
 
-          rows.size === 1
+          rows.size mustEqual 1
 
           val row = rows(0)
 
-          row(0) === 6578
-          row(1) === "this is some text"
+          row(0) mustEqual 6578
+          row(1) mustEqual "this is some text"
         }
 
         succeed

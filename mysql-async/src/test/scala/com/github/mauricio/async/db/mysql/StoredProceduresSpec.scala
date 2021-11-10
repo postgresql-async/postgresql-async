@@ -40,7 +40,7 @@ class StoredProceduresSpec extends Spec with ConnectionHelper {
               """
             )
           ) yield create
-        awaitFuture(future).statusMessage === ""
+        awaitFuture(future).statusMessage mustEqual ""
       }
     }
 
@@ -62,10 +62,10 @@ class StoredProceduresSpec extends Spec with ConnectionHelper {
             arg  <- connection.sendQuery("SELECT @arg")
           ) yield arg
         val result: Option[ResultSet] = awaitFuture(future).rows
-        result.isDefined === true
+        result.isDefined mustEqual true
         val rows = result.get
-        rows.size === 1
-        rows(0)(rows.columnNames.head) === 125
+        rows.size mustEqual 1
+        rows(0)(rows.columnNames.head) mustEqual 125
       }
     }
 
@@ -87,10 +87,10 @@ class StoredProceduresSpec extends Spec with ConnectionHelper {
             res  <- connection.sendQuery("SELECT @sm")
           ) yield res
         val result: Option[ResultSet] = awaitFuture(future).rows
-        result.isDefined === true
+        result.isDefined mustEqual true
         val rows = result.get
-        rows.size === 1
-        rows(0)(rows.columnNames.head) === 377
+        rows.size mustEqual 1
+        rows(0)(rows.columnNames.head) mustEqual 377
       }
     }
 
@@ -115,9 +115,9 @@ class StoredProceduresSpec extends Spec with ConnectionHelper {
             )
           ) yield routine
         ).rows
-        createResult.isDefined === true
-        createResult.get.size === 1
-        createResult.get(0)("routine_name") === "remTest"
+        createResult.isDefined mustEqual true
+        createResult.get.size mustEqual 1
+        createResult.get(0)("routine_name") mustEqual "remTest"
         val removeResult: Option[ResultSet] = awaitFuture(
           for (
             drop <- connection.sendQuery("DROP PROCEDURE remTest;");
@@ -128,8 +128,8 @@ class StoredProceduresSpec extends Spec with ConnectionHelper {
             )
           ) yield routine
         ).rows
-        removeResult.isDefined === true
-        removeResult.get.isEmpty === true
+        removeResult.isDefined mustEqual true
+        removeResult.get.isEmpty mustEqual true
       }
     }
   }

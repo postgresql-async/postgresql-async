@@ -29,13 +29,13 @@ class DefaultColumnEncoderRegistrySpec extends Spec {
         Array("some", """text \ hoes " here to be seen""", null, "all, right")
       registry.encode(
         items
-      ) === """{"some","text \\ hoes \" here to be seen",NULL,"all, right"}"""
+      ) mustEqual """{"some","text \\ hoes \" here to be seen",NULL,"all, right"}"""
     }
 
     "correctly render an array of numbers" in {
       val items =
         Array(Array[Any](1, 2, 3), Array[Any](4, 5, 6), Array[Any](7, null, 8))
-      registry.encode(items) === "{{1,2,3},{4,5,6},{7,NULL,8}}"
+      registry.encode(items) mustEqual "{{1,2,3},{4,5,6},{7,NULL,8}}"
     }
 
   }

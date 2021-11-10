@@ -35,12 +35,12 @@ class TimeoutSchedulerSpec extends Spec {
     val scheduledFuture =
       timeoutScheduler.addTimeout(promise, Some(Duration(1000, MILLISECONDS)))
     Thread.sleep(100);
-    promise.isCompleted === false
+    promise.isCompleted mustEqual false
     promise.success(TIMEOUT_DID_NOT_PASS)
     Thread.sleep(1500)
-    promise.future.value.get.get === TIMEOUT_DID_NOT_PASS
-    scheduledFuture.get.isCancelled === true
-    timeoutScheduler.timeoutCount === 0
+    promise.future.value.get.get mustEqual TIMEOUT_DID_NOT_PASS
+    scheduledFuture.get.isCancelled mustEqual true
+    timeoutScheduler.timeoutCount mustEqual 0
   }
 
   "test timeout passed" in {
@@ -52,10 +52,10 @@ class TimeoutSchedulerSpec extends Spec {
       Some(Duration(timeoutMillis, MILLISECONDS))
     )
     Thread.sleep(1000)
-    promise.isCompleted === true
-    scheduledFuture.get.isCancelled === false
+    promise.isCompleted mustEqual true
+    scheduledFuture.get.isCancelled mustEqual false
     promise.trySuccess(TIMEOUT_DID_NOT_PASS)
-    timeoutScheduler.timeoutCount === 1
+    timeoutScheduler.timeoutCount mustEqual 1
     the[
       TimeoutException
     ] thrownBy promise.future.value.get.get must have message (
@@ -68,10 +68,10 @@ class TimeoutSchedulerSpec extends Spec {
     val promise          = Promise[String]()
     val scheduledFuture  = timeoutScheduler.addTimeout(promise, None)
     Thread.sleep(1000)
-    scheduledFuture === None
-    promise.isCompleted === false
+    scheduledFuture mustEqual None
+    promise.isCompleted mustEqual false
     promise.success(TIMEOUT_DID_NOT_PASS)
-    promise.future.value.get.get === TIMEOUT_DID_NOT_PASS
-    timeoutScheduler.timeoutCount === 0
+    promise.future.value.get.get mustEqual TIMEOUT_DID_NOT_PASS
+    timeoutScheduler.timeoutCount mustEqual 0
   }
 }

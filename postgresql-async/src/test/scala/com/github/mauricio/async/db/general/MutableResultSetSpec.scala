@@ -73,17 +73,17 @@ class MutableResultSetSpec extends Spec {
 
       val resultSet = resultSetBuilder.build()
 
-      resultSet(0)(0) === 1
-      resultSet(0)("id") === 1
+      resultSet(0)(0) mustEqual 1
+      resultSet(0)("id") mustEqual 1
 
-      resultSet(0)(1) === text
-      resultSet(0)("name") === text
+      resultSet(0)(1) mustEqual text
+      resultSet(0)("name") mustEqual text
 
-      resultSet(1)(0) === 2
-      resultSet(1)("id") === 2
+      resultSet(1)(0) mustEqual 2
+      resultSet(1)("id") mustEqual 2
 
-      resultSet(1)(1) === otherText
-      resultSet(1)("name") === otherText
+      resultSet(1)(1) mustEqual otherText
+      resultSet(1)("name") mustEqual otherText
 
     }
 

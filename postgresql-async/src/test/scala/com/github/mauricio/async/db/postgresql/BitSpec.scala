@@ -46,8 +46,8 @@ class BitSpec extends Spec with DatabaseTestHelper {
         val bit0 = rows(0)("some_bit")
         val bit1 = rows(1)("some_bit")
 
-        bit0 === Array(0)
-        bit1 === Array(1)
+        bit0 mustEqual Array(0)
+        bit1 mustEqual Array(1)
       }
 
     }
@@ -78,10 +78,10 @@ class BitSpec extends Spec with DatabaseTestHelper {
         val bit2 = rows(2)("some_bit")
         val bit3 = rows(3)("some_bit")
 
-        bit0 === Array(0)
-        bit1 === Array(1)
-        bit2 === Array(2)
-        bit3 === Array(3)
+        bit0 mustEqual Array(0)
+        bit1 mustEqual Array(1)
+        bit2 mustEqual Array(2)
+        bit3 mustEqual Array(3)
       }
 
     }

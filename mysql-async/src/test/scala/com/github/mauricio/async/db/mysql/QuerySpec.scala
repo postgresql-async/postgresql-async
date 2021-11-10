@@ -33,7 +33,7 @@ class QuerySpec extends Spec with ConnectionHelper {
     "be able to run a DML query" in {
 
       withConnection { connection =>
-        executeQuery(connection, this.createTable).rowsAffected === 0
+        executeQuery(connection, this.createTable).rowsAffected mustEqual 0
       }
 
     }
@@ -44,19 +44,19 @@ class QuerySpec extends Spec with ConnectionHelper {
           connection,
           "this is not SQL"
         )
-        e.asInstanceOf[MySQLException].errorMessage.sqlState === "#42000"
+        e.asInstanceOf[MySQLException].errorMessage.sqlState mustEqual "#42000"
       }
     }
 
     "be able to select from a table" in {
 
       withConnection { connection =>
-        executeQuery(connection, this.createTable).rowsAffected === 0
-        executeQuery(connection, this.insert).rowsAffected === 1
+        executeQuery(connection, this.createTable).rowsAffected mustEqual 0
+        executeQuery(connection, this.insert).rowsAffected mustEqual 1
         val result = executeQuery(connection, this.select).rows.get
 
-        result(0)("id") === 1
-        result(0)("name") === "Maurício Aragão"
+        result(0)("id") mustEqual 1
+        result(0)("name") mustEqual "Maurício Aragão"
       }
 
     }
@@ -70,35 +70,38 @@ class QuerySpec extends Spec with ConnectionHelper {
 
         val date = result("created_at_date").asInstanceOf[LocalDate]
 
-        date.getYear === 2038
-        date.getMonthOfYear === 1
-        date.getDayOfMonth === 19
+        date.getYear mustEqual 2038
+        date.getMonthOfYear mustEqual 1
+        date.getDayOfMonth mustEqual 19
 
         val dateTime = result("created_at_datetime").asInstanceOf[LocalDateTime]
-        dateTime.getYear === 2013
-        dateTime.getMonthOfYear === 1
-        dateTime.getDayOfMonth === 19
-        dateTime.getHourOfDay === 3
-        dateTime.getMinuteOfHour === 14
-        dateTime.getSecondOfMinute === 7
+        dateTime.getYear mustEqual 2013
+        dateTime.getMonthOfYear mustEqual 1
+        dateTime.getDayOfMonth mustEqual 19
+        dateTime.getHourOfDay mustEqual 3
+        dateTime.getMinuteOfHour mustEqual 14
+        dateTime.getSecondOfMinute mustEqual 7
 
         val timestamp =
           result("created_at_timestamp").asInstanceOf[LocalDateTime]
-        timestamp.getYear === 2020
-        timestamp.getMonthOfYear === 1
-        timestamp.getDayOfMonth === 19
-        timestamp.getHourOfDay === 3
-        timestamp.getMinuteOfHour === 14
-        timestamp.getSecondOfMinute === 7
+        timestamp.getYear mustEqual 2020
+        timestamp.getMonthOfYear mustEqual 1
+        timestamp.getDayOfMonth mustEqual 19
+        timestamp.getHourOfDay mustEqual 3
+        timestamp.getMinuteOfHour mustEqual 14
+        timestamp.getSecondOfMinute mustEqual 7
 
-        result("created_at_time") === Duration(3, TimeUnit.HOURS) + Duration(
+        result("created_at_time") mustEqual Duration(
+          3,
+          TimeUnit.HOURS
+        ) + Duration(
           14,
           TimeUnit.MINUTES
         ) + Duration(7, TimeUnit.SECONDS)
 
         val year = result("created_at_year").asInstanceOf[Short]
 
-        year === 1999
+        year mustEqual 1999
       }
 
     }
@@ -111,14 +114,15 @@ class QuerySpec extends Spec with ConnectionHelper {
         val result =
           executeQuery(connection, "SELECT * FROM numbers").rows.get(0)
 
-        result("number_tinyint").asInstanceOf[Byte] === -100
-        result("number_smallint").asInstanceOf[Short] === 32766
-        result("number_mediumint").asInstanceOf[Int] === 8388607
-        result("number_int").asInstanceOf[Int] === 2147483647
-        result("number_bigint").asInstanceOf[Long] === 9223372036854775807L
-        result("number_decimal") === BigDecimal(450.764491)
-        result("number_float") === 14.7f
-        result("number_double") === 87650.9876
+        result("number_tinyint").asInstanceOf[Byte] mustEqual -100
+        result("number_smallint").asInstanceOf[Short] mustEqual 32766
+        result("number_mediumint").asInstanceOf[Int] mustEqual 8388607
+        result("number_int").asInstanceOf[Int] mustEqual 2147483647
+        result("number_bigint")
+          .asInstanceOf[Long] mustEqual 9223372036854775807L
+        result("number_decimal") mustEqual BigDecimal(450.764491)
+        result("number_float") mustEqual 14.7f
+        result("number_double") mustEqual 87650.9876
       }
 
     }
@@ -137,8 +141,8 @@ class QuerySpec extends Spec with ConnectionHelper {
         executeQuery(connection, create)
         executePreparedStatement(connection, insert, bytes)
         val row = executeQuery(connection, select).rows.get(0)
-        row("id") === 1
-        row("some_bytes") === bytes
+        row("id") mustEqual 1
+        row("some_bytes") mustEqual bytes
       }
     }
 
@@ -208,10 +212,10 @@ class QuerySpec extends Spec with ConnectionHelper {
         executeQuery(connection, insert)
 
         val rows = executeQuery(connection, select).rows.get
-        rows(0)("bit_column") === Array(0, 0, -128)
+        rows(0)("bit_column") mustEqual Array(0, 0, -128)
 
         val preparedRows = executePreparedStatement(connection, select).rows.get
-        preparedRows(0)("bit_column") === Array(0, 0, -128)
+        preparedRows(0)("bit_column") mustEqual Array(0, 0, -128)
       }
 
     }
@@ -246,7 +250,7 @@ class QuerySpec extends Spec with ConnectionHelper {
 
         val result = executeQuery(connection, "select * from test_11")
 
-        result.rows.get.size === 0
+        result.rows.get.size mustEqual 0
       }
     }
 
@@ -264,7 +268,7 @@ class QuerySpec extends Spec with ConnectionHelper {
 
         val result = executeQuery(connection, "select * from test_10")
 
-        result.rows.get.size === 0
+        result.rows.get.size mustEqual 0
       }
 
     }
@@ -284,10 +288,10 @@ class QuerySpec extends Spec with ConnectionHelper {
         executeQuery(connection, insert)
         val result = executeQuery(connection, "select bomb from bombs").rows.get
 
-        result.size === 2
+        result.size mustEqual 2
 
-        result(0)("bomb").asInstanceOf[String].length === 98176
-        result(1)("bomb").asInstanceOf[String].length === 98175
+        result(0)("bomb").asInstanceOf[String].length mustEqual 98176
+        result(1)("bomb").asInstanceOf[String].length mustEqual 98175
       }
 
     }

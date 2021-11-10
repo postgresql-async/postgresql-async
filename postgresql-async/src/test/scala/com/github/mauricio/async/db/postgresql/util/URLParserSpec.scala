@@ -42,11 +42,11 @@ class URLParserSpec extends Spec {
         "jdbc:postgresql://128.167.54.90:9987/my_database?user=john&password=doe"
 
       val configuration = parse(connectionUri)
-      configuration.username === "john"
-      configuration.password === Some("doe")
-      configuration.database === Some("my_database")
-      configuration.host === "128.167.54.90"
-      configuration.port === 9987
+      configuration.username mustEqual "john"
+      configuration.password mustEqual Some("doe")
+      configuration.database mustEqual Some("my_database")
+      configuration.host mustEqual "128.167.54.90"
+      configuration.port mustEqual 9987
     }
 
     "create a connection without port" in {
@@ -54,22 +54,22 @@ class URLParserSpec extends Spec {
         "jdbc:postgresql://128.167.54.90/my_database?user=john&password=doe"
 
       val configuration = parse(connectionUri)
-      configuration.username === "john"
-      configuration.password === Some("doe")
-      configuration.database === Some("my_database")
-      configuration.host === "128.167.54.90"
-      configuration.port === 5432
+      configuration.username mustEqual "john"
+      configuration.password mustEqual Some("doe")
+      configuration.database mustEqual Some("my_database")
+      configuration.host mustEqual "128.167.54.90"
+      configuration.port mustEqual 5432
     }
 
     "create a connection without username and password" in {
       val connectionUri = "jdbc:postgresql://128.167.54.90:9987/my_database"
 
       val configuration = parse(connectionUri)
-      configuration.username === DEFAULT.username
-      configuration.password === None
-      configuration.database === Some("my_database")
-      configuration.host === "128.167.54.90"
-      configuration.port === 9987
+      configuration.username mustEqual DEFAULT.username
+      configuration.password mustEqual None
+      configuration.database mustEqual Some("my_database")
+      configuration.host mustEqual "128.167.54.90"
+      configuration.port mustEqual 9987
     }
 
     // ========== postgresql:// ==============
@@ -78,11 +78,11 @@ class URLParserSpec extends Spec {
       val connectionUri = "postgresql://john:doe@128.167.54.90:9987/my_database"
 
       val configuration = parse(connectionUri)
-      configuration.username === "john"
-      configuration.password === Some("doe")
-      configuration.database === Some("my_database")
-      configuration.host === "128.167.54.90"
-      configuration.port === 9987
+      configuration.username mustEqual "john"
+      configuration.password mustEqual Some("doe")
+      configuration.database mustEqual Some("my_database")
+      configuration.host mustEqual "128.167.54.90"
+      configuration.port mustEqual 9987
     }
 
     "create a connection with SSL enabled" in {
@@ -90,12 +90,12 @@ class URLParserSpec extends Spec {
         "jdbc:postgresql://128.167.54.90:9987/my_database?sslmode=verify-full"
 
       val configuration = parse(connectionUri)
-      configuration.username === DEFAULT.username
-      configuration.password === None
-      configuration.database === Some("my_database")
-      configuration.host === "128.167.54.90"
-      configuration.port === 9987
-      configuration.ssl.mode === Mode.VerifyFull
+      configuration.username mustEqual DEFAULT.username
+      configuration.password mustEqual None
+      configuration.database mustEqual Some("my_database")
+      configuration.host mustEqual "128.167.54.90"
+      configuration.port mustEqual 9987
+      configuration.ssl.mode mustEqual Mode.VerifyFull
     }
 
     "create a connection with SSL enabled and root CA from a heroku like URL using 'postgresql' protocol" in {
@@ -103,13 +103,13 @@ class URLParserSpec extends Spec {
         "postgresql://john:doe@128.167.54.90:9987/my_database?sslmode=verify-ca&sslrootcert=server.crt"
 
       val configuration = parse(connectionUri)
-      configuration.username === "john"
-      configuration.password === Some("doe")
-      configuration.database === Some("my_database")
-      configuration.host === "128.167.54.90"
-      configuration.port === 9987
-      configuration.ssl.mode === Mode.VerifyCA
-      configuration.ssl.rootCert.map(_.getPath) === Some("server.crt")
+      configuration.username mustEqual "john"
+      configuration.password mustEqual Some("doe")
+      configuration.database mustEqual Some("my_database")
+      configuration.host mustEqual "128.167.54.90"
+      configuration.port mustEqual 9987
+      configuration.ssl.mode mustEqual Mode.VerifyCA
+      configuration.ssl.rootCert.map(_.getPath) mustEqual Some("server.crt")
     }
 
     "create a connection with the available fields and named server" in {
@@ -117,11 +117,11 @@ class URLParserSpec extends Spec {
         "jdbc:postgresql://localhost:9987/my_database?user=john&password=doe"
 
       val configuration = parse(connectionUri)
-      configuration.username === "john"
-      configuration.password === Some("doe")
-      configuration.database === Some("my_database")
-      configuration.host === "localhost"
-      configuration.port === 9987
+      configuration.username mustEqual "john"
+      configuration.password mustEqual Some("doe")
+      configuration.database mustEqual Some("my_database")
+      configuration.host mustEqual "localhost"
+      configuration.port mustEqual 9987
     }
 
     "create a connection from a heroku like URL with named server" in {
@@ -129,11 +129,11 @@ class URLParserSpec extends Spec {
         "postgresql://john:doe@psql.heroku.com:9987/my_database"
 
       val configuration = parse(connectionUri)
-      configuration.username === "john"
-      configuration.password === Some("doe")
-      configuration.database === Some("my_database")
-      configuration.host === "psql.heroku.com"
-      configuration.port === 9987
+      configuration.username mustEqual "john"
+      configuration.password mustEqual Some("doe")
+      configuration.database mustEqual Some("my_database")
+      configuration.host mustEqual "psql.heroku.com"
+      configuration.port mustEqual 9987
     }
 
     "create a connection with the available fields and ipv6" in {
@@ -142,22 +142,22 @@ class URLParserSpec extends Spec {
 
       val configuration = parse(connectionUri)
 
-      configuration.username === "john"
-      configuration.password === Some("doe")
-      configuration.database === Some("my_database")
-      configuration.host === "::1"
-      configuration.port === 9987
+      configuration.username mustEqual "john"
+      configuration.password mustEqual Some("doe")
+      configuration.database mustEqual Some("my_database")
+      configuration.host mustEqual "::1"
+      configuration.port mustEqual 9987
     }
 
     "create a connection from a heroku like URL and with ipv6" in {
       val connectionUri = "postgresql://john:doe@[::1]:9987/my_database"
 
       val configuration = parse(connectionUri)
-      configuration.username === "john"
-      configuration.password === Some("doe")
-      configuration.database === Some("my_database")
-      configuration.host === "::1"
-      configuration.port === 9987
+      configuration.username mustEqual "john"
+      configuration.password mustEqual Some("doe")
+      configuration.database mustEqual Some("my_database")
+      configuration.host mustEqual "::1"
+      configuration.port mustEqual 9987
     }
 
     "create a connection with a missing hostname" in {
@@ -165,11 +165,11 @@ class URLParserSpec extends Spec {
 
       val configuration = parse(connectionUri)
 
-      configuration.username === "john"
-      configuration.password === Some("doe")
-      configuration.database === Some("my_database")
-      configuration.host === "localhost"
-      configuration.port === 5432
+      configuration.username mustEqual "john"
+      configuration.password mustEqual Some("doe")
+      configuration.database mustEqual Some("my_database")
+      configuration.host mustEqual "localhost"
+      configuration.port mustEqual 5432
     }
 
     "create a connection with a missing database name" in {
@@ -177,11 +177,11 @@ class URLParserSpec extends Spec {
 
       val configuration = parse(connectionUri)
 
-      configuration.username === "john"
-      configuration.password === Some("doe")
-      configuration.database === None
-      configuration.host === "::1"
-      configuration.port === 9987
+      configuration.username mustEqual "john"
+      configuration.password mustEqual Some("doe")
+      configuration.database mustEqual None
+      configuration.host mustEqual "::1"
+      configuration.port mustEqual 9987
     }
 
     "create a connection with all default fields" in {
@@ -189,11 +189,11 @@ class URLParserSpec extends Spec {
 
       val configuration = parse(connectionUri)
 
-      configuration.username === "postgres"
-      configuration.password === None
-      configuration.database === None
-      configuration.host === "localhost"
-      configuration.port === 5432
+      configuration.username mustEqual "postgres"
+      configuration.password mustEqual None
+      configuration.database mustEqual None
+      configuration.host mustEqual "localhost"
+      configuration.port mustEqual 5432
     }
 
     "create a connection with an empty (invalid) url" in {
@@ -201,11 +201,11 @@ class URLParserSpec extends Spec {
 
       val configuration = parse(connectionUri)
 
-      configuration.username === "postgres"
-      configuration.password === None
-      configuration.database === None
-      configuration.host === "localhost"
-      configuration.port === 5432
+      configuration.username mustEqual "postgres"
+      configuration.password mustEqual None
+      configuration.database mustEqual None
+      configuration.host mustEqual "localhost"
+      configuration.port mustEqual 5432
     }
 
     "recognise a postgresql:// uri" in {
@@ -289,11 +289,11 @@ class URLParserSpec extends Spec {
       val connectionUri = "postgresql://john:doe@128.567.54.90:9987/my_database"
 
       val configuration = parse(connectionUri)
-      configuration.username === "postgres"
-      configuration.password === None
-      configuration.database === None
-      configuration.host === "localhost"
-      configuration.port === 5432
+      configuration.username mustEqual "postgres"
+      configuration.password mustEqual None
+      configuration.database mustEqual None
+      configuration.host mustEqual "localhost"
+      configuration.port mustEqual 5432
 
       a[UnableToParseURLException] must be thrownBy parseOrDie(connectionUri)
     }

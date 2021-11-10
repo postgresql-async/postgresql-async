@@ -29,7 +29,7 @@ class PasswordHelperSpec extends Spec {
         password,
         salt,
         CharsetUtil.UTF_8
-      ) === result
+      ) mustEqual result
 
     }
 

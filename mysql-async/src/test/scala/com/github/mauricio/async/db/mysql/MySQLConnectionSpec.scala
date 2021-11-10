@@ -59,26 +59,26 @@ class MySQLConnectionSpec extends Spec {
     "connect to a MySQL instance with a password" in {
 
       withNonConnectedConnection { connection =>
-        awaitFuture(connection.connect) === connection
+        awaitFuture(connection.connect) mustEqual connection
       }(configuration)
 
     }
 
     "connect to a MySQL instance without password" in {
       withNonConnectedConnection({ connection =>
-        awaitFuture(connection.connect) === connection
+        awaitFuture(connection.connect) mustEqual connection
       })(configurationWithoutPassword)
     }
 
     "connect to a MySQL instance without a database" in {
       withNonConnectedConnection({ connection =>
-        awaitFuture(connection.connect) === connection
+        awaitFuture(connection.connect) mustEqual connection
       })(configurationWithoutDatabase)
     }
 
     "connect to a MySQL instance without database with password" in {
       withNonConnectedConnection({ connection =>
-        awaitFuture(connection.connect) === connection
+        awaitFuture(connection.connect) mustEqual connection
       })(configurationWithPasswordWithoutDatabase)
     }
 

@@ -41,11 +41,11 @@ class MySQLFrameDecoderSpec extends Spec {
       decoder.writeInbound(buffer)
 
       val ok = decoder.readInbound().asInstanceOf[OkMessage]
-      ok.affectedRows === 10
-      ok.lastInsertId === 15
-      ok.message === "this is a test"
-      ok.statusFlags === 5
-      ok.warnings === 6
+      ok.affectedRows mustEqual 10
+      ok.lastInsertId mustEqual 15
+      ok.message mustEqual "this is a test"
+      ok.statusFlags mustEqual 5
+      ok.warnings mustEqual 6
     }
 
     "decode an error message" in {
@@ -60,9 +60,9 @@ class MySQLFrameDecoderSpec extends Spec {
 
       val error = decoder.readInbound().asInstanceOf[ErrorMessage]
 
-      error.errorCode === 27
-      error.errorMessage === content
-      error.sqlState === "HZAWAY"
+      error.errorCode mustEqual 27
+      error.errorMessage mustEqual content
+      error.sqlState mustEqual "HZAWAY"
 
     }
 
@@ -84,7 +84,7 @@ class MySQLFrameDecoderSpec extends Spec {
       embedder
         .readInbound()
         .asInstanceOf[OkMessage]
-        .message === "this is a test"
+        .message mustEqual "this is a test"
 
       decoder.isInQuery must be(false)
       decoder.processingColumns must be(false)
@@ -107,7 +107,10 @@ class MySQLFrameDecoderSpec extends Spec {
       val buffer = createErrorPacket(content)
 
       embedder.writeInbound(buffer) must be(true)
-      embedder.readInbound().asInstanceOf[ErrorMessage].errorMessage === content
+      embedder
+        .readInbound()
+        .asInstanceOf[ErrorMessage]
+        .errorMessage mustEqual content
 
       decoder.isInQuery must be(false)
       decoder.processingColumns must be(false)
@@ -123,7 +126,7 @@ class MySQLFrameDecoderSpec extends Spec {
 
       decoder.queryProcessStarted()
 
-      decoder.totalColumns === 0
+      decoder.totalColumns mustEqual 0
 
       val columnCountBuffer = ByteBufferUtils.packetBuffer()
       columnCountBuffer.writeLength(2)
@@ -131,7 +134,7 @@ class MySQLFrameDecoderSpec extends Spec {
 
       embedder.writeInbound(columnCountBuffer)
 
-      decoder.totalColumns === 2
+      decoder.totalColumns mustEqual 2
 
       val columnId = createColumnPacket("id", ColumnTypes.FIELD_TYPE_LONG)
       val columnName =
@@ -139,18 +142,21 @@ class MySQLFrameDecoderSpec extends Spec {
 
       embedder.writeInbound(columnId)
 
-      embedder.readInbound().asInstanceOf[ColumnDefinitionMessage].name === "id"
+      embedder
+        .readInbound()
+        .asInstanceOf[ColumnDefinitionMessage]
+        .name mustEqual "id"
 
-      decoder.processedColumns === 1
+      decoder.processedColumns mustEqual 1
 
       embedder.writeInbound(columnName)
 
       embedder
         .readInbound()
         .asInstanceOf[ColumnDefinitionMessage]
-        .name === "name"
+        .name mustEqual "name"
 
-      decoder.processedColumns === 2
+      decoder.processedColumns mustEqual 2
 
       embedder.writeInbound(this.createEOFPacket())
 
@@ -158,7 +164,7 @@ class MySQLFrameDecoderSpec extends Spec {
         .readInbound()
         .asInstanceOf[ColumnProcessingFinishedMessage]
         .eofMessage
-        .flags === 8765
+        .flags mustEqual 8765
 
       decoder.processingColumns must be(false)
 

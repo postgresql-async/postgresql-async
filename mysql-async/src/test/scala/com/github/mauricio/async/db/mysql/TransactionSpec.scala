@@ -40,10 +40,10 @@ class TransactionSpec extends Spec with ConnectionHelper {
         awaitFuture(future)
 
         val result = executePreparedStatement(connection, this.select).rows.get
-        result.size === 2
+        result.size mustEqual 2
 
-        result(0)("name") === "Maurício Aragão"
-        result(1)("name") === "Maurício Aragão"
+        result(0)("name") mustEqual "Maurício Aragão"
+        result(1)("name") mustEqual "Maurício Aragão"
       }
     }
 
@@ -63,13 +63,13 @@ class TransactionSpec extends Spec with ConnectionHelper {
         } catch {
           case e: MySQLException => {
 
-            e.errorMessage.errorCode === 1062
-            e.errorMessage.errorMessage === "Duplicate entry '1' for key 'PRIMARY'"
+            e.errorMessage.errorCode mustEqual 1062
+            e.errorMessage.errorMessage mustEqual "Duplicate entry '1' for key 'PRIMARY'"
 
             val result =
               executePreparedStatement(connection, this.select).rows.get
-            result.size === 1
-            result(0)("name") === "Maurício Aragão"
+            result.size mustEqual 1
+            result(0)("name") mustEqual "Maurício Aragão"
             succeed
           }
         }
@@ -130,12 +130,12 @@ class TransactionSpec extends Spec with ConnectionHelper {
         operations.value.get match {
           case Success(e) => fail("should not have executed")
           case Failure(e) => {
-            e.asInstanceOf[MySQLException].errorMessage.errorCode === 1062
+            e.asInstanceOf[MySQLException].errorMessage.errorCode mustEqual 1062
             executePreparedStatement(
               pool,
               "select * from transaction_test where id = ?",
               id
-            ).rows.get.size === 0
+            ).rows.get.size mustEqual 0
             succeed
           }
         }
