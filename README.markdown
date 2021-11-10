@@ -1,102 +1,73 @@
-
-- This is a fork from https://github.com/mauricio/postgresql-async
-    - [Abstractions and integrations](#abstractions-and-integrations)
-    - [Include them as dependencies](#include-them-as-dependencies)
-    - [Database connections and encodings](#database-connections-and-encodings)
-    - [Prepared statements gotcha](#prepared-statements-gotcha)
-    - [What are the design goals?](#what-are-the-design-goals)
-    - [What is missing?](#what-is-missing)
-    - [How can you help?](#how-can-you-help)
-    - [Main public interface](#main-public-interface)
-        - [Connection](#connection)
-        - [QueryResult](#queryresult)
-        - [ResultSet](#resultset)
-        - [Prepared statements](#prepared-statements)
-    - [Transactions](#transactions)
-    - [Example usage (for PostgreSQL, but it looks almost the same on MySQL)](#example-usage-for-postgresql-but-it-looks-almost-the-same-on-mysql)
-    - [LISTEN/NOTIFY support (PostgreSQL only)](#listennotify-support-postgresql-only)
-    - [Contributing](#contributing)
-    - [Licence](#licence)
+## Table of contents
+- [Include them as dependencies](#include-them-as-dependencies)
+- [Database connections and encodings](#database-connections-and-encodings)
+- [Prepared statements gotcha](#prepared-statements-gotcha)
+- [What are the design goals?](#what-are-the-design-goals)
+- [What is missing?](#what-is-missing)
+- [How can you help?](#how-can-you-help)
+- [Main public interface](#main-public-interface)
+  - [Connection](#connection)
+  - [QueryResult](#queryresult)
+  - [ResultSet](#resultset)
+  - [Prepared statements](#prepared-statements)
+- [Transactions](#transactions)
+- [Example usage (for PostgreSQL, but it looks almost the same on MySQL)](#example-usage-for-postgresql-but-it-looks-almost-the-same-on-mysql)
+- [LISTEN/NOTIFY support (PostgreSQL only)](#listennotify-support-postgresql-only)
+- [Contributing](#contributing)
+- [Licence](#licence)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 [![build](https://github.com/postgresql-async/postgresql-async/actions/workflows/scala.yml/badge.svg?branch=master)](https://github.com/postgresql-async/postgresql-async/actions/workflows/scala.yml)
 [![codecov](https://codecov.io/gh/postgresql-async/postgresql-async/branch/master/graph/badge.svg?token=UR9HMLK0L2)](https://codecov.io/gh/postgresql-async/postgresql-async)
-![Maven](https://maven-badges.herokuapp.com/maven-central/com.github.postgresql-async/postgresql-async_2.13/badge.svg)
+[![Maven](https://maven-badges.herokuapp.com/maven-central/com.github.postgresql-async/postgresql-async_2.13/badge.svg)](https://search.maven.org/artifact/com.github.postgresql-async/postgresql-async_2.13)
 
 
-This fork is mainly focused on bug fix and scala 2.13/dotty migrattion.
+This is a fork of the orginal `postgresal-async` lib.
 
-This project always returns [JodaTime](http://joda-time.sourceforge.net/) when dealing with date types and not the
+It currently cross compiled with `2.11` / `2.12` / `2.13` and `3.x`
+
+This project currently returns [JodaTime](http://joda-time.sourceforge.net/), it will be replace by `java.time` in the near future.
 `java.util.Date` class.
 
-If you want information specific to the drivers, check the [PostgreSQL README](postgresql-async/README.md) and the
-[MySQL README](mysql-async/README.md).
-
-You can view the project's [CHANGELOG here](CHANGELOG.md).
-
-## Abstractions and integrations
-
-* [Activate Framework](http://activate-framework.org/) - full ORM solution for persisting objects using a software
- transactional memory (STM) layer;
-* [ScalikeJDBC-Async](https://github.com/scalikejdbc/scalikejdbc-async) - provides an abstraction layer on top of the
- driver allowing you to write less SQL and make use of a nice high level database access API;
-* [mod-mysql-postgresql](https://github.com/vert-x/mod-mysql-postgresql) - [vert.x](http://vertx.io/) module that integrates
- the driver into a vert.x application;
-* [dbmapper](https://github.com/njeuk/dbmapper) - enables SQL queries with automatic mapping from the database table to the Scala 
- class and a mechanism to create a Table Date Gateway model with very little boiler plate code;
-* [Quill](http://getquill.io) - A compile-time language integrated query library for Scala.
+For information specific to the drivers, check 
+ - [PostgreSQL README](postgresql-async/README.md) and the
+ - [MySQL README](mysql-async/README.md).
 
 ## Include them as dependencies
 
 And if you're in a hurry, you can include them in your build like this, if you're using PostgreSQL:
 
 ```scala
-"com.github.postgresql" %% "postgresql-async" % "0.3.0"
+"com.github.postgresql-async" %% "postgresql-async" % "0.3.1"
 ```
 
 Or Maven:
 
 ```xml
 <dependency>
-  <groupId>com.github.postgresql</groupId>
-  <artifactId>postgresql-async_2.11</artifactId>
-  <version>0.3.0</version>
-</dependency>
-```
-
-respectively for Scala 2.12:
-```xml
-<dependency>
-  <groupId>com.github.postgresql</groupId>
-  <artifactId>postgresql-async_2.12</artifactId>
-  <version>0.3.0</version>
+  <groupId>com.github.postgresql-async</groupId>
+  <artifactId>postgresql-async_<scalaMajorVersion></artifactId>
+  <version>0.3.1</version>
 </dependency>
 ```
 
 And if you're into MySQL:
 
 ```scala
-"com.github.postgresql" %% "mysql-async" % "0.3.0"
+"com.github.postgresql-async" %% "mysql-async" % "0.3.1"
 ```
 
 Or Maven:
 
 ```xml
 <dependency>
-  <groupId>com.github.postgresql</groupId>
-  <artifactId>mysql-async_2.11</artifactId>
-  <version>0.3.0</version>
+  <groupId>com.github.postgresql-async</groupId>
+  <artifactId>mysql-async_<scalaMajorVersion></artifactId>
+  <version>0.3.1</version>
 </dependency>
 ```
-respectively for Scala 2.12:
-```xml
-<dependency>
-  <groupId>com.github.postgresql</groupId>
-  <artifactId>mysql-async_2.12</artifactId>
-  <version>0.3.0</version>
-</dependency>
-```
+
 
 ## Database connections and encodings
 
@@ -143,21 +114,28 @@ So, prepared statements are awesome, but are not free. Use them judiciously.
 - easy to use, call a method, get a future or a callback and be happy
 - never, ever, block
 - all features covered by tests
-- next to zero dependencies (it currently depends on Netty, JodaTime and SFL4J only)
+- less dependencies (it currently depends on Netty, JodaTime, scala-collection-compat and SFL4J only)
 
-## What is missing?
+## Recently planned improvoments
 
-- more authentication mechanisms
-- benchmarks
-- more tests (run the `jacoco:cover` sbt task and see where you can improve)
-- timeout handler for initial handshare and queries
+- [x] CI/CD migration
+- [x] Scala 3 support
+- [ ] `java.time` migration
+- [ ] Stablize api
+- [ ] New pool implementation
+- [ ] PreparedStatement management
+- [ ] ColumnData caching
+- [ ] `PooledByteBufferAllocator` support
+- [ ] More netty customization option (inlcuding native transport)
+- [ ] Postgresql binary protocol
+
 
 ## How can you help?
 
 - checkout the source code
 - find bugs, find places where performance can be improved
 - check the **What is missing** piece
-- check the [issues page](https://github.com/postgresql/postgresql-async/issues) for bugs or new features
+- check the [issues page](https://github.com/postgresql-async/postgresql-async/issues) for bugs or new features
 - send a pull request with specs
 
 ## Main public interface
@@ -240,10 +218,10 @@ it [here](http://postgresql.github.io/2013/04/29/async-database-access-with-post
 
 In short, what you would usually do is:
 ```scala
-import com.github.postgresql.async.db.postgresql.PostgreSQLConnection
-import com.github.postgresql.async.db.postgresql.util.URLParser
-import com.github.postgresql.async.db.util.ExecutorServiceUtils.CachedExecutionContext
-import com.github.postgresql.async.db.{RowData, QueryResult, Connection}
+import com.github.mauricio.async.db.postgresql.PostgreSQLConnection
+import com.github.mauricio.async.db.postgresql.util.URLParser
+import com.github.mauricio.async.db.util.ExecutorServiceUtils.CachedExecutionContext
+import com.github.mauricio.async.db.{RowData, QueryResult, Connection}
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 

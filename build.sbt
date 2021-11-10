@@ -3,7 +3,7 @@ import ReleaseTransformations._
 val commonName     = "db-async-common"
 val postgresqlName = "postgresql-async"
 val mysqlName      = "mysql-async"
-val nettyVersion   = "4.1.66.Final"
+val nettyVersion   = "4.1.70.Final"
 
 def testDependency(scalaVersion: String) = {
   val scalacheckPlusV = if (scalaVersion.startsWith("2.11")) {
@@ -15,7 +15,7 @@ def testDependency(scalaVersion: String) = {
     "org.scalatest"     %% "scalatest"       % "3.2.10"        % Test,
     "org.scalatestplus" %% "scalacheck-1-15" % scalacheckPlusV % Test,
     "org.mockito"        % "mockito-core"    % "4.0.0"         % Test,
-    "org.slf4j"          % "slf4j-simple"    % "1.7.29"        % Test
+    "org.slf4j"          % "slf4j-simple"    % "1.7.32"        % Test
   )
 }
 
@@ -25,7 +25,11 @@ lazy val root = (project in file("."))
     name            := "db-async-base",
     publish         := {},
     publishLocal    := {},
-    publishArtifact := false
+    publishArtifact := false,
+    jacocoAggregateReportSettings := JacocoReportSettings(
+      title = "PostgresAsync Coverage",
+      formats = Seq(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML)
+    )
   )
   .aggregate(common, postgresql, mysql)
 
@@ -51,14 +55,14 @@ lazy val mysql = (project in file("mysql-async"))
   .dependsOn(common % "compile->compile;test->test")
 
 def commonDependencies(scalaVersion: String) = Seq(
-  "org.slf4j"                % "slf4j-api"               % "1.7.29",
-  "joda-time"                % "joda-time"               % "2.10.5",
+  "org.slf4j"                % "slf4j-api"               % "1.7.32",
+  "joda-time"                % "joda-time"               % "2.10.13",
   "org.joda"                 % "joda-convert"            % "2.2.1",
   "io.netty"                 % "netty-codec"             % nettyVersion,
   "io.netty"                 % "netty-handler"           % nettyVersion,
-  "org.javassist"            % "javassist"               % "3.26.0-GA",
+  "org.javassist"            % "javassist"               % "3.28.0-GA",
   "org.scala-lang.modules"  %% "scala-collection-compat" % "2.5.0",
-  "com.google.code.findbugs" % "jsr305"                  % "3.0.1" % Provided
+  "com.google.code.findbugs" % "jsr305"                  % "3.0.2" % Provided
 ) ++ testDependency(scalaVersion)
 
 def scalacOpts(v: String): Seq[String] = {
@@ -84,9 +88,9 @@ def scalacOpts(v: String): Seq[String] = {
 }
 
 val baseSettings = Seq(
-  crossScalaVersions := Seq("2.11.12", "2.12.14", "2.13.6", "3.0.2"),
+  crossScalaVersions := Seq("2.11.12", "2.12.15", "2.13.7", "3.1.0"),
   (Test / fork)      := true,
-  scalaVersion       := "2.13.6",
+  scalaVersion       := "2.13.7",
   scalacOptions      := scalacOpts(scalaVersion.value),
   (doc / scalacOptions) := Seq(
     s"-doc-external-doc:scala=https://www.scala-lang.org/files/archive/api/${scalaVersion.value}/"
@@ -98,34 +102,23 @@ val baseSettings = Seq(
 ) ++ publishSettings
 
 lazy val publishSettings = Seq(
-  // Add sonatype repository settings
-  publishTo := Some(
-    if (isSnapshot.value)
-      Opts.resolver.sonatypeSnapshots
-    else
-      Opts.resolver.sonatypeStaging
-  ),
-  releaseCrossBuild             := true,
-  releasePublishArtifactsAction := PgpKeys.publishSigned.value,
-  releaseProcess := Seq[ReleaseStep](
-    checkSnapshotDependencies,
-    inquireVersions,
-    runClean,
-    runTest,
-    setReleaseVersion,
-    commitReleaseVersion,
-    tagRelease,
-    publishArtifacts,
-    setNextVersion,
-    commitNextVersion,
-    releaseStepCommand("sonatypeReleaseAll"),
-    pushChanges
-  ),
   scmInfo := Some(
     ScmInfo(
       url("https://github.com/postgresql-async/postgresql-async"),
       "git@github.com:postgresql-async/postgresql-async.git"
     )
+  ),
+  releaseProcess := Seq[
+    ReleaseStep
+  ]( // release was run by github action, just make a tag here
+    checkSnapshotDependencies,
+    inquireVersions,
+    setReleaseVersion,
+    commitReleaseVersion,
+    tagRelease,
+    setNextVersion,
+    commitNextVersion,
+    pushChanges
   ),
   developers += Developer(
     "jilen",
@@ -134,7 +127,6 @@ lazy val publishSettings = Seq(
     url("https://github.com/jilen")
   ),
   licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0")),
-  pomIncludeRepository := (_ => false),
   homepage := Some(url("https://github.com/postgresql-async/postgresql-async"))
 )
 

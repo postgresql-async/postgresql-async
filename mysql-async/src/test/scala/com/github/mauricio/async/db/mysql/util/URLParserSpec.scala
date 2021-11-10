@@ -36,7 +36,7 @@ class URLParserSpec extends Spec {
 
       DEFAULT === Configuration(
         username = "root",
-        host = "127.0.0.1", //Matched JDBC default
+        host = "127.0.0.1", // Matched JDBC default
         port = 3306,
         password = None,
         database = None
