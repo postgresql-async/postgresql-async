@@ -42,7 +42,7 @@ jobs:
             ~/.ivy2/cache
             ~/.coursier
             ~/.cache/coursier
-          key: sbt-cache-${{ runner.os }}-${{ matrix.target-platform }}-${{ hashFiles('project/build.properties') }}-${{ hashFiles('build.sbt') }}
+          key: sbt-cache-${{ runner.os }}-${{matrix.scala}}-${{ matrix.target-platform }}-${{ hashFiles('project/build.properties') }}
 
       - name: Tests
         run: sbt ++${{matrix.scala}} test
