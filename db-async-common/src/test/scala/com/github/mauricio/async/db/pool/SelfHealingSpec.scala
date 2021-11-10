@@ -4,9 +4,9 @@ import java.util.concurrent.atomic._
 import com.github.mauricio.async.db.Spec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalacheck._
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
 import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class SelfHealingSpec
     extends Spec
@@ -23,7 +23,6 @@ class SelfHealingSpec
     checkInterval = 10,
     releaseTimeout = 10,
     checkTimeout = 10,
-    minHealInterval = 10,
     createTimeout = 10
   )
 
@@ -97,7 +96,7 @@ class SelfHealingSpec
 
     def verifyResult(start: Long, end: Long) = {
       createCount.get <= (checkCount.get() - successCheck.get()) + 1
-      successCreate.get() === releaseCount
+      successCreate.get() mustEqual releaseCount
         .get() // always release success creation
       val checkTime =
         ((end - start) / config.checkInterval).toInt // check at min interval
@@ -136,11 +135,11 @@ class SelfHealingSpec
             println(s"Failed get resource ${e}")
           }
         }
-        val maxGap = (r.endAt - r.startAt) / 10 + 1
-        r.successCreate === r.releaseCount
-        r.checkCount <= maxGap
-        r.createCount <= maxGap
-        r.createCount <= (r.checkCount - r.successCheck) + 1
+        val maxGap = ((r.endAt - r.startAt) / 10 + 1).toInt
+        r.successCreate mustEqual r.releaseCount
+        r.checkCount must be <= maxGap
+        r.createCount must be <= (maxGap)
+        r.createCount must be <= (r.checkCount - r.successCheck) + 1
       }
     }
 
@@ -154,11 +153,9 @@ class SelfHealingSpec
           for {
             _ <- sh.get().recover { case e: Throwable =>
             }
-            start = System.currentTimeMillis()
             _ <- FutureGenInstance.timer.sleep(
               (config.checkInterval + 10).millis
             )
-            end = System.currentTimeMillis
             _ <- sh.get().recover { case e: Throwable => }
           } yield {}
         }
@@ -184,6 +181,24 @@ class SelfHealingSpec
             end = System.currentTimeMillis
             _ <- sh.get().recover { case e: Throwable =>
             }
+          } yield {}
+        }
+        rr.checkCount mustEqual (1)
+        rr.createCount mustEqual (2)
+      }
+    }
+
+    "should create only once with in min-interval" in {
+      forAll { (data: Data) =>
+        val nd = data.copy(check = () => Future.successful(false))
+        val rr = runPropTest(nd) { sh =>
+          for {
+            _ <- FutureGenInstance.timer.sleep(
+              (config.checkInterval + 10).millis
+            )
+            _ <- sh.get().recover { case e: Throwable => }
+            _ <- sh.get()
+            _ <- sh.get()
           } yield {}
         }
         rr.checkCount mustEqual (1)

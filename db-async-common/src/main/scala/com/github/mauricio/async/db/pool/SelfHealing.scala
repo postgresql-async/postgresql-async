@@ -34,8 +34,7 @@ object SelfHealing {
     checkInterval: Long,
     createTimeout: Long,
     releaseTimeout: Long,
-    checkTimeout: Long,
-    minHealInterval: Long
+    checkTimeout: Long
   )
 
   /**
@@ -148,8 +147,7 @@ object SelfHealing {
             isAlive <- curr.promise.future
               .flatMap(timeoutCheck)
               .recover { case e: Throwable => false }
-            isOk = isAlive || (now - curr.createTime) < config.minHealInterval
-            r <- if (isOk) curr.promise.future else healed(newState)
+            r <- if (isAlive) curr.promise.future else healed(newState)
           } yield r
         } else { // under checking, return old resource
           curr.promise.future
