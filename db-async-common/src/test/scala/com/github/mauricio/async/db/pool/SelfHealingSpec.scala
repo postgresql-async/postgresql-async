@@ -190,15 +190,19 @@ class SelfHealingSpec
 
     "should create only once with in min-interval" in {
       forAll { (data: Data) =>
-        val nd = data.copy(check = () => Future.successful(false))
+        val nd = data.copy(
+          acquire = () => Future(System.currentTimeMillis().toInt),
+          check = () => Future.successful(false)
+        )
         val rr = runPropTest(nd) { sh =>
           for {
+            _ <- sh.get().recover { case e: Throwable => }
             _ <- FutureGenInstance.timer.sleep(
-              (config.checkInterval + 10).millis
+              (config.checkInterval + 1).millis
             )
             _ <- sh.get().recover { case e: Throwable => }
-            _ <- sh.get()
-            _ <- sh.get()
+            _ <- sh.get().recover { case e: Throwable => }
+            _ <- sh.get().recover { case e: Throwable => }
           } yield {}
         }
         rr.checkCount mustEqual (1)
