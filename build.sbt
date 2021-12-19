@@ -47,7 +47,7 @@ lazy val mysql = (project in file("mysql-async"))
 def commonDependencies(scalaVersion: String) = Seq(
   "org.slf4j"                % "slf4j-api"               % "1.7.32",
   "joda-time"                % "joda-time"               % "2.10.13",
-  "org.joda"                 % "joda-convert"            % "2.2.1",
+  "org.joda"                 % "joda-convert"            % "2.2.2",
   "io.netty"                 % "netty-codec"             % nettyVersion,
   "io.netty"                 % "netty-handler"           % nettyVersion,
   "org.javassist"            % "javassist"               % "3.28.0-GA",
