@@ -24,6 +24,12 @@ object ExecutorServiceUtils {
     Executors.newFixedThreadPool(count, DaemonThreadsFactory(name))
   }
 
+  implicit val CachedThreadPool: ExecutorService =
+    Executors.newCachedThreadPool(DaemonThreadsFactory("db-async-default"))
+
+  implicit val CachedExecutionContext: ExecutionContext =
+    ExecutionContext.fromExecutor(CachedThreadPool)
+
   private[db] implicit val SameThread: ExecutionContext =
     SameThreadExecutionContext()
 
