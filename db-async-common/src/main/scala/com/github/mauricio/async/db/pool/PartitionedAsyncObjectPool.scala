@@ -13,7 +13,7 @@ class PartitionedAsyncObjectPool[T](
   numberOfPartitions: Int
 ) extends AsyncObjectPool[T] {
 
-  import ExecutorServiceUtils.CachedExecutionContext
+  import ExecutorServiceUtils.SameThread
 
   private val pools =
     (0 until numberOfPartitions)

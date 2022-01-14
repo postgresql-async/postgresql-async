@@ -43,8 +43,7 @@ object PostgreSQLConnectionFactory {
 class PostgreSQLConnectionFactory(
   val configuration: Configuration,
   group: EventLoopGroup = NettyUtils.DefaultEventLoopGroup,
-  executionContext: ExecutionContext =
-    ExecutorServiceUtils.CachedExecutionContext
+  executionContext: ExecutionContext = ExecutorServiceUtils.SameThread
 ) extends ObjectFactory[PostgreSQLConnection] {
 
   import PostgreSQLConnectionFactory.log

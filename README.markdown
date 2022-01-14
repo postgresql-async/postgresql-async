@@ -220,9 +220,9 @@ In short, what you would usually do is:
 ```scala
 import com.github.mauricio.async.db.postgresql.PostgreSQLConnection
 import com.github.mauricio.async.db.postgresql.util.URLParser
-import com.github.mauricio.async.db.util.ExecutorServiceUtils.CachedExecutionContext
 import com.github.mauricio.async.db.{RowData, QueryResult, Connection}
 import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global // Or use the default pool provided by underlying runtime.
 import scala.concurrent.{Await, Future}
 
 object BasicExample {
@@ -245,7 +245,7 @@ object BasicExample {
     }
     )
 
-    val result = Await.result( mapResult, 5 seconds )
+    val result = Await.result( mapResult, 5 seconds ) // Blocking here, used for demo, should be avoid in real application.
 
     println(result)
 

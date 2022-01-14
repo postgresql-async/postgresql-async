@@ -13,6 +13,24 @@ def testDependency(scalaVersion: String) = {
   )
 }
 
+def scalaVersionSpecificFolders(
+  srcName: String,
+  srcBaseDir: java.io.File,
+  scalaVersion: String
+) = {
+  def extraDirs(suffix: String) =
+    srcBaseDir / "src" / srcName / s"scala${suffix}"
+
+  CrossVersion.partialVersion(scalaVersion) match {
+    case Some((2, y)) =>
+      val shared2x = extraDirs("-2.x")
+      val extra    = if (y >= 13) extraDirs("-2.13+") else extraDirs("-2.13-")
+      Seq(shared2x, extra)
+    case Some((0 | 3, _)) => Seq(extraDirs("-2.13+"), extraDirs("-3.x"))
+    case _                => Nil
+  }
+}
+
 lazy val root = (project in file("."))
   .settings(baseSettings: _*)
   .settings(
@@ -24,11 +42,11 @@ lazy val root = (project in file("."))
   .aggregate(common, postgresql, mysql)
 
 lazy val common = (project in file("db-async-common"))
-  .settings(baseSettings: _*)
   .settings(
     name := commonName,
     libraryDependencies ++= commonDependencies(scalaVersion.value)
   )
+  .settings(baseSettings: _*)
 
 lazy val postgresql = (project in file("postgresql-async"))
   .settings(baseSettings: _*)
@@ -89,6 +107,16 @@ val baseSettings = Seq(
   (Test / javaOptions) ++= Seq(
     "-Dio.netty.leakDetection.level=paranoid",
     "-Dorg.slf4j.simpleLogger.log.io.netty=DEBUG"
+  ),
+  Compile / unmanagedSourceDirectories ++= scalaVersionSpecificFolders(
+    "main",
+    baseDirectory.value,
+    scalaVersion.value
+  ),
+  Test / unmanagedSourceDirectories ++= scalaVersionSpecificFolders(
+    "test",
+    baseDirectory.value,
+    scalaVersion.value
   ),
   organization               := "com.github.postgresql-async",
   (Test / parallelExecution) := false

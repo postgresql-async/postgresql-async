@@ -122,7 +122,7 @@ class PostgreSQLColumnEncoderRegistry extends ColumnEncoderRegistry {
       value match {
         case i: java.lang.Iterable[_] => encodeArray(i.asScala)
         case i: Iterable[_]           => encodeArray(i)
-        case i: Array[_]              => encodeArray(i.toIterable)
+        case i: Array[_]              => encodeArray(i)
         case p: Product               => encodeComposite(p)
         case _ => {
           this.classesSequence
