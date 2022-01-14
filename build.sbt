@@ -18,7 +18,6 @@ def scalaVersionSpecificFolders(
   srcBaseDir: java.io.File,
   scalaVersion: String
 ) = {
-  println(srcBaseDir)
   def extraDirs(suffix: String) =
     srcBaseDir / "src" / srcName / s"scala${suffix}"
 
