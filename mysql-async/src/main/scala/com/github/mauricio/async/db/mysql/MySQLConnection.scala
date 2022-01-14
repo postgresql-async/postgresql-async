@@ -47,7 +47,7 @@ class MySQLConnection(
   charsetMapper: CharsetMapper = CharsetMapper.Instance,
   group: EventLoopGroup = NettyUtils.DefaultEventLoopGroup,
   implicit val executionContext: ExecutionContext =
-    ExecutorServiceUtils.CachedExecutionContext
+    ExecutorServiceUtils.SameThread
 ) extends MySQLHandlerDelegate
     with Connection
     with TimeoutScheduler {

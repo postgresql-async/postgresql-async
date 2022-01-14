@@ -64,7 +64,7 @@ class PostgreSQLConnection(
     PostgreSQLColumnDecoderRegistry.Instance,
   group: EventLoopGroup = NettyUtils.DefaultEventLoopGroup,
   implicit val executionContext: ExecutionContext =
-    ExecutorServiceUtils.CachedExecutionContext
+    ExecutorServiceUtils.SameThread
 ) extends PostgreSQLConnectionDelegate
     with Connection
     with TimeoutScheduler {
