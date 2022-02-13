@@ -43,7 +43,7 @@ trait PreparedStatementEncoderHelper {
     if (log.isDebugEnabled) {
       log.debug(
         s"Preparing execute portal to statement ($query) - values (${values
-          .mkString(", ")}) - ${charset}"
+            .mkString(", ")}) - ${charset}"
       )
     }
 
@@ -95,7 +95,7 @@ trait PreparedStatementEncoderHelper {
     if (log.isDebugEnabled) {
       log.debug(
         s"Executing portal - statement id (${statementIdBytes.mkString("-")}) - statement ($query) - encoded values (${decodedValues
-          .mkString(", ")}) - original values (${values.mkString(", ")})"
+            .mkString(", ")}) - original values (${values.mkString(", ")})"
       )
     }
 

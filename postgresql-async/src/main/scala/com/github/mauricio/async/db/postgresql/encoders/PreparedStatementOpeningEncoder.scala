@@ -59,8 +59,8 @@ class PreparedStatementOpeningEncoder(
 
     if (log.isDebugEnabled) {
       log.debug(s"Opening query (${m.query}) - statement id (${statementIdBytes
-        .mkString("-")}) - selected types (${m.valueTypes
-        .mkString(", ")}) - values (${m.values.mkString(", ")})")
+          .mkString("-")}) - selected types (${m.valueTypes
+          .mkString(", ")}) - values (${m.values.mkString(", ")})")
     }
 
     for (kind <- m.valueTypes) {
