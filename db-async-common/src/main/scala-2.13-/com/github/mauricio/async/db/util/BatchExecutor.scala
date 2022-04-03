@@ -6,8 +6,8 @@ import scala.annotation.tailrec
 import scala.concurrent._
 
 /**
- * Copyright (C) 2009-2022 Lightbend Inc. <https://www.lightbend.com>
- * Copied from akka
+ * Copyright (C) 2009-2022 Lightbend Inc. <https://www.lightbend.com> Copied
+ * from akka
  */
 private[util] trait BatchingExecutor extends Executor {
 
@@ -100,9 +100,9 @@ private[util] trait BatchingExecutor extends Executor {
           ) // If we are already in batching mode, add to batch
       }
     } else
-        unbatchedExecute(
-          runnable
-        ) // If not batchable, just delegate to underlying
+      unbatchedExecute(
+        runnable
+      ) // If not batchable, just delegate to underlying
   }
 
   /** Override this to define which runnables will be batched. */
