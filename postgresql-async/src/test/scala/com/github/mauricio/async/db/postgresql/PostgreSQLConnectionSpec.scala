@@ -32,7 +32,7 @@ import com.github.mauricio.async.db.postgresql.messages.backend.InformationMessa
 import com.github.mauricio.async.db.util.Log
 import com.github.mauricio.async.db.{Configuration, Connection, QueryResult}
 import io.netty.buffer.Unpooled
-import org.joda.time.LocalDateTime
+import java.time.{Duration => _, _}
 import com.github.mauricio.async.db.Spec
 
 import scala.concurrent.duration._
@@ -425,7 +425,7 @@ class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
 
       withHandler { handler =>
         executePreparedStatement(handler, "CREATE TEMP TABLE test(t TIMESTAMP)")
-        val date1 = new LocalDateTime
+        val date1 = LocalDateTime.now()
         executePreparedStatement(
           handler,
           "INSERT INTO test(t) VALUES(?)",

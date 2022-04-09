@@ -17,25 +17,25 @@
 package com.github.mauricio.async.db.column
 
 import com.github.mauricio.async.db.Spec
-import org.joda.time.DateTime
+import java.time._
 import java.sql.Timestamp
-import org.joda.time.format.DateTimeFormatterBuilder
+import java.time.format._
 import java.util.Calendar
 
 class TimestampEncoderDecoderSpec extends Spec {
 
   val encoder = TimestampEncoderDecoder.Instance
-  val dateTime = new DateTime()
-    .withDate(2013, 12, 27)
-    .withTime(8, 40, 50, 800)
+  val dateTime =
+    LocalDate.of(2013, 12, 27).atTime(8, 40, 50, 800).atOffset(ZoneOffset.UTC)
 
   val result    = "2013-12-27 08:40:50.800000"
-  val formatter = new DateTimeFormatterBuilder().appendPattern("Z").toFormatter
+  val formatter = DateTimeFormatter.ofPattern("Z")
   val resultWithTimezone =
-    s"2013-12-27 08:40:50.800000${formatter.print(dateTime)}"
+    s"2013-12-27 08:40:50.800000${formatter.format(dateTime)}"
   "doecoder" - {
     "shouldprint a timestamp" in {
-      val timestamp = new Timestamp(dateTime.toDate.getTime)
+      val timestamp =
+        new Timestamp(dateTime.toInstant().toEpochMilli)
       encoder.encode(timestamp) === resultWithTimezone
     }
 
@@ -44,12 +44,12 @@ class TimestampEncoderDecoderSpec extends Spec {
     }
 
     "should print a date" in {
-      encoder.encode(dateTime.toDate) === resultWithTimezone
+      encoder.encode(dateTime) === resultWithTimezone
     }
 
     "should print a calendar" in {
       val calendar = Calendar.getInstance()
-      calendar.setTime(dateTime.toDate)
+      calendar.setTime(new java.util.Date(dateTime.toInstant().toEpochMilli()))
       encoder.encode(calendar) === resultWithTimezone
     }
 

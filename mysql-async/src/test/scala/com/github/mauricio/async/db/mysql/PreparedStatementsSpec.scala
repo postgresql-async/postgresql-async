@@ -18,7 +18,8 @@ package com.github.mauricio.async.db.mysql
 
 import java.sql.Timestamp
 import java.util.concurrent.TimeUnit
-import org.joda.time._
+import java.time._
+import java.time.temporal._
 import com.github.mauricio.async.db.Spec
 import scala.concurrent.duration.Duration
 import scala.Some
@@ -101,25 +102,25 @@ class PreparedStatementsSpec extends Spec with ConnectionHelper {
         val date = result("created_at_date").asInstanceOf[LocalDate]
 
         date.getYear === 2038
-        date.getMonthOfYear === 1
+        date.getMonthValue === 1
         date.getDayOfMonth === 19
 
         val dateTime = result("created_at_datetime").asInstanceOf[LocalDateTime]
         dateTime.getYear === 2013
-        dateTime.getMonthOfYear === 1
+        dateTime.getMonthValue === 1
         dateTime.getDayOfMonth === 19
-        dateTime.getHourOfDay === 3
-        dateTime.getMinuteOfHour === 14
-        dateTime.getSecondOfMinute === 7
+        dateTime.getHour === 3
+        dateTime.getMinute === 14
+        dateTime.getSecond === 7
 
         val timestamp =
           result("created_at_timestamp").asInstanceOf[LocalDateTime]
         timestamp.getYear === 2020
-        timestamp.getMonthOfYear === 1
+        timestamp.getMonthValue === 1
         timestamp.getDayOfMonth === 19
-        timestamp.getHourOfDay === 3
-        timestamp.getMinuteOfHour === 14
-        timestamp.getSecondOfMinute === 7
+        timestamp.getHour === 3
+        timestamp.getMinute === 14
+        timestamp.getSecond === 7
 
         result("created_at_time") === Duration(3, TimeUnit.HOURS) + Duration(
           14,
@@ -233,9 +234,10 @@ class PreparedStatementsSpec extends Spec with ConnectionHelper {
           |values ( ?, ?, ?, ?, ? )
         """.stripMargin
 
-      val date      = new LocalDate(2011, 9, 8)
-      val dateTime  = new LocalDateTime(2012, 5, 27, 15, 29, 55)
-      val timestamp = new Timestamp(dateTime.toDateTime.getMillis)
+      val date     = LocalDate.of(2011, 9, 8)
+      val dateTime = LocalDateTime.of(2012, 5, 27, 15, 29, 55)
+      val timestamp =
+        new Timestamp(dateTime.toInstant(ZoneOffset.UTC).toEpochMilli)
       val time =
         Duration(3, TimeUnit.HOURS) + Duration(5, TimeUnit.MINUTES) + Duration(
           10,
@@ -264,7 +266,7 @@ class PreparedStatementsSpec extends Spec with ConnectionHelper {
         val row = rows(0)
 
         row("created_at_date") === date
-        row("created_at_timestamp") === new LocalDateTime(timestamp.getTime)
+        row("created_at_timestamp") === dateTime
         row("created_at_time") === time
         row("created_at_year") === year
         row("created_at_datetime") === dateTime
@@ -291,7 +293,7 @@ class PreparedStatementsSpec extends Spec with ConnectionHelper {
         Duration(7, TimeUnit.SECONDS) +
         Duration(19, TimeUnit.MILLISECONDS)
 
-      val timestamp = new LocalDateTime(2013, 1, 19, 3, 14, 7, 19)
+      val timestamp = LocalDateTime.of(2013, 1, 19, 3, 14, 7, 19)
       val select    = "SELECT * FROM posts"
 
       withConnection { connection =>
@@ -398,7 +400,9 @@ class PreparedStatementsSpec extends Spec with ConnectionHelper {
         )
         val moment = LocalDateTime
           .now()
-          .withMillisOfDay(0) // cut off millis to match timestamp
+          .truncatedTo(
+            ChronoUnit.SECONDS
+          ) // cut off millis to match timestamp
         executePreparedStatement(
           connection,
           "INSERT INTO timestamps (moment, id) VALUES (?, ?)",
