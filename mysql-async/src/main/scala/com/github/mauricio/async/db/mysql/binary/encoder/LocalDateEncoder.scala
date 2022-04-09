@@ -17,7 +17,7 @@
 package com.github.mauricio.async.db.mysql.binary.encoder
 
 import io.netty.buffer.ByteBuf
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import com.github.mauricio.async.db.exceptions.DateEncoderNotAvailableException
 import com.github.mauricio.async.db.mysql.column.ColumnTypes
 
@@ -27,8 +27,8 @@ object LocalDateEncoder extends BinaryEncoder {
 
     buffer.writeByte(4)
     buffer.writeShort(date.getYear)
-    buffer.writeByte(date.getMonthOfYear)
-    buffer.writeByte(date.getDayOfMonth)
+    buffer.writeByte(date.getMonthValue())
+    buffer.writeByte(date.getDayOfMonth())
 
   }
 

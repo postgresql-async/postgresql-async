@@ -16,27 +16,28 @@
 
 package com.github.mauricio.async.db.column
 
-import org.joda.time.format.DateTimeFormat
-import org.joda.time.{ReadablePartial, LocalDate}
+import java.time._
+import java.time.format._
+import java.time.temporal._
 import com.github.mauricio.async.db.exceptions.DateEncoderNotAvailableException
 
 object DateEncoderDecoder extends ColumnEncoderDecoder {
 
   private val ZeroedDate = "0000-00-00"
 
-  private val formatter = DateTimeFormat.forPattern("yyyy-MM-dd")
+  private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
   override def decode(value: String): LocalDate =
     if (ZeroedDate == value) {
       null
     } else {
-      this.formatter.parseLocalDate(value)
+      LocalDate.parse(value, formatter)
     }
 
   override def encode(value: Any): String = {
     value match {
-      case d: java.sql.Date   => this.formatter.print(new LocalDate(d))
-      case d: ReadablePartial => this.formatter.print(d)
+      case d: java.sql.Date    => this.formatter.format(d.toLocalDate)
+      case d: TemporalAccessor => this.formatter.format(d)
       case _ => throw new DateEncoderNotAvailableException(value)
     }
   }

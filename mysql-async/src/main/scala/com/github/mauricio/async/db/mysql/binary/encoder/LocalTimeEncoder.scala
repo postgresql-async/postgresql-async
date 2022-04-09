@@ -17,22 +17,23 @@
 package com.github.mauricio.async.db.mysql.binary.encoder
 
 import io.netty.buffer.ByteBuf
-import org.joda.time.LocalTime
+import java.time.LocalTime
+import java.time.temporal._
 import com.github.mauricio.async.db.mysql.column.ColumnTypes
 
 object LocalTimeEncoder extends BinaryEncoder {
   def encode(value: Any, buffer: ByteBuf): Unit = {
-    val time = value.asInstanceOf[LocalTime]
+    val time         = value.asInstanceOf[LocalTime]
+    val microSeconds = time.get(ChronoField.MICRO_OF_SECOND)
+    val hasMicro     = microSeconds != 0
 
-    val hasMillis = time.getMillisOfSecond != 0
-
-    if (hasMillis) {
+    if (hasMicro) {
       buffer.writeByte(12)
     } else {
       buffer.writeByte(8)
     }
 
-    if (time.getMillisOfDay > 0) {
+    if (time.get(ChronoField.MICRO_OF_DAY) > 0) {
       buffer.writeByte(0)
     } else {
       buffer.writeByte(1)
@@ -40,12 +41,12 @@ object LocalTimeEncoder extends BinaryEncoder {
 
     buffer.writeInt(0)
 
-    buffer.writeByte(time.getHourOfDay)
-    buffer.writeByte(time.getMinuteOfHour)
-    buffer.writeByte(time.getSecondOfMinute)
+    buffer.writeByte(time.getHour)
+    buffer.writeByte(time.getMinute)
+    buffer.writeByte(time.getSecond)
 
-    if (hasMillis) {
-      buffer.writeInt(time.getMillisOfSecond * 1000)
+    if (hasMicro) {
+      buffer.writeInt(microSeconds)
     }
 
   }

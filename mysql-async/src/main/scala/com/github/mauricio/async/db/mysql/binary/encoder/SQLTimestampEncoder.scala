@@ -17,13 +17,13 @@
 package com.github.mauricio.async.db.mysql.binary.encoder
 
 import io.netty.buffer.ByteBuf
-import org.joda.time.{LocalDateTime, DateTime}
+import java.time._
 import com.github.mauricio.async.db.mysql.column.ColumnTypes
 
 object SQLTimestampEncoder extends BinaryEncoder {
   def encode(value: Any, buffer: ByteBuf): Unit = {
     val date = value.asInstanceOf[java.sql.Timestamp]
-    LocalDateTimeEncoder.encode(new LocalDateTime(date.getTime), buffer)
+    LocalDateTimeEncoder.encode(date.toLocalDateTime, buffer)
   }
 
   def encodesTo: Int = ColumnTypes.FIELD_TYPE_TIMESTAMP

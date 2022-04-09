@@ -25,31 +25,29 @@ import io.netty.buffer.ByteBuf
 import java.nio.charset.Charset
 import java.sql.Timestamp
 import java.util.{Calendar, Date}
-import org.joda.time._
-import org.joda.time.format.DateTimeFormatterBuilder
+import java.time._
+import java.time.format._
+import java.time.temporal._
 
 object PostgreSQLTimestampEncoderDecoder extends ColumnEncoderDecoder {
 
   private val log = Log.getByName(this.getClass.getName)
 
-  private val optionalTimeZone = new DateTimeFormatterBuilder()
-    .appendPattern("Z")
-    .toParser
+  private val optionalTimeZone = DateTimeFormatter.ofPattern("Z")
 
-  private val internalFormatters = 1.until(6).inclusive.map { index =>
+  private val internalFormatter =
     new DateTimeFormatterBuilder()
       .appendPattern("yyyy-MM-dd HH:mm:ss")
-      .appendPattern("." + ("S" * index))
+      .appendFraction(ChronoField.MICRO_OF_SECOND, 0, 6, true)
       .appendOptional(optionalTimeZone)
       .toFormatter
-  }
 
   private val internalFormatterWithoutSeconds = new DateTimeFormatterBuilder()
     .appendPattern("yyyy-MM-dd HH:mm:ss")
     .appendOptional(optionalTimeZone)
     .toFormatter
 
-  def formatter = internalFormatters(5)
+  def formatter = internalFormatter
 
   override def decode(
     kind: ColumnData,
@@ -62,31 +60,11 @@ object PostgreSQLTimestampEncoderDecoder extends ColumnEncoderDecoder {
     val text = new String(bytes, charset)
 
     val columnType = kind.asInstanceOf[PostgreSQLColumnData]
-
-    columnType.dataType match {
-      case ColumnTypes.Timestamp | ColumnTypes.TimestampArray => {
-        selectFormatter(text).parseLocalDateTime(text)
-      }
-      case ColumnTypes.TimestampWithTimezoneArray => {
-        selectFormatter(text).parseDateTime(text)
-      }
-      case ColumnTypes.TimestampWithTimezone => {
-        if (columnType.dataTypeModifier > 0) {
-          internalFormatters(columnType.dataTypeModifier - 1)
-            .parseDateTime(text)
-        } else {
-          selectFormatter(text).parseDateTime(text)
-        }
-      }
-    }
+    LocalDateTime.parse(text, internalFormatter)
   }
 
   private def selectFormatter(text: String) = {
-    if (text.contains(".")) {
-      internalFormatters(5)
-    } else {
-      internalFormatterWithoutSeconds
-    }
+    internalFormatter
   }
 
   override def decode(value: String): Any =
@@ -96,12 +74,12 @@ object PostgreSQLTimestampEncoderDecoder extends ColumnEncoderDecoder {
 
   override def encode(value: Any): String = {
     value match {
-      case t: Timestamp        => this.formatter.print(new DateTime(t))
-      case t: Date             => this.formatter.print(new DateTime(t))
-      case t: Calendar         => this.formatter.print(new DateTime(t))
-      case t: LocalDateTime    => this.formatter.print(t)
-      case t: ReadableDateTime => this.formatter.print(t)
-      case _ => throw new DateEncoderNotAvailableException(value)
+      case t: Timestamp     => this.formatter.format(t.toInstant)
+      case t: Date          => this.formatter.format(t.toInstant)
+      case t: Calendar      => this.formatter.format(t.toInstant)
+      case t: LocalDateTime => this.formatter.format(t)
+      case t: ZonedDateTime => this.formatter.format(t)
+      case _                => throw new DateEncoderNotAvailableException(value)
     }
   }
 

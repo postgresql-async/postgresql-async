@@ -18,12 +18,15 @@ package com.github.mauricio.async.db.mysql.binary.encoder
 
 import io.netty.buffer.ByteBuf
 import com.github.mauricio.async.db.mysql.column.ColumnTypes
-import org.joda.time._
+import java.time._
 
-object ReadableInstantEncoder extends BinaryEncoder {
+object InstantEncoder extends BinaryEncoder {
   def encode(value: Any, buffer: ByteBuf): Unit = {
-    val date = value.asInstanceOf[ReadableInstant]
-    LocalDateTimeEncoder.encode(new LocalDateTime(date.getMillis), buffer)
+    val date = value.asInstanceOf[Instant]
+    LocalDateTimeEncoder.encode(
+      LocalDateTime.ofInstant(date, ZoneId.systemDefault()),
+      buffer
+    )
   }
 
   def encodesTo: Int = ColumnTypes.FIELD_TYPE_TIMESTAMP

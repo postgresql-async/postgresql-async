@@ -16,11 +16,11 @@
 
 package com.github.mauricio.async.db.column
 
-import org.joda.time.format.DateTimeFormat
+import java.time.format.DateTimeFormatter
 
 object TimeWithTimezoneEncoderDecoder extends TimeEncoderDecoder {
 
-  private val format = DateTimeFormat.forPattern("HH:mm:ss.SSSSSSZ")
+  private val format = DateTimeFormatter.ofPattern("HH:mm:ss.SSSSSSZ")
 
   override def formatter = format
 

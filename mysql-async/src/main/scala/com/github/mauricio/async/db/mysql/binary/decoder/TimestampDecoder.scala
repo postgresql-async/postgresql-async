@@ -17,43 +17,35 @@
 package com.github.mauricio.async.db.mysql.binary.decoder
 
 import io.netty.buffer.ByteBuf
-import org.joda.time.LocalDateTime
+import java.time._
 
 object TimestampDecoder extends BinaryDecoder {
   def decode(buffer: ByteBuf): LocalDateTime = {
     val size = buffer.readUnsignedByte()
 
+    def readDatePart() = {
+      LocalDate.of(
+        buffer.readUnsignedShort(),
+        buffer.readUnsignedByte(),
+        buffer.readUnsignedByte()
+      )
+    }
+
     size match {
       case 0 => null
       case 4 =>
-        new LocalDateTime()
-          .withDate(
-            buffer.readUnsignedShort(),
-            buffer.readUnsignedByte(),
-            buffer.readUnsignedByte()
-          )
-          .withTime(0, 0, 0, 0)
+        readDatePart().atTime(0, 0, 0, 0)
       case 7 =>
-        new LocalDateTime()
-          .withDate(
-            buffer.readUnsignedShort(),
-            buffer.readUnsignedByte(),
-            buffer.readUnsignedByte()
-          )
-          .withTime(
+        readDatePart()
+          .atTime(
             buffer.readUnsignedByte(),
             buffer.readUnsignedByte(),
             buffer.readUnsignedByte(),
             0
           )
       case 11 =>
-        new LocalDateTime()
-          .withDate(
-            buffer.readUnsignedShort(),
-            buffer.readUnsignedByte(),
-            buffer.readUnsignedByte()
-          )
-          .withTime(
+        readDatePart()
+          .atTime(
             buffer.readUnsignedByte(),
             buffer.readUnsignedByte(),
             buffer.readUnsignedByte(),

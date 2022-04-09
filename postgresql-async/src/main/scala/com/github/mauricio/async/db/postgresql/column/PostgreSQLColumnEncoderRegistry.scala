@@ -20,11 +20,11 @@ import java.nio.ByteBuffer
 
 import com.github.mauricio.async.db.column._
 import io.netty.buffer.ByteBuf
-import org.joda.time._
+import java.time._
 import scala.jdk.CollectionConverters._
 
 object PostgreSQLColumnEncoderRegistry {
-  val Instance = new PostgreSQLColumnEncoderRegistry()
+  final val Instance = new PostgreSQLColumnEncoderRegistry()
 }
 
 class PostgreSQLColumnEncoderRegistry extends ColumnEncoderRegistry {
@@ -56,16 +56,14 @@ class PostgreSQLColumnEncoderRegistry extends ColumnEncoderRegistry {
     classOf[
       LocalDateTime
     ] -> (TimestampEncoderDecoder.Instance -> ColumnTypes.Timestamp),
-    classOf[DateTime] -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
     classOf[
-      ReadableDateTime
+      ZonedDateTime
     ] -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
-    classOf[ReadableInstant] -> (DateEncoderDecoder -> ColumnTypes.Date),
     classOf[
-      ReadablePeriod
+      Period
     ] -> (PostgreSQLIntervalEncoderDecoder -> ColumnTypes.Interval),
     classOf[
-      ReadableDuration
+      Duration
     ] -> (PostgreSQLIntervalEncoderDecoder -> ColumnTypes.Interval),
     classOf[
       java.util.Date
@@ -88,9 +86,6 @@ class PostgreSQLColumnEncoderRegistry extends ColumnEncoderRegistry {
 
   private final val classesSequence =
     (classOf[LocalTime] -> (TimeEncoderDecoder.Instance -> ColumnTypes.Time)) ::
-      (classOf[
-        ReadablePartial
-      ] -> (TimeEncoderDecoder.Instance -> ColumnTypes.Time)) ::
       classesSequence_
 
   private final val classes = classesSequence.toMap

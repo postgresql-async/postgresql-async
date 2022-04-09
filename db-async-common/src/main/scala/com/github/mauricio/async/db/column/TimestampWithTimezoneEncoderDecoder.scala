@@ -16,17 +16,18 @@
 
 package com.github.mauricio.async.db.column
 
-import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormat
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 object TimestampWithTimezoneEncoderDecoder extends TimestampEncoderDecoder {
 
-  private val format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss.SSSSSSZ")
+  private val format =
+    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSZ")
 
   override def formatter = format
 
   override def decode(value: String): Any = {
-    formatter.parseDateTime(value)
+    ZonedDateTime.parse(value, format)
   }
 
 }
