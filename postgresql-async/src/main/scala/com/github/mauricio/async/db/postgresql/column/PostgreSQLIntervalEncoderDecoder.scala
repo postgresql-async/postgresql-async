@@ -38,7 +38,7 @@ object PostgreSQLIntervalEncoderDecoder extends ColumnEncoderDecoder {
   /* This supports all positive intervals, and intervalstyle of postgres_verbose, and iso_8601 perfectly.
    * If intervalstyle is set to postgres or sql_standard, some negative intervals may be rejected.
    */
-  def decode(value: String): Period = {
-    Period.parse(value)
+  def decode(value: String): String = {
+    value
   }
 }

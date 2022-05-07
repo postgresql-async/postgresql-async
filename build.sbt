@@ -51,7 +51,10 @@ lazy val common = (project in file("db-async-common"))
 lazy val postgresql = (project in file("postgresql-async"))
   .settings(baseSettings: _*)
   .settings(
-    name := postgresqlName
+    name := postgresqlName,
+    libraryDependencies ++= Seq(
+      "org.threeten" % "threeten-extra" % "1.7.0"
+    )
   )
   .dependsOn(common % "compile->compile;test->test")
 

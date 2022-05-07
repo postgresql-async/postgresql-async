@@ -60,9 +60,6 @@ class PostgreSQLColumnEncoderRegistry extends ColumnEncoderRegistry {
       ZonedDateTime
     ] -> (TimestampWithTimezoneEncoderDecoder -> ColumnTypes.TimestampWithTimezone),
     classOf[
-      Period
-    ] -> (PostgreSQLIntervalEncoderDecoder -> ColumnTypes.Interval),
-    classOf[
       Duration
     ] -> (PostgreSQLIntervalEncoderDecoder -> ColumnTypes.Interval),
     classOf[

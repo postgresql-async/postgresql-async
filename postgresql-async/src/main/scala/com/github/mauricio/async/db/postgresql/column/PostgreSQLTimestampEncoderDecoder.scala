@@ -33,7 +33,7 @@ object PostgreSQLTimestampEncoderDecoder extends ColumnEncoderDecoder {
 
   private val log = Log.getByName(this.getClass.getName)
 
-  private val optionalTimeZone = DateTimeFormatter.ofPattern("Z")
+  private val optionalTimeZone = DateTimeFormatter.ofPattern("x")
 
   private val internalFormatter =
     new DateTimeFormatterBuilder()
@@ -60,7 +60,14 @@ object PostgreSQLTimestampEncoderDecoder extends ColumnEncoderDecoder {
     val text = new String(bytes, charset)
 
     val columnType = kind.asInstanceOf[PostgreSQLColumnData]
-    LocalDateTime.parse(text, internalFormatter)
+    columnType.dataType match {
+      case ColumnTypes.TimestampWithTimezone |
+          ColumnTypes.TimestampWithTimezoneArray =>
+        ZonedDateTime.parse(text, internalFormatter)
+      case ColumnTypes.Timestamp | ColumnTypes.TimestampArray =>
+        LocalDateTime.parse(text, internalFormatter)
+    }
+
   }
 
   private def selectFormatter(text: String) = {
