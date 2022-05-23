@@ -152,9 +152,10 @@ class PostgreSQLConnectionHandler(
 
       case SSLResponseMessage(supported) =>
         if (supported) {
+          val sslConfig  = configuration.ssl
           val ctxBuilder = SslContextBuilder.forClient()
-          if (configuration.ssl.mode >= Mode.VerifyCA) {
-            configuration.ssl.rootCert.fold {
+          if (sslConfig.mode >= Mode.VerifyCA) {
+            sslConfig.rootCert.fold {
               val tmf = TrustManagerFactory.getInstance(
                 TrustManagerFactory.getDefaultAlgorithm()
               )
@@ -171,6 +172,12 @@ class PostgreSQLConnectionHandler(
               ctxBuilder.trustManager(tmf)
             } { path =>
               ctxBuilder.trustManager(path)
+              (sslConfig.clientCert, sslConfig.clientKey) match {
+                case (Some(cert), Some(key)) =>
+                  ctxBuilder.keyManager(cert, key)
+                case _ =>
+              }
+              ctxBuilder
             }
           } else {
             ctxBuilder.trustManager(InsecureTrustManagerFactory.INSTANCE)
@@ -181,7 +188,7 @@ class PostgreSQLConnectionHandler(
             configuration.host,
             configuration.port
           )
-          if (configuration.ssl.mode >= Mode.VerifyFull) {
+          if (sslConfig.mode >= Mode.VerifyFull) {
             val sslParams = sslEngine.getSSLParameters()
             sslParams.setEndpointIdentificationAlgorithm("HTTPS")
             sslEngine.setSSLParameters(sslParams)
