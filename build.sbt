@@ -7,7 +7,7 @@ val nettyVersion   = "4.1.77.Final"
 
 def testDependency(scalaVersion: String) = {
   Seq(
-    "org.scalatest" %% "scalatest"    % "3.2.11" % Test,
+    "org.scalatest" %% "scalatest"    % "3.2.12" % Test,
     "org.mockito"    % "mockito-core" % "4.4.0"  % Test,
     "org.slf4j"      % "slf4j-simple" % "1.7.36" % Test
   )
