@@ -18,7 +18,10 @@ case class SSLConfiguration(
   mode: Mode.Value = Mode.Disable,
   rootCert: Option[java.io.File] = None,
   clientCert: Option[java.io.File] = None,
-  clientKey: Option[java.io.File] = None
+  clientKey: Option[java.io.File] = None,
+  clientKeyPwd: Option[String] = None,
+  trustStore: Option[java.io.File] = None,
+  trustStorePwd: Option[String] = None
 )
 
 object SSLConfiguration {
@@ -44,6 +47,9 @@ object SSLConfiguration {
       mode = Mode.withName(properties.get("sslmode").getOrElse("disable")),
       rootCert = properties.get("sslrootcert").map(new File(_)),
       clientCert = properties.get("sslcert").map(new File(_)),
-      clientKey = properties.get("sslkey").map(new File(_))
+      clientKey = properties.get("sslkey").map(new File(_)),
+      clientKeyPwd = properties.get("sslkeypwd"),
+      trustStore = properties.get("truststore").map(new File(_)),
+      trustStorePwd = properties.get("truststorepwd")
     )
 }
