@@ -3,7 +3,7 @@ import ReleaseTransformations._
 val commonName     = "db-async-common"
 val postgresqlName = "postgresql-async"
 val mysqlName      = "mysql-async"
-val nettyVersion   = "4.1.82.Final"
+val nettyVersion   = "4.1.85.Final"
 
 def testDependency(scalaVersion: String) = {
   Seq(
@@ -69,7 +69,7 @@ def commonDependencies(scalaVersion: String) = Seq(
   "io.netty"                 % "netty-codec"             % nettyVersion,
   "io.netty"                 % "netty-handler"           % nettyVersion,
   "org.javassist"            % "javassist"               % "3.28.0-GA",
-  "org.scala-lang.modules"  %% "scala-collection-compat" % "2.8.1",
+  "org.scala-lang.modules"  %% "scala-collection-compat" % "2.9.0",
   "com.google.code.findbugs" % "jsr305"                  % "3.0.2" % Provided
 ) ++ testDependency(scalaVersion)
 
