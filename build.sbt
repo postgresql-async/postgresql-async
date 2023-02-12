@@ -3,12 +3,12 @@ import ReleaseTransformations._
 val commonName     = "db-async-common"
 val postgresqlName = "postgresql-async"
 val mysqlName      = "mysql-async"
-val nettyVersion   = "4.1.86.Final"
+val nettyVersion   = "4.1.87.Final"
 
 def testDependency(scalaVersion: String) = {
   Seq(
     "org.scalatest" %% "scalatest"    % "3.2.14" % Test,
-    "org.mockito"    % "mockito-core" % "4.8.0"  % Test,
+    "org.mockito"    % "mockito-core" % "4.8.1"  % Test,
     "org.slf4j"      % "slf4j-simple" % "1.7.36" % Test
   )
 }
@@ -65,7 +65,7 @@ lazy val mysql = (project in file("mysql-async"))
 def commonDependencies(scalaVersion: String) = Seq(
   "org.slf4j"                % "slf4j-api"               % "1.7.36",
   "joda-time"                % "joda-time"               % "2.10.14",
-  "org.joda"                 % "joda-convert"            % "2.2.2",
+  "org.joda"                 % "joda-convert"            % "2.2.3",
   "io.netty"                 % "netty-codec"             % nettyVersion,
   "io.netty"                 % "netty-handler"           % nettyVersion,
   "org.javassist"            % "javassist"               % "3.28.0-GA",
