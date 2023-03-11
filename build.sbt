@@ -3,13 +3,13 @@ import ReleaseTransformations._
 val commonName     = "db-async-common"
 val postgresqlName = "postgresql-async"
 val mysqlName      = "mysql-async"
-val nettyVersion   = "4.1.87.Final"
+val nettyVersion   = "4.1.89.Final"
 
 def testDependency(scalaVersion: String) = {
   Seq(
-    "org.scalatest" %% "scalatest"    % "3.2.14" % Test,
+    "org.scalatest" %% "scalatest"    % "3.2.15" % Test,
     "org.mockito"    % "mockito-core" % "4.11.0" % Test,
-    "org.slf4j"      % "slf4j-simple" % "1.7.36" % Test
+    "org.slf4j"      % "slf4j-simple" % "2.0.6"  % Test
   )
 }
 
@@ -63,8 +63,8 @@ lazy val mysql = (project in file("mysql-async"))
   .dependsOn(common % "compile->compile;test->test")
 
 def commonDependencies(scalaVersion: String) = Seq(
-  "org.slf4j"                % "slf4j-api"               % "1.7.36",
-  "joda-time"                % "joda-time"               % "2.10.14",
+  "org.slf4j"                % "slf4j-api"               % "2.0.6",
+  "joda-time"                % "joda-time"               % "2.12.2",
   "org.joda"                 % "joda-convert"            % "2.2.3",
   "io.netty"                 % "netty-codec"             % nettyVersion,
   "io.netty"                 % "netty-handler"           % nettyVersion,
@@ -96,7 +96,7 @@ def scalacOpts(v: String): Seq[String] = {
 }
 
 val baseSettings = Seq(
-  crossScalaVersions := Seq("2.11.12", "2.12.16", "2.13.10", "3.1.2"),
+  crossScalaVersions := Seq("2.11.12", "2.12.17", "2.13.10", "3.2.2"),
   (Test / fork)      := true,
   scalaVersion       := "2.13.10",
   scalacOptions      := scalacOpts(scalaVersion.value),
