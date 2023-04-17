@@ -169,7 +169,9 @@ class MySQLFrameDecoderSpec extends Spec {
 
       embedder.writeInbound(row)
 
-      embedder.readInbound[ResultSetRowMessage]().isInstanceOf[ResultSetRowMessage] must be(true)
+      embedder
+        .readInbound[ResultSetRowMessage]()
+        .isInstanceOf[ResultSetRowMessage] must be(true)
 
       embedder.writeInbound(this.createEOFPacket())
 
