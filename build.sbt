@@ -96,7 +96,7 @@ def scalacOpts(v: String): Seq[String] = {
 }
 
 val baseSettings = Seq(
-  crossScalaVersions := Seq("2.11.12", "2.12.17", "2.13.10", "3.2.2"),
+  crossScalaVersions := Seq("2.11.12", "2.12.17", "2.13.10", "3.3.0"),
   (Test / fork)      := true,
   scalaVersion       := "2.13.10",
   scalacOptions      := scalacOpts(scalaVersion.value),
