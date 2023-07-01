@@ -68,7 +68,7 @@ class MySQLFrameDecoderSpec extends Spec {
 
     "on a query process it should correctly send an OK" in {
 
-      val decoder = new MySQLFrameDecoder(charset, "[mysql-connection]")
+      val decoder = new MySQLFrameDecoder(charset)
       decoder.hasDoneHandshake = true
       val embedder = new EmbeddedChannel(decoder)
       embedder.config.setAllocator(LittleEndianByteBufAllocator.INSTANCE)
@@ -92,7 +92,7 @@ class MySQLFrameDecoderSpec extends Spec {
 
     "on query process it should correctly send an error" in {
 
-      val decoder = new MySQLFrameDecoder(charset, "[mysql-connection]")
+      val decoder = new MySQLFrameDecoder(charset)
       decoder.hasDoneHandshake = true
       val embedder = new EmbeddedChannel(decoder)
       embedder.config.setAllocator(LittleEndianByteBufAllocator.INSTANCE)
@@ -116,7 +116,7 @@ class MySQLFrameDecoderSpec extends Spec {
 
     "on query process it should correctly handle a result set" in {
 
-      val decoder = new MySQLFrameDecoder(charset, "[mysql-connection]")
+      val decoder = new MySQLFrameDecoder(charset)
       decoder.hasDoneHandshake = true
       val embedder = new EmbeddedChannel(decoder)
       embedder.config.setAllocator(LittleEndianByteBufAllocator.INSTANCE)
@@ -181,7 +181,7 @@ class MySQLFrameDecoderSpec extends Spec {
   }
 
   def createPipeline(): EmbeddedChannel = {
-    val decoder = new MySQLFrameDecoder(charset, "[mysql-connection]")
+    val decoder = new MySQLFrameDecoder(charset)
     decoder.hasDoneHandshake = true
     val channel = new EmbeddedChannel(decoder)
     channel.config.setAllocator(LittleEndianByteBufAllocator.INSTANCE)

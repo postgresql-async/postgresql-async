@@ -16,46 +16,41 @@
 
 package com.github.mauricio.async.db.mysql.codec
 
-import java.net.InetSocketAddress
-import java.nio.ByteBuffer
-import java.util.concurrent.TimeUnit
-
 import com.github.mauricio.async.db.Configuration
 import com.github.mauricio.async.db.exceptions.DatabaseException
 import com.github.mauricio.async.db.general.ResultSetBuilder
 import com.github.mauricio.async.db.mysql.binary.BinaryRowDecoder
-import com.github.mauricio.async.db.mysql.message.client._
-import com.github.mauricio.async.db.mysql.message.server._
+import com.github.mauricio.async.db.mysql.message.client.*
+import com.github.mauricio.async.db.mysql.message.server.*
 import com.github.mauricio.async.db.mysql.util.CharsetMapper
+import com.github.mauricio.async.db.util.*
 import com.github.mauricio.async.db.util.ChannelFutureTransformer.toFuture
-import com.github.mauricio.async.db.util._
 import io.netty.bootstrap.Bootstrap
 import io.netty.buffer.{ByteBuf, ByteBufAllocator, Unpooled}
-import io.netty.channel._
+import io.netty.channel.*
 import io.netty.channel.socket.nio.NioSocketChannel
 import io.netty.handler.codec.CodecException
+
+import java.net.InetSocketAddress
+import java.nio.ByteBuffer
 import scala.annotation.switch
-import scala.collection.mutable.{ArrayBuffer, HashMap}
-import scala.collection.immutable.IndexedSeq
-import scala.concurrent._
-import scala.concurrent.duration.Duration
-import scala.collection.mutable.{Seq => MSeq}
+import scala.collection.mutable.{HashMap, Seq as MSeq}
+import scala.concurrent.*
 
 class MySQLConnectionHandler(
   configuration: Configuration,
   charsetMapper: CharsetMapper,
   handlerDelegate: MySQLHandlerDelegate,
   group: EventLoopGroup,
-  executionContext: ExecutionContext,
-  connectionId: String
+  executionContext: ExecutionContext
 ) extends SimpleChannelInboundHandler[Object] {
 
   private implicit val internalPool: ExecutionContext = executionContext
-  private final val log = Log.getByName(s"[connection-handler]")
+  private final val log               = Log.getByName(s"[connection-handler]")
   private final val bootstrap         = new Bootstrap().group(this.group)
   private final val connectionPromise = Promise[MySQLConnectionHandler]()
   private final val decoder =
-    new MySQLFrameDecoder(configuration.charset, connectionId)
+    new MySQLFrameDecoder(configuration.charset)
   private final val encoder =
     new MySQLOneToOneEncoder(configuration.charset, charsetMapper)
   private final val sendLongDataEncoder = new SendLongDataEncoder()
@@ -431,19 +426,6 @@ class MySQLConnectionHandler(
         handlerDelegate.switchAuthentication(authenticationSwitch)
       }
     }
-  }
-
-  def schedule(block: => Unit, duration: Duration): Unit = {
-    this.currentContext
-      .channel()
-      .eventLoop()
-      .schedule(
-        new Runnable {
-          override def run(): Unit = block
-        },
-        duration.toMillis,
-        TimeUnit.MILLISECONDS
-      )
   }
 
 }
