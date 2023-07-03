@@ -20,22 +20,22 @@ import com.github.mauricio.async.db.Configuration
 import com.github.mauricio.async.db.exceptions.DatabaseException
 import com.github.mauricio.async.db.general.ResultSetBuilder
 import com.github.mauricio.async.db.mysql.binary.BinaryRowDecoder
-import com.github.mauricio.async.db.mysql.message.client.*
-import com.github.mauricio.async.db.mysql.message.server.*
+import com.github.mauricio.async.db.mysql.message.client._
+import com.github.mauricio.async.db.mysql.message.server._
 import com.github.mauricio.async.db.mysql.util.CharsetMapper
-import com.github.mauricio.async.db.util.*
+import com.github.mauricio.async.db.util._
 import com.github.mauricio.async.db.util.ChannelFutureTransformer.toFuture
 import io.netty.bootstrap.Bootstrap
 import io.netty.buffer.{ByteBuf, ByteBufAllocator, Unpooled}
-import io.netty.channel.*
+import io.netty.channel._
 import io.netty.channel.socket.nio.NioSocketChannel
 import io.netty.handler.codec.CodecException
 
 import java.net.InetSocketAddress
 import java.nio.ByteBuffer
 import scala.annotation.switch
-import scala.collection.mutable.{HashMap, Seq as MSeq}
-import scala.concurrent.*
+import scala.collection.mutable.{HashMap, Seq => MSeq}
+import scala.concurrent._
 
 class MySQLConnectionHandler(
   configuration: Configuration,
