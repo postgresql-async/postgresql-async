@@ -15,7 +15,7 @@ jobs:
       PGV: '9.6'
     strategy:
      matrix:
-       scala: [2.11.12, 2.12.18, 2.13.10, 3.3.0]
+       scala: [2.11.12, 2.12.18, 2.13.11, 3.3.0]
     timeout-minutes: 10
     steps:
       - name: Clone Repository
