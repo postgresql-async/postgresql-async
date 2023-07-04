@@ -65,8 +65,7 @@ class MySQLConnection(
     charsetMapper,
     this,
     group,
-    executionContext,
-    connectionId
+    executionContext
   )
 
   private final val connectionPromise    = Promise[Connection]()

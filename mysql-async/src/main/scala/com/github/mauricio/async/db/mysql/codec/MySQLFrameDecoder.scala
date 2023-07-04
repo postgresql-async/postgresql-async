@@ -25,14 +25,13 @@ import com.github.mauricio.async.db.util.{BufferDumper, Log}
 import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.ByteToMessageDecoder
-import java.nio.ByteOrder
+
 import java.nio.charset.Charset
 import java.util.concurrent.atomic.AtomicInteger
 
-class MySQLFrameDecoder(charset: Charset, connectionId: String)
-    extends ByteToMessageDecoder {
+class MySQLFrameDecoder(charset: Charset) extends ByteToMessageDecoder {
 
-  private final val log = Log.getByName(s"[frame-decoder]${connectionId}")
+  private final val log              = Log.getByName(s"[frame-decoder]")
   private final val messagesCount    = new AtomicInteger()
   private final val handshakeDecoder = new HandshakeV10Decoder(charset)
   private final val errorDecoder     = new ErrorDecoder(charset)
