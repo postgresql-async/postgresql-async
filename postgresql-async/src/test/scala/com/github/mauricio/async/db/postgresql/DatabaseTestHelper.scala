@@ -62,7 +62,16 @@ trait DatabaseTestHelper {
   def withSSLHandler[T](
     mode: SSLConfiguration.Mode.Value,
     host: String = "localhost",
-    rootCert: Option[File] = Some(new File("../build/server/cert/server.crt"))
+    rootCert: Option[File] = Some(new File("../build/server/cert/server.crt")),
+    clientCert: Option[File] = None,
+    clientKey: Option[File] = Some(
+      new File("../build/client/cert/client.p12")
+    ),
+    clientKeyPwd: Option[String] = None,
+    trustStore: Option[File] = Some(
+      new File("../build/client/cert/server_trust")
+    ),
+    trustStorePwd: Option[String] = None
   )(fn: (PostgreSQLConnection) => T): T = {
     val config = new Configuration(
       host = host,
@@ -70,7 +79,15 @@ trait DatabaseTestHelper {
       username = "postgres_md5",
       password = Some("postgres_md5"),
       database = databaseName,
-      ssl = SSLConfiguration(mode = mode, rootCert = rootCert)
+      ssl = SSLConfiguration(
+        mode = mode,
+        rootCert = rootCert,
+        clientCert = clientCert,
+        clientKey = clientKey,
+        clientKeyPwd = clientKeyPwd,
+        trustStore = trustStore,
+        trustStorePwd = trustStorePwd
+      )
     )
     withHandler(config, fn)
   }

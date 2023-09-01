@@ -48,6 +48,22 @@ import io.netty.util.concurrent.FutureListener
 import javax.net.ssl.{SSLParameters, TrustManagerFactory}
 import java.security.KeyStore
 import java.io.FileInputStream
+import javax.net.ssl.KeyManagerFactory
+import java.security.cert.CertificateFactory
+import java.security.Certificate
+import java.security.cert
+import java.security.interfaces.ECPrivateKey
+import java.security.spec.ECPrivateKeySpec
+import java.security.PrivateKey
+import java.nio.file.Files
+import java.nio.charset.Charset
+import java.security.KeyFactory
+import java.util.Base64
+import java.security.AlgorithmParameters
+import java.security.spec.{ECGenParameterSpec, ECParameterSpec}
+import java.math.BigInteger
+import java.security.spec.PKCS8EncodedKeySpec
+import java.security.interfaces.RSAPrivateKey
 
 object PostgreSQLConnectionHandler {
   final val log = Log.get[PostgreSQLConnectionHandler]
@@ -152,9 +168,10 @@ class PostgreSQLConnectionHandler(
 
       case SSLResponseMessage(supported) =>
         if (supported) {
+          val sslConfig  = configuration.ssl
           val ctxBuilder = SslContextBuilder.forClient()
-          if (configuration.ssl.mode >= Mode.VerifyCA) {
-            configuration.ssl.rootCert.fold {
+          if (sslConfig.mode >= Mode.VerifyCA) {
+            sslConfig.rootCert.fold {
               val tmf = TrustManagerFactory.getInstance(
                 TrustManagerFactory.getDefaultAlgorithm()
               )
@@ -170,7 +187,48 @@ class PostgreSQLConnectionHandler(
               tmf.init(ks)
               ctxBuilder.trustManager(tmf)
             } { path =>
-              ctxBuilder.trustManager(path)
+              (
+                sslConfig.clientCert,
+                sslConfig.clientKey,
+                sslConfig.clientKeyPwd,
+                sslConfig.trustStore,
+                sslConfig.trustStorePwd
+              ) match {
+                case (
+                      None,
+                      Some(key),
+                      keyPwd,
+                      Some(trustStore),
+                      trustStorePwd
+                    ) =>
+                  val ks: KeyStore =
+                    KeyStore.getInstance(KeyStore.getDefaultType)
+                  ks.load(
+                    new FileInputStream(key),
+                    keyPwd.getOrElse("changeit").toCharArray
+                  )
+
+                  val kmf: KeyManagerFactory = KeyManagerFactory.getInstance(
+                    KeyManagerFactory.getDefaultAlgorithm
+                  )
+                  kmf.init(ks, keyPwd.getOrElse("changeit").toCharArray)
+
+                  val tmf: TrustManagerFactory =
+                    TrustManagerFactory.getInstance(
+                      TrustManagerFactory.getDefaultAlgorithm
+                    )
+                  ks.load(
+                    new FileInputStream(trustStore),
+                    trustStorePwd.getOrElse("password").toCharArray
+                  )
+                  tmf.init(ks)
+                  ctxBuilder.keyManager(kmf)
+                  ctxBuilder.trustManager(tmf)
+                case (Some(cert), Some(key), None, None, None) =>
+                  ctxBuilder.keyManager(key, cert)
+                case _ =>
+                  ctxBuilder
+              }
             }
           } else {
             ctxBuilder.trustManager(InsecureTrustManagerFactory.INSTANCE)
@@ -181,7 +239,7 @@ class PostgreSQLConnectionHandler(
             configuration.host,
             configuration.port
           )
-          if (configuration.ssl.mode >= Mode.VerifyFull) {
+          if (sslConfig.mode >= Mode.VerifyFull) {
             val sslParams = sslEngine.getSSLParameters()
             sslParams.setEndpointIdentificationAlgorithm("HTTPS")
             sslEngine.setSSLParameters(sslParams)
@@ -309,5 +367,49 @@ class PostgreSQLConnectionHandler(
       case e: Throwable => connectionDelegate.onError(e)
     }
   }
+
+  // def getCertificate(certificateFile: java.io.File): cert.X509Certificate = {
+  //  val certificateFactory = CertificateFactory.getInstance("X.509");
+  //  val in                 = new FileInputStream(certificateFile);
+  //  val certificate        = certificateFactory.generateCertificate(in);
+  //  return certificate.asInstanceOf[cert.X509Certificate];
+  // }
+
+  // def getRSAPrivateKey(keyFile: java.io.File): PrivateKey = {
+  //  val key = new String(
+  //    Files.readAllBytes(keyFile.toPath()),
+  //    Charset.defaultCharset()
+  //  )
+  //  val privateKeyPEM = key
+  //    .replace("-----BEGIN PRIVATE KEY-----", "")
+  //    .replaceAll(System.lineSeparator(), "")
+  //    .replace("-----END PRIVATE KEY-----", "")
+  //  val encoded    = Base64.getDecoder.decode(privateKeyPEM)
+  //  val keyFactory = KeyFactory.getInstance("RSA");
+  //  val keySpec    = new PKCS8EncodedKeySpec(encoded);
+  //  return keyFactory.generatePrivate(keySpec).asInstanceOf[RSAPrivateKey];
+  // }
+
+  // def getECPrivateKey(keyFile: java.io.File): PrivateKey = {
+  //  val key = new String(
+  //    Files.readAllBytes(keyFile.toPath()),
+  //    Charset.defaultCharset()
+  //  )
+  //  val privateKeyPEM = key
+  //    .replace("-----BEGIN EC PRIVATE KEY-----", "")
+  //    .replaceAll(System.lineSeparator(), "")
+  //    .replace("-----END EC PRIVATE KEY-----", "")
+  //  val encoded        = Base64.getDecoder.decode(privateKeyPEM)
+  //  val algoParameters = AlgorithmParameters.getInstance("EC")
+  //  algoParameters.init(new ECGenParameterSpec("secp256r1"))
+  //  val parameterSpec =
+  //    algoParameters.getParameterSpec(classOf[ECParameterSpec])
+  //  val privateKeySpec =
+  //    new ECPrivateKeySpec(new BigInteger(encoded), parameterSpec)
+  //  KeyFactory
+  //    .getInstance("EC")
+  //    .generatePrivate(privateKeySpec)
+  //    .asInstanceOf[ECPrivateKey]
+  // }
 
 }
