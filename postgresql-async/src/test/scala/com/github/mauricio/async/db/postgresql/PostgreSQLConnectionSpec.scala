@@ -230,7 +230,8 @@ class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
       val configuration = new Configuration(
         username = "postgres_scram",
         password = Some("postgres_scram"),
-        port = databasePort
+        port = databasePort,
+        database = databaseName
       )
       withHandler { conn =>
         val result = executeQuery(
