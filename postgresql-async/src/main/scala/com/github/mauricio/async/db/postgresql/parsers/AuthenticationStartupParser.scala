@@ -17,13 +17,9 @@
 package com.github.mauricio.async.db.postgresql.parsers
 
 import com.github.mauricio.async.db.exceptions.UnsupportedAuthenticationMethodException
-import com.github.mauricio.async.db.postgresql.messages.backend.{
-  AuthenticationChallengeMD5,
-  AuthenticationChallengeCleartextMessage,
-  AuthenticationOkMessage,
-  ServerMessage
-}
+import com.github.mauricio.async.db.postgresql.messages.backend._
 import io.netty.buffer.ByteBuf
+import scala.collection.mutable.ArrayBuilder
 
 object AuthenticationStartupParser extends MessageParser {
 
@@ -35,6 +31,9 @@ object AuthenticationStartupParser extends MessageParser {
   val AuthenticationGSS               = 7
   val AuthenticationGSSContinue       = 8
   val AuthenticationSSPI              = 9
+  val AuthenticationSASL              = 10
+  val AuthenticationSASLCont          = 11
+  val AuthenticationSASLFin           = 12
 
   override def parseMessage(b: ByteBuf): ServerMessage = {
 
@@ -44,17 +43,42 @@ object AuthenticationStartupParser extends MessageParser {
       case AuthenticationOk => AuthenticationOkMessage.Instance
       case AuthenticationCleartextPassword =>
         AuthenticationChallengeCleartextMessage.Instance
-      case AuthenticationMD5Password => {
+      case AuthenticationMD5Password =>
         val bytes = new Array[Byte](b.readableBytes())
         b.readBytes(bytes)
         new AuthenticationChallengeMD5(bytes)
-      }
+      case AuthenticationSASL =>
+        val sbb = ArrayBuilder.make[String]
+        while (b.readableBytes > 0) {
+          sbb += readCString(b)
+        }
+        AuthSASLReq(sbb.result())
+      case AuthenticationSASLCont =>
+        val ba = Array.ofDim[Byte](b.readableBytes)
+        b.readBytes(ba)
+        val serverFirst = new String(ba, "UTF-8")
+        AuthSASLCont(serverFirst)
+      case AuthenticationSASLFin =>
+        val ba = Array.ofDim[Byte](b.readableBytes)
+        b.readBytes(ba)
+        val finalMsg = new String(ba, "UTF-8")
+        AuthSASLFinal(finalMsg)
       case _ => {
         throw new UnsupportedAuthenticationMethodException(authenticationType)
       }
-
     }
+  }
 
+  private def readCString(buf: ByteBuf) = {
+    val bb = ArrayBuilder.make[Byte]
+    var ch = buf.readByte()
+    while (ch != 0) {
+      bb += ch
+      if (buf.readableBytes > 0) {
+        ch = buf.readByte()
+      }
+    }
+    new String(bb.result(), "UTF-8")
   }
 
 }

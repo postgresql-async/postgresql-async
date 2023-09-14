@@ -12,10 +12,10 @@ jobs:
     env:
       PGUSER: postgres
       MYSQLV: '5.7'
-      PGV: '9.6'
+      PGV: '10'
     strategy:
      matrix:
-       scala: [2.11.12, 2.12.18, 2.13.11, 3.3.0]
+       scala: [2.11.12, 2.12.18, 2.13.12, 3.3.1]
     timeout-minutes: 10
     steps:
       - name: Clone Repository

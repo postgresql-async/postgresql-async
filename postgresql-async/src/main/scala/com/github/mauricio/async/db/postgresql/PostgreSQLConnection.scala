@@ -29,7 +29,8 @@ import com.github.mauricio.async.db.general.ResultSetBuilder
 import com.github.mauricio.async.db.pool.TimeoutScheduler
 import com.github.mauricio.async.db.postgresql.codec.{
   PostgreSQLConnectionDelegate,
-  PostgreSQLConnectionHandler
+  PostgreSQLConnectionHandler,
+  ScramAuthSession
 }
 import com.github.mauricio.async.db.postgresql.column.{
   PostgreSQLColumnDecoderRegistry,
@@ -101,7 +102,8 @@ class PostgreSQLConnection(
   private var notifyListeners =
     new CopyOnWriteArrayList[NotificationResponse => Unit]()
 
-  private var queryResult: Option[QueryResult] = None
+  private var queryResult: Option[QueryResult]   = None
+  private var scramAuthSession: ScramAuthSession = null
 
   override def eventLoopGroup: EventLoopGroup = group
   def isReadyForQuery: Boolean                = this.queryPromise.isEmpty
@@ -278,6 +280,19 @@ class PostgreSQLConnection(
   ): Unit = {
 
     message match {
+      case m: AuthSASLReq =>
+        log.debug(s"[AuthSASLReq] ${m}")
+        this.scramAuthSession =
+          ScramAuthSession(configuration.password.getOrElse(""), m.mechanisms)
+        val (mechanism, firstMsg) = this.scramAuthSession.clientFirstMsg()
+        write(ScramAuthFirstMsg(mechanism, firstMsg))
+      case m: AuthSASLCont =>
+        log.debug(s"[AuthSASLCont] ${m}")
+        val finalMsg = this.scramAuthSession.clientFinalMsg(m.serverFirstMsg)
+        write(ScramAuthFinalMsg(finalMsg))
+      case m: AuthSASLFinal =>
+        log.info(s"[AuthSASLFinal] ${m.serverFinalMsg}")
+        this.scramAuthSession.verifyServerFinalMsg(m.serverFinalMsg)
       case m: AuthenticationOkMessage => {
         log.debug("Successfully logged in to database")
         this.authenticated = true

@@ -85,15 +85,11 @@ class MessageDecoder(
 
         val result = code match {
           case ServerMessage.Authentication => {
-            AuthenticationStartupParser.parseMessage(b)
+            AuthenticationStartupParser.parseMessage(b.readSlice(length))
           }
           case _ => {
-            val buf = b.readRetainedSlice(length)
-            try {
-              parser.parse(code, buf)
-            } finally {
-              buf.release()
-            }
+            val buf = b.readSlice(length)
+            parser.parse(code, buf)
           }
         }
 

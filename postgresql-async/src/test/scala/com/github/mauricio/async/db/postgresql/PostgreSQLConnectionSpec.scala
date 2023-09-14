@@ -230,6 +230,30 @@ class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
 
     }
 
+    "login using scram-sha-256" in {
+      val configuration = new Configuration(
+        username = "postgres_scram",
+        password = Some("postgres_scram"),
+        port = databasePort
+      )
+      withHandler { conn =>
+        val result = executeQuery(
+          conn,
+          "SELECT rolpassword FROM pg_authid where rolname='postgres_scram'"
+        )
+        result.rows.get(0)(0).asInstanceOf[String] must startWith(
+          "SCRAM-SHA-256"
+        )
+      }
+      withHandler(
+        configuration,
+        { handler =>
+          val result = executeQuery(handler, "SELECT 0")
+          result.rows.get(0)(0) === 0
+        }
+      )
+    }
+
     "login using MD5 authentication" in {
 
       val configuration = new Configuration(

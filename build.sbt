@@ -51,7 +51,8 @@ lazy val common = (project in file("db-async-common"))
 lazy val postgresql = (project in file("postgresql-async"))
   .settings(baseSettings: _*)
   .settings(
-    name := postgresqlName
+    name := postgresqlName,
+    libraryDependencies ++= Seq("com.ongres.scram" % "client" % "2.1")
   )
   .dependsOn(common % "compile->compile;test->test")
 
