@@ -192,14 +192,10 @@ class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
         executeDdl(handler, this.preparedStatementInsert, 1)
         val result =
           executePreparedStatement(handler, this.preparedStatementSelect)
-
         val row = result.rows.get(0)
-
         row(0) === 1
         row(1) === "John Doe"
-
       }
-
     }
 
     "execute a prepared statement with parameters" in {
@@ -228,6 +224,31 @@ class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
 
       }
 
+    }
+
+    "login using scram-sha-256" in {
+      val configuration = new Configuration(
+        username = "postgres_scram",
+        password = Some("postgres_scram"),
+        port = databasePort,
+        database = databaseName
+      )
+      withHandler { conn =>
+        val result = executeQuery(
+          conn,
+          "SELECT rolpassword FROM pg_authid where rolname='postgres_scram'"
+        )
+        result.rows.get(0)(0).asInstanceOf[String] must startWith(
+          "SCRAM-SHA-256"
+        )
+      }
+      withHandler(
+        configuration,
+        { handler =>
+          val result = executeQuery(handler, "SELECT 0")
+          result.rows.get(0)(0) === 0
+        }
+      )
     }
 
     "login using MD5 authentication" in {

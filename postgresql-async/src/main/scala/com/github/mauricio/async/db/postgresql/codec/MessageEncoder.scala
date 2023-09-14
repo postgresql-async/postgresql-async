@@ -40,9 +40,10 @@ class MessageEncoder(charset: Charset, encoderRegistry: ColumnEncoderRegistry)
     new ExecutePreparedStatementEncoder(charset, encoderRegistry)
   private val openEncoder =
     new PreparedStatementOpeningEncoder(charset, encoderRegistry)
-  private val startupEncoder    = new StartupMessageEncoder(charset)
-  private val queryEncoder      = new QueryMessageEncoder(charset)
-  private val credentialEncoder = new CredentialEncoder(charset)
+  private val startupEncoder      = new StartupMessageEncoder(charset)
+  private val queryEncoder        = new QueryMessageEncoder(charset)
+  private val credentialEncoder   = new CredentialEncoder(charset)
+  private val scramAuthMsgEncoder = new ScramAuthMsgEncoder()
 
   override def encode(
     ctx: ChannelHandlerContext,
@@ -53,18 +54,18 @@ class MessageEncoder(charset: Charset, encoderRegistry: ColumnEncoderRegistry)
     val buffer = msg match {
       case SSLRequestMessage       => SSLMessageEncoder.encode()
       case message: StartupMessage => startupEncoder.encode(message)
-      case message: ClientMessage => {
-        val encoder = (message.kind: @switch) match {
+      case message: ScramAuthMsg   => scramAuthMsgEncoder.encode(message)
+      case message: ClientMessage =>
+        val encoder = message.kind match {
           case ServerMessage.Close           => CloseMessageEncoder
           case ServerMessage.Execute         => this.executeEncoder
           case ServerMessage.Parse           => this.openEncoder
           case ServerMessage.Query           => this.queryEncoder
           case ServerMessage.PasswordMessage => this.credentialEncoder
-          case _ => throw new EncoderNotAvailableException(message)
+          case _ =>
+            throw new EncoderNotAvailableException(message)
         }
-
         encoder.encode(message)
-      }
       case _ => {
         throw new IllegalArgumentException(
           "Can not encode message %s".format(msg)
