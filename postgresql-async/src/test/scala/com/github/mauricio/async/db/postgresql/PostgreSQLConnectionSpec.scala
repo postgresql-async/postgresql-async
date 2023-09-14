@@ -192,14 +192,10 @@ class PostgreSQLConnectionSpec extends Spec with DatabaseTestHelper {
         executeDdl(handler, this.preparedStatementInsert, 1)
         val result =
           executePreparedStatement(handler, this.preparedStatementSelect)
-
         val row = result.rows.get(0)
-
         row(0) === 1
         row(1) === "John Doe"
-
       }
-
     }
 
     "execute a prepared statement with parameters" in {
