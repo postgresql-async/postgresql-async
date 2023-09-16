@@ -39,7 +39,7 @@ For information specific to the drivers, check
 And if you're in a hurry, you can include them in your build like this, if you're using PostgreSQL:
 
 ```scala
-"com.github.postgresql-async" %% "postgresql-async" % "0.3.6"
+"com.github.postgresql-async" %% "postgresql-async" % "0.3.7"
 ```
 
 Or Maven:
@@ -48,14 +48,14 @@ Or Maven:
 <dependency>
   <groupId>com.github.postgresql-async</groupId>
   <artifactId>postgresql-async_<scalaMajorVersion></artifactId>
-  <version>0.3.6</version>
+  <version>0.3.7</version>
 </dependency>
 ```
 
 And if you're into MySQL:
 
 ```scala
-"com.github.postgresql-async" %% "mysql-async" % "0.3.6"
+"com.github.postgresql-async" %% "mysql-async" % "0.3.7"
 ```
 
 Or Maven:
@@ -64,7 +64,7 @@ Or Maven:
 <dependency>
   <groupId>com.github.postgresql-async</groupId>
   <artifactId>mysql-async_<scalaMajorVersion></artifactId>
-  <version>0.3.6</version>
+  <version>0.3.7</version>
 </dependency>
 ```
 
