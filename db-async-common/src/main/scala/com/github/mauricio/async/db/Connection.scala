@@ -21,7 +21,7 @@ import concurrent.Future
 /**
  * Base interface for all objects that behave like a connection. This trait will
  * usually be implemented by the objects that connect to a database, either over
- * the filesystem or sockets. {@link Connection} are not supposed to be
+ * the filesystem or sockets. {@@linkConnection} are not supposed to be
  * thread-safe and clients should assume implementations **are not** thread safe
  * and shouldn't try to perform more than one statement (either common or
  * prepared) at the same time. They should wait for the previous statement to be

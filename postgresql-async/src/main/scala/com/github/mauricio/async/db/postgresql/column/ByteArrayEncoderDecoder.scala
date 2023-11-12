@@ -74,7 +74,7 @@ object ByteArrayEncoderDecoder extends ColumnEncoderDecoder {
   }
 
   /**
-   * This is required since {@link Iterator#next} when {@linke Iterator#hasNext}
+   * This is required since {@@linkIterator#next} when {@@linkeIterator#hasNext}
    * is false is undefined.
    * @param ci
    *   the iterator source of the data
