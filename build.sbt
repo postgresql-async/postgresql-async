@@ -69,7 +69,7 @@ def commonDependencies(scalaVersion: String) = Seq(
   "org.joda"                 % "joda-convert"            % "2.2.3",
   "io.netty"                 % "netty-codec"             % nettyVersion,
   "io.netty"                 % "netty-handler"           % nettyVersion,
-  "org.javassist"            % "javassist"               % "3.28.0-GA",
+  "org.javassist"            % "javassist"               % "3.30.0-GA",
   "org.scala-lang.modules"  %% "scala-collection-compat" % "2.11.0",
   "com.google.code.findbugs" % "jsr305"                  % "3.0.2" % Provided
 ) ++ testDependency(scalaVersion)
