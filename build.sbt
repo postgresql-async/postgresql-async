@@ -3,7 +3,7 @@ import ReleaseTransformations._
 val commonName     = "db-async-common"
 val postgresqlName = "postgresql-async"
 val mysqlName      = "mysql-async"
-val nettyVersion   = "4.1.101.Final"
+val nettyVersion   = "4.1.104.Final"
 
 def testDependency(scalaVersion: String) = {
   Seq(
