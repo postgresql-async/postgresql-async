@@ -169,7 +169,11 @@ class PreparedStatementSpec extends Spec with DatabaseTestHelper {
 
           val otherResult = executePreparedStatement(handler, select).rows.get
           otherResult.size === x
-          otherResult.columnNames must contain inOrder ("id", "other_moment", "other_content")
+          otherResult.columnNames must contain inOrder (
+            "id",
+            "other_moment",
+            "other_content"
+          )
 
           otherResult(x - 1)("other_moment") === otherMoment
           otherResult(x - 1)("other_content") === otherMessage
