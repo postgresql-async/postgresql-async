@@ -236,7 +236,7 @@ class PreparedStatementsSpec extends Spec with ConnectionHelper {
       val date      = new LocalDate(2011, 9, 8)
       val dateTime  = new LocalDateTime(2012, 5, 27, 15, 29, 55)
       val timestamp = new Timestamp(dateTime.toDateTime.getMillis)
-      val time =
+      val time      =
         Duration(3, TimeUnit.HOURS) + Duration(5, TimeUnit.MINUTES) + Duration(
           10,
           TimeUnit.SECONDS

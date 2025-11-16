@@ -133,7 +133,7 @@ class MySQLFrameDecoderSpec extends Spec {
 
       decoder.totalColumns === 2
 
-      val columnId = createColumnPacket("id", ColumnTypes.FIELD_TYPE_LONG)
+      val columnId   = createColumnPacket("id", ColumnTypes.FIELD_TYPE_LONG)
       val columnName =
         createColumnPacket("name", ColumnTypes.FIELD_TYPE_VARCHAR)
 
