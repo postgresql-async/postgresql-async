@@ -31,7 +31,7 @@ object BinaryRowEncoder {
 class BinaryRowEncoder(charset: Charset) {
 
   private final val stringEncoder = new StringEncoder(charset)
-  private final val encoders = Map[Class[_], BinaryEncoder](
+  private final val encoders      = Map[Class[_], BinaryEncoder](
     classOf[String]                                   -> this.stringEncoder,
     classOf[BigInt]                                   -> this.stringEncoder,
     classOf[BigDecimal]                               -> this.stringEncoder,
@@ -66,7 +66,7 @@ class BinaryRowEncoder(charset: Charset) {
 
     this.encoders.get(v.getClass) match {
       case Some(encoder) => encoder
-      case None => {
+      case None          => {
         v match {
           case v: CharSequence                       => this.stringEncoder
           case v: BigInt                             => this.stringEncoder

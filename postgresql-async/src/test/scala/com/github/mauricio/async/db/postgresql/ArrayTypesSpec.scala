@@ -109,12 +109,12 @@ class ArrayTypesSpec extends Spec with DatabaseTestHelper {
         InetAddressEncoderDecoder.decode("2002:15::1")
       )
       val directions = List("in", "out")
-      val endpoints = List(
+      val endpoints  = List(
         Endpoint(InetAddress.getByName("127.0.0.1"), 80), // case class
         (InetAddress.getByName("2002:15::1"), 443)        // tuple
       )
       val numbers = List(1, 2, 3, 4)
-      val texts = List(
+      val texts   = List(
         "some,\"comma,separated,text",
         "another line of text",
         "fake,backslash",

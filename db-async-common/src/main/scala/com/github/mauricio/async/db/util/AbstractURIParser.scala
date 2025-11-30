@@ -139,7 +139,7 @@ abstract class AbstractURIParser {
         val userInfo = parseUserInfo(Option(uri.getUserInfo))
 
         val port = Some(uri.getPort).filter(_ > 0)
-        val db =
+        val db   =
           Option(uri.getPath).map(_.stripPrefix("/")).filterNot(_.isEmpty)
         val host = Option(uri.getHost)
 

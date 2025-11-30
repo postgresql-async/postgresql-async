@@ -92,13 +92,13 @@ class PostgreSQLConnection(
 
   private val connectionFuture = Promise[Connection]()
 
-  private var recentError = false
+  private var recentError           = false
   private val queryPromiseReference =
     new AtomicReference[Option[Promise[QueryResult]]](None)
   private var currentQuery: Option[ResultSetBuilder[PostgreSQLColumnData]] =
     None
   private var currentPreparedStatement: Option[PreparedStatementHolder] = None
-  private var version = Version(0, 0, 0)
+  private var version         = Version(0, 0, 0)
   private var notifyListeners =
     new CopyOnWriteArrayList[NotificationResponse => Unit]()
 
