@@ -52,7 +52,7 @@ class PreparedStatementSpec extends Spec with DatabaseTestHelper {
     "SELECT id, content, moment FROM messages WHERE id = ?"
   val messagesSelectByMoment =
     "SELECT id, content, moment FROM messages WHERE moment = ?"
-  val messagesSelectAll = "SELECT id, content, moment FROM messages"
+  val messagesSelectAll     = "SELECT id, content, moment FROM messages"
   val messagesSelectEscaped =
     "SELECT id, content, moment FROM messages WHERE content LIKE '%??%' AND id > ?"
 
@@ -169,7 +169,11 @@ class PreparedStatementSpec extends Spec with DatabaseTestHelper {
 
           val otherResult = executePreparedStatement(handler, select).rows.get
           otherResult.size === x
-          otherResult.columnNames must contain inOrder ("id", "other_moment", "other_content")
+          otherResult.columnNames must contain inOrder (
+            "id",
+            "other_moment",
+            "other_content"
+          )
 
           otherResult(x - 1)("other_moment") === otherMoment
           otherResult(x - 1)("other_content") === otherMessage
@@ -331,7 +335,7 @@ class PreparedStatementSpec extends Spec with DatabaseTestHelper {
 
           val insert =
             "INSERT INTO people (addresses, phones) VALUES (?,?) RETURNING id"
-          val select = "SELECT * FROM people"
+          val select    = "SELECT * FROM people"
           val addresses =
             """[ {"Home" : {"city" : "Tahoe", "state" : "CA"}} ]"""
           val phones = """[ "925-575-0415", "916-321-2233" ]"""
