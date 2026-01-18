@@ -44,7 +44,7 @@ case class ColumnDefinitionMessage(
 
   override def toString: String = {
     val columnTypeName = ColumnTypes.Mapping.getOrElse(columnType, columnType)
-    val charsetName =
+    val charsetName    =
       CharsetMapper.DefaultCharsetsById.getOrElse(characterSet, characterSet)
 
     s"${this.getClass.getSimpleName}(name=$name,columnType=${columnTypeName},table=$table,charset=$charsetName,decimals=$decimals})"
