@@ -30,7 +30,7 @@ abstract class PartitionedAsyncObjectPoolSpec extends Spec {
       else {
         current.incrementAndGet()
       }
-    def destroy(item: Int) = {}
+    def destroy(item: Int)  = {}
     def validate(item: Int) =
       Try {
         if (reject.contains(item))

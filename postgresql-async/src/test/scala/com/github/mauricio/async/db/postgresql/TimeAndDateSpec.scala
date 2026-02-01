@@ -237,7 +237,7 @@ class TimeAndDateSpec extends Spec with DatabaseTestHelper {
         )
         result.rows.get.size === 1
 
-        val dateTime = new LocalDateTime(2016, 3, 5, 0, 0, 0, 0)
+        val dateTime       = new LocalDateTime(2016, 3, 5, 0, 0, 0, 0)
         val dateTimeResult = executePreparedStatement(
           conn,
           "SELECT T FROM TEST WHERE T  = ?",

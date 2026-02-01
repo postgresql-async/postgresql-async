@@ -26,7 +26,7 @@ class TimeDecoderSpec extends Spec {
 
     "handle a time" in {
 
-      val time = "120:10:07"
+      val time     = "120:10:07"
       val duration = Duration(120, TimeUnit.HOURS) +
         Duration(10, TimeUnit.MINUTES) +
         Duration(7, TimeUnit.SECONDS)
@@ -36,7 +36,7 @@ class TimeDecoderSpec extends Spec {
 
     "handle a time with millis" in {
 
-      val time = "120:10:07.00098"
+      val time     = "120:10:07.00098"
       val duration = Duration(120, TimeUnit.HOURS) +
         Duration(10, TimeUnit.MINUTES) +
         Duration(7, TimeUnit.SECONDS) +
