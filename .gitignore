@@ -24,3 +24,4 @@ vendor/*
 .bloop/
 .bsp/
 .DS_Store
+.codex
