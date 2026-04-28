@@ -3,13 +3,13 @@ import ReleaseTransformations._
 val commonName     = "db-async-common"
 val postgresqlName = "postgresql-async"
 val mysqlName      = "mysql-async"
-val nettyVersion   = "4.1.111.Final"
+val nettyVersion   = "4.2.12.Final"
 
 def testDependency(scalaVersion: String) = {
   Seq(
-    "org.scalatest" %% "scalatest"    % "3.2.17" % Test,
+    "org.scalatest" %% "scalatest"    % "3.2.19" % Test,
     "org.mockito"    % "mockito-core" % "4.8.1"  % Test,
-    "org.slf4j"      % "slf4j-simple" % "2.0.13" % Test
+    "org.slf4j"      % "slf4j-simple" % "2.0.17" % Test
   )
 }
 
@@ -98,9 +98,9 @@ def scalacOpts(v: String): Seq[String] = {
 }
 
 val baseSettings = Seq(
-  crossScalaVersions := Seq("2.11.12", "2.12.19", "2.13.12", "3.3.3"),
+  crossScalaVersions := Seq("2.12.20", "2.13.18", "3.3.7"),
   (Test / fork)      := true,
-  scalaVersion       := "2.13.11",
+  scalaVersion       := "2.13.18",
   scalacOptions      := scalacOpts(scalaVersion.value),
   (doc / scalacOptions) := Seq(
     s"-doc-external-doc:scala=https://www.scala-lang.org/files/archive/api/${scalaVersion.value}/"
