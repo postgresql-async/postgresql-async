@@ -16,30 +16,34 @@
 
 package com.github.mauricio.async.db.column
 
-import org.joda.time.format.DateTimeFormatterBuilder
-import org.joda.time.LocalDateTime
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatterBuilder
+import java.time.temporal.ChronoField
 
 object LocalDateTimeEncoderDecoder extends ColumnEncoderDecoder {
 
   private val ZeroedTimestamp = "0000-00-00 00:00:00"
 
-  private val optional = new DateTimeFormatterBuilder()
-    .appendPattern(".SSSSSS")
-    .toParser
-
   private val format = new DateTimeFormatterBuilder()
     .appendPattern("yyyy-MM-dd HH:mm:ss")
-    .appendOptional(optional)
-    .toFormatter
+    .optionalStart()
+    .appendFraction(ChronoField.NANO_OF_SECOND, 1, 6, true)
+    .optionalEnd()
+    .toFormatter()
+
+  private val printer = new DateTimeFormatterBuilder()
+    .appendPattern("yyyy-MM-dd HH:mm:ss")
+    .appendFraction(ChronoField.NANO_OF_SECOND, 6, 6, true)
+    .toFormatter()
 
   override def encode(value: Any): String =
-    format.print(value.asInstanceOf[LocalDateTime])
+    printer.format(value.asInstanceOf[LocalDateTime])
 
   override def decode(value: String): LocalDateTime =
     if (ZeroedTimestamp == value) {
       null
     } else {
-      format.parseLocalDateTime(value)
+      LocalDateTime.parse(value, format)
     }
 
 }

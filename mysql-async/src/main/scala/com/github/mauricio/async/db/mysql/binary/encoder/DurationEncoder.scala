@@ -17,25 +17,37 @@
 package com.github.mauricio.async.db.mysql.binary.encoder
 
 import io.netty.buffer.ByteBuf
-import scala.concurrent.duration._
 import com.github.mauricio.async.db.mysql.column.ColumnTypes
+import java.time.{Duration => JavaDuration}
+import scala.concurrent.duration.{Duration => ScalaDuration, FiniteDuration}
 
 object DurationEncoder extends BinaryEncoder {
 
-  private final val Zero = 0.seconds
+  private final val Zero = JavaDuration.ZERO
 
-  def encode(value: Any, buffer: ByteBuf): Unit = {
-    val duration = value.asInstanceOf[Duration]
+  private def asJavaDuration(value: Any): JavaDuration = value match {
+    case duration: JavaDuration   => duration
+    case duration: FiniteDuration => JavaDuration.ofNanos(duration.toNanos)
+    case duration: ScalaDuration if duration.isFinite =>
+      JavaDuration.ofNanos(duration.toNanos)
+    case duration: ScalaDuration =>
+      throw new IllegalArgumentException(
+        s"MySQL TIME does not support non-finite Scala durations: $duration"
+      )
+  }
 
-    val days            = duration.toDays
-    val hoursDuration   = duration - days.days
+  def encode(value: Any, buffer: ByteBuf) = {
+    val duration = asJavaDuration(value)
+    val absolute = if (duration.isNegative) duration.negated() else duration
+
+    val days            = absolute.toDays
+    val hoursDuration   = absolute.minusDays(days)
     val hours           = hoursDuration.toHours
-    val minutesDuration = hoursDuration - hours.hours
+    val minutesDuration = hoursDuration.minusHours(hours)
     val minutes         = minutesDuration.toMinutes
-    val secondsDuration = minutesDuration - minutes.minutes
-    val seconds         = secondsDuration.toSeconds
-    val microsDuration  = secondsDuration - seconds.seconds
-    val micros          = microsDuration.toMicros
+    val secondsDuration = minutesDuration.minusMinutes(minutes)
+    val seconds         = secondsDuration.getSeconds
+    val micros          = secondsDuration.minusSeconds(seconds).getNano / 1000
 
     val hasMicros = micros != 0
 
@@ -45,7 +57,7 @@ object DurationEncoder extends BinaryEncoder {
       buffer.writeByte(8)
     }
 
-    if (duration > Zero) {
+    if (duration.compareTo(Zero) >= 0) {
       buffer.writeByte(0)
     } else {
       buffer.writeByte(1)

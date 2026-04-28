@@ -17,10 +17,9 @@
 package com.github.mauricio.async.db.mysql
 
 import com.github.mauricio.async.db.mysql.exceptions.MySQLException
-import org.joda.time._
+import java.time.{LocalDate, LocalDateTime}
+import java.time.{Duration => JavaDuration}
 import com.github.mauricio.async.db.Spec
-import scala.concurrent.duration.Duration
-import java.util.concurrent.TimeUnit
 import io.netty.util.CharsetUtil
 import com.github.mauricio.async.db.exceptions.InsufficientParametersException
 import com.github.mauricio.async.db.{QueryResult, ResultSet}
@@ -71,30 +70,30 @@ class QuerySpec extends Spec with ConnectionHelper {
         val date = result("created_at_date").asInstanceOf[LocalDate]
 
         date.getYear === 2038
-        date.getMonthOfYear === 1
+        date.getMonthValue === 1
         date.getDayOfMonth === 19
 
         val dateTime = result("created_at_datetime").asInstanceOf[LocalDateTime]
         dateTime.getYear === 2013
-        dateTime.getMonthOfYear === 1
+        dateTime.getMonthValue === 1
         dateTime.getDayOfMonth === 19
-        dateTime.getHourOfDay === 3
-        dateTime.getMinuteOfHour === 14
-        dateTime.getSecondOfMinute === 7
+        dateTime.getHour === 3
+        dateTime.getMinute === 14
+        dateTime.getSecond === 7
 
         val timestamp =
           result("created_at_timestamp").asInstanceOf[LocalDateTime]
         timestamp.getYear === 2020
-        timestamp.getMonthOfYear === 1
+        timestamp.getMonthValue === 1
         timestamp.getDayOfMonth === 19
-        timestamp.getHourOfDay === 3
-        timestamp.getMinuteOfHour === 14
-        timestamp.getSecondOfMinute === 7
+        timestamp.getHour === 3
+        timestamp.getMinute === 14
+        timestamp.getSecond === 7
 
-        result("created_at_time") === Duration(3, TimeUnit.HOURS) + Duration(
-          14,
-          TimeUnit.MINUTES
-        ) + Duration(7, TimeUnit.SECONDS)
+        result("created_at_time") === JavaDuration
+          .ofHours(3)
+          .plusMinutes(14)
+          .plusSeconds(7)
 
         val year = result("created_at_year").asInstanceOf[Short]
 

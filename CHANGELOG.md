@@ -2,6 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Changelog](#changelog)
+	- [Unreleased](#unreleased)
 	- [0.2.19 - 2016-03-17](#0219---2016-03-17)
 	- [0.2.18 - 2015-08-08](#0218---2015-08-08)
 	- [0.2.17 - 2015-07-13](#0217---2015-07-13)
@@ -25,6 +26,13 @@
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # Changelog
+
+## Unreleased
+
+* Remove Joda-Time dependencies and migrate driver date/time handling to Java 8+ `java.time`;
+* PostgreSQL timestamp/date/time values now decode to `java.time` types, and interval parameters accept `java.time.Period` / `java.time.Duration`;
+* MySQL date/time values now decode to `java.time` types, including `java.time.Duration` for `time`;
+* Add migration notes for users moving from Joda-Time-based releases;
 
 ## 0.2.20 - 2017-09-17
 

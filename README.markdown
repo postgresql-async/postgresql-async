@@ -27,12 +27,12 @@ This is a fork of the orginal `postgresal-async` lib.
 
 It currently cross compiled with `2.11` / `2.12` / `2.13` and `3.x`
 
-This project currently returns [JodaTime](http://joda-time.sourceforge.net/), it will be replace by `java.time` in the near future.
-`java.util.Date` class.
+This project uses the Java 8+ `java.time` API for date and time values.
 
-For information specific to the drivers, check 
- - [PostgreSQL README](postgresql-async/README.md) and the
- - [MySQL README](mysql-async/README.md).
+For information specific to the drivers, check:
+- [PostgreSQL README](postgresql-async/README.md)
+- [MySQL README](mysql-async/README.md)
+- [Migration guide](MIGRATING_FROM_0.3_X.md) for moving from Joda-Time-based releases
 
 ## Include them as dependencies
 
@@ -114,13 +114,13 @@ So, prepared statements are awesome, but are not free. Use them judiciously.
 - easy to use, call a method, get a future or a callback and be happy
 - never, ever, block
 - all features covered by tests
-- less dependencies (it currently depends on Netty, JodaTime, scala-collection-compat and SFL4J only)
+- less dependencies (it currently depends on Netty, scala-collection-compat and SFL4J only)
 
 ## Recently planned improvoments
 
 - [x] CI/CD migration
 - [x] Scala 3 support
-- [ ] `java.time` migration
+- [x] `java.time` migration
 - [ ] Stablize api
 - [ ] New pool implementation
 - [ ] PreparedStatement management
@@ -179,7 +179,7 @@ The `?` (question mark) in the query is a parameter placeholder, it allows you t
 query without having to escape stuff yourself. The driver itself will make sure this parameter is delivered to the
 database in a safe way so you don't have to worry about SQL injection attacks.
 
-The basic numbers, Joda Time date, time, timestamp objects, strings and arrays of these objects are all valid values
+The basic numbers, Java time date, time, timestamp objects, strings and arrays of these objects are all valid values
 as prepared statement parameters and they will be encoded to their respective database types. Remember that not all databases
 are created equal, so not every type will work or might work in unexpected ways. For instance, MySQL doesn't have array
 types, so, if you send an array or collection to MySQL it won't work.

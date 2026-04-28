@@ -16,29 +16,74 @@
 
 package com.github.mauricio.async.db.column
 
-import org.joda.time.format.DateTimeFormat
-import org.joda.time.{ReadablePartial, LocalDate}
 import com.github.mauricio.async.db.exceptions.DateEncoderNotAvailableException
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 object DateEncoderDecoder extends ColumnEncoderDecoder {
 
   private val ZeroedDate = "0000-00-00"
 
-  private val formatter = DateTimeFormat.forPattern("yyyy-MM-dd")
-
   override def decode(value: String): LocalDate =
     if (ZeroedDate == value) {
       null
     } else {
-      this.formatter.parseLocalDate(value)
+      parseDate(value)
     }
 
   override def encode(value: Any): String = {
     value match {
-      case d: java.sql.Date   => this.formatter.print(new LocalDate(d))
-      case d: ReadablePartial => this.formatter.print(d)
-      case _ => throw new DateEncoderNotAvailableException(value)
+      case d: java.sql.Date => formatDate(d.toLocalDate)
+      case d: LocalDate     => formatDate(d)
+      case _                => throw new DateEncoderNotAvailableException(value)
     }
   }
+
+  /**
+   * Optimized date parsing using manual parsing instead of formatter for better
+   * performance
+   */
+  private def parseDate(value: String): LocalDate = {
+    if (
+      value.length != 10 || value.charAt(4) != '-' || value.charAt(7) != '-'
+    ) {
+      LocalDate.parse(value, oldFormatter)
+    } else {
+      val yearOpt  = toIntOption(value.slice(0, 4))
+      val monthOpt = toIntOption(value.slice(5, 7))
+      val dayOpt   = toIntOption(value.slice(8, 10))
+
+      (yearOpt, monthOpt, dayOpt) match {
+        case (Some(year), Some(month), Some(day)) =>
+          LocalDate.of(year, month, day)
+        case _ =>
+          // Fallback to old formatter on any parsing error
+          LocalDate.parse(value, oldFormatter)
+      }
+    }
+  }
+
+  /**
+   * Optimized date formatting using manual formatting instead of formatter for
+   * better performance
+   */
+  private def formatDate(date: LocalDate): String = {
+    val year  = date.getYear
+    val month = date.getMonthValue
+    val day   = date.getDayOfMonth
+
+    // Use string interpolation for cleaner formatting
+    f"$year%04d-$month%02d-$day%02d"
+  }
+
+  // Keep old formatter for fallback
+  private val oldFormatter = DateTimeFormatter.ISO_LOCAL_DATE
+
+  private def toIntOption(value: String): Option[Int] =
+    try {
+      Some(value.toInt)
+    } catch {
+      case _: NumberFormatException => None
+    }
 
 }

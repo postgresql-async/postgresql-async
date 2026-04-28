@@ -17,24 +17,26 @@
 package com.github.mauricio.async.db.mysql.binary.decoder
 
 import io.netty.buffer.ByteBuf
-import scala.concurrent.duration._
+import java.time.Duration
 
 object TimeDecoder extends BinaryDecoder {
   def decode(buffer: ByteBuf): Duration = {
 
     buffer.readUnsignedByte() match {
-      case 0 => 0.seconds
+      case 0 => Duration.ZERO
       case 8 => {
 
         val isNegative = buffer.readUnsignedByte() == 1
 
-        val duration = buffer.readUnsignedInt().days +
-          buffer.readUnsignedByte().toInt.hours +
-          buffer.readUnsignedByte().toInt.minutes +
-          buffer.readUnsignedByte().toInt.seconds
+        val duration =
+          Duration
+            .ofDays(buffer.readUnsignedInt().toLong)
+            .plusHours(buffer.readUnsignedByte().toLong)
+            .plusMinutes(buffer.readUnsignedByte().toLong)
+            .plusSeconds(buffer.readUnsignedByte().toLong)
 
         if (isNegative) {
-          duration.neg()
+          duration.negated()
         } else {
           duration
         }
@@ -44,14 +46,16 @@ object TimeDecoder extends BinaryDecoder {
 
         val isNegative = buffer.readUnsignedByte() == 1
 
-        val duration = buffer.readUnsignedInt().days +
-          buffer.readUnsignedByte().toInt.hours +
-          buffer.readUnsignedByte().toInt.minutes +
-          buffer.readUnsignedByte().toInt.seconds +
-          buffer.readUnsignedInt().toInt.micros
+        val duration =
+          Duration
+            .ofDays(buffer.readUnsignedInt().toLong)
+            .plusHours(buffer.readUnsignedByte().toLong)
+            .plusMinutes(buffer.readUnsignedByte().toLong)
+            .plusSeconds(buffer.readUnsignedByte().toLong)
+            .plusNanos(buffer.readUnsignedInt().toLong * 1000)
 
         if (isNegative) {
-          duration.neg()
+          duration.negated()
         } else {
           duration
         }
