@@ -11,38 +11,75 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PGUSER: postgres
-      MYSQLV: '5.7'
-      PGV: '10'
+      PG_HOST: 127.0.0.1
+      GITHUB_ACTIONS: true
+    services:
+      postgres:
+        image: postgres:10
+        ports:
+          - 5432:5432
+        volumes:
+          - ${{ github.workspace }}:/github/workspace
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ''
+          POSTGRES_DB: postgres
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd "pg_isready -U postgres -d postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      mysql:
+        image: mysql:5.7
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+        options: >-
+          --health-cmd "mysqladmin ping -h 127.0.0.1 --silent"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     strategy:
      matrix:
-       scala: [2.11.12, 2.12.19, 2.13.12, 3.3.3]
+       scala: [2.12.20, 2.13.18, 3.3.7]
     timeout-minutes: 10
     steps:
       - name: Clone Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v6
 
-      - name: Set up JDK 1.8
-        uses: actions/setup-java@v1
+      - name: Set up java
+        uses: actions/setup-java@v5
         with:
-          java-version: 1.8
+          java-version: 8
+          distribution: 'zulu'
+          cache: sbt
+      - uses: sbt/setup-sbt@v1
+      - name: Configure PostgreSQL service
+        run: |
+          postgres_container="${{ job.services.postgres.id }}"
+          sed 's/127.0.0.1\/32/0.0.0.0\/0/g' build/server/conf/pg_hba.conf > build/server/conf/pg_hba_actions.conf
+          sudo install -m 644 -o root -g root build/server/cert/server.crt build/server/cert/server_actions.crt
+          sudo install -m 600 -o root -g root build/server/cert/server.key build/server/cert/server_actions.key
+          docker exec -u root "${postgres_container}" sh -c "chown postgres:postgres /github/workspace/build/server/cert/server_actions.crt /github/workspace/build/server/cert/server_actions.key && chmod 600 /github/workspace/build/server/cert/server_actions.key"
+          docker exec -u root "${postgres_container}" sh -c "printf '\nhba_file = '\''/github/workspace/build/server/conf/pg_hba_actions.conf'\''\nssl = on\nssl_cert_file = '\''/github/workspace/build/server/cert/server_actions.crt'\''\nssl_key_file = '\''/github/workspace/build/server/cert/server_actions.key'\''\n' >> /var/lib/postgresql/data/postgresql.conf"
+          docker restart "${postgres_container}"
+          for _ in {1..30}; do
+            if docker exec "${postgres_container}" pg_isready -U postgres -d postgres; then
+              exit 0
+            fi
+            if [ "$(docker inspect -f '{{.State.Running}}' "${postgres_container}")" != "true" ]; then
+              docker logs "${postgres_container}"
+              exit 1
+            fi
+            sleep 1
+          done
+          docker logs "${postgres_container}"
+          exit 1
 
-      - name: Start postgresql & mysql
-        working-directory: build/server
-        run:
-          docker-compose up -d && docker-compose logs
       - name: Setup database
         run: bash build/prepare_build.sh
-
-
-      - name: Cache sbt
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.sbt
-            ~/.ivy2/cache
-            ~/.coursier
-            ~/.cache/coursier
-          key: sbt-cache-${{ runner.os }}-${{matrix.scala}}-${{ matrix.target-platform }}-${{ hashFiles('project/build.properties') }}
 
       - name: Tests
         run: sbt ++${{matrix.scala}} test
