@@ -17,25 +17,32 @@
 package com.github.mauricio.async.db.column
 
 import com.github.mauricio.async.db.Spec
-import org.joda.time.DateTime
 import java.sql.Timestamp
-import org.joda.time.format.DateTimeFormatterBuilder
+import java.time.format.DateTimeFormatterBuilder
+import java.time.temporal.ChronoField
+import java.time.{OffsetDateTime, ZoneId, ZoneOffset}
 import java.util.Calendar
 
 class TimestampEncoderDecoderSpec extends Spec {
 
   val encoder = TimestampEncoderDecoder.Instance
-  val dateTime = new DateTime()
-    .withDate(2013, 12, 27)
-    .withTime(8, 40, 50, 800)
+  val dateTime =
+    OffsetDateTime.of(2013, 12, 27, 8, 40, 50, 800000000, ZoneOffset.UTC)
+  val systemZone = ZoneId.systemDefault()
+  val formatter = new DateTimeFormatterBuilder()
+    .appendPattern("yyyy-MM-dd HH:mm:ss")
+    .appendFraction(ChronoField.NANO_OF_SECOND, 6, 6, true)
+    .appendOffset("+HH:mm", "Z")
+    .toFormatter()
 
-  val result    = "2013-12-27 08:40:50.800000"
-  val formatter = new DateTimeFormatterBuilder().appendPattern("Z").toFormatter
+  val result = "2013-12-27 08:40:50.800000"
   val resultWithTimezone =
-    s"2013-12-27 08:40:50.800000${formatter.print(dateTime)}"
-  "doecoder" - {
-    "shouldprint a timestamp" in {
-      val timestamp = new Timestamp(dateTime.toDate.getTime)
+    formatter.format(dateTime.toInstant.atZone(systemZone))
+  val resultOffsetDateTime = formatter.format(dateTime)
+
+  "decoder" - {
+    "should print a timestamp" in {
+      val timestamp = Timestamp.from(dateTime.toInstant)
       encoder.encode(timestamp) === resultWithTimezone
     }
 
@@ -44,17 +51,19 @@ class TimestampEncoderDecoderSpec extends Spec {
     }
 
     "should print a date" in {
-      encoder.encode(dateTime.toDate) === resultWithTimezone
+      encoder.encode(
+        java.util.Date.from(dateTime.toInstant)
+      ) === resultWithTimezone
     }
 
     "should print a calendar" in {
       val calendar = Calendar.getInstance()
-      calendar.setTime(dateTime.toDate)
+      calendar.setTime(java.util.Date.from(dateTime.toInstant))
       encoder.encode(calendar) === resultWithTimezone
     }
 
-    "should print a datetime" in {
-      encoder.encode(dateTime) === resultWithTimezone
+    "should print an offset datetime" in {
+      encoder.encode(dateTime) === resultOffsetDateTime
     }
   }
 }

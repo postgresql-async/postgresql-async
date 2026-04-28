@@ -2,34 +2,109 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Changelog](#changelog)
-	- [0.2.19 - 2016-03-17](#0219---2016-03-17)
-	- [0.2.18 - 2015-08-08](#0218---2015-08-08)
-	- [0.2.17 - 2015-07-13](#0217---2015-07-13)
-	- [0.2.16 - 2015-01-04](#0216---2015-01-04)
-	- [0.2.15 - 2014-09-12](#0215---2014-09-12)
-	- [0.2.14 - 2014-08-30](#0214---2014-08-30)
-	- [0.2.13 - 2014-04-07](#0213---2014-04-07)
-	- [0.2.12 - 2014-01-11](#0212---2014-01-11)
-	- [0.2.11 - 2014-01-11](#0211---2014-01-11)
-	- [0.2.10 - 2013-12-18](#0210---2013-12-18)
-	- [0.2.9 - 2013-12-01](#029---2013-12-01)
-	- [0.2.8 - 2013-09-24](#028---2013-09-24)
-	- [0.2.7 - 2013-09-09](#027---2013-09-09)
-	- [0.2.5](#025)
-	- [0.2.4 - 2013-07-06](#024---2013-07-06)
-	- [0.2.3 - 2013-05-21](#023---2013-05-21)
-	- [0.2.2 - 2013-05-18](#022---2013-05-18)
-	- [0.1.1 - 2013-04-30](#011---2013-04-30)
-	- [0.1.0 - 2013-04-29](#010---2013-04-29)
+  - [Unreleased](#unreleased)
+  - [0.3.7 - 2023-09-16](#037---2023-09-16)
+  - [0.3.6 - 2023-09-14](#036---2023-09-14)
+  - [0.3.5 - 2023-07-07](#035---2023-07-07)
+  - [0.3.4 - 2023-06-16](#034---2023-06-16)
+  - [0.3.3 - 2023-03-11](#033---2023-03-11)
+  - [0.3.2 - 2022-01-14](#032---2022-01-14)
+  - [0.3.1 - 2021-10-29](#031---2021-10-29)
+  - [0.3.1-M0 - 2021-10-28](#031-m0---2021-10-28)
+  - [0.3.0 - 2019-11-11](#030---2019-11-11)
+  - [0.2.21 - 2017-01-09](#0221---2017-01-09)
+  - [0.2.20 - 2016-06-10](#0220---2016-06-10)
+  - [0.2.19 - 2016-03-17](#0219---2016-03-17)
+  - [0.2.18 - 2015-08-08](#0218---2015-08-08)
+  - [0.2.17 - 2015-07-13](#0217---2015-07-13)
+  - [0.2.16 - 2015-01-04](#0216---2015-01-04)
+  - [0.2.15 - 2014-09-12](#0215---2014-09-12)
+  - [0.2.14 - 2014-08-30](#0214---2014-08-30)
+  - [0.2.13 - 2014-04-07](#0213---2014-04-07)
+  - [0.2.12 - 2014-01-11](#0212---2014-01-11)
+  - [0.2.11 - 2014-01-11](#0211---2014-01-11)
+  - [0.2.10 - 2013-12-18](#0210---2013-12-18)
+  - [0.2.9 - 2013-12-01](#029---2013-12-01)
+  - [0.2.8 - 2013-09-24](#028---2013-09-24)
+  - [0.2.7 - 2013-09-09](#027---2013-09-09)
+  - [0.2.5](#025)
+  - [0.2.4 - 2013-07-06](#024---2013-07-06)
+  - [0.2.3 - 2013-05-21](#023---2013-05-21)
+  - [0.2.2 - 2013-05-18](#022---2013-05-18)
+  - [0.1.1 - 2013-04-30](#011---2013-04-30)
+  - [0.1.0 - 2013-04-29](#010---2013-04-29)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # Changelog
 
-## 0.2.20 - 2017-09-17
+## Unreleased
+
+* Remove Joda-Time dependencies and migrate driver date/time handling to Java 8+ `java.time`;
+* PostgreSQL timestamp/date/time values now decode to `java.time` types;
+* PostgreSQL interval query results now decode to raw PostgreSQL text as `String`;
+* PostgreSQL interval parameters now accept `java.time.Period` / `java.time.Duration`;
+* MySQL date/time values now decode to `java.time` types, including `java.time.Duration` for `time`;
+* Add migration notes for users moving from Joda-Time-based releases;
+
+## 0.3.7 - 2023-09-16
+
+* Fix Scala 2.12 build settings;
+
+## 0.3.6 - 2023-09-14
+
+* Add PostgreSQL SCRAM-SHA-256 password authentication support;
+* Update dependencies, including Netty, SLF4J, scala-collection-compat, Scala 2.12, Scala 2.13 and Scala 3;
+* Remove connection ids from hot-path logging for performance;
+
+## 0.3.5 - 2023-07-07
+
+* Maintenance release with dependency and build-tool updates;
+
+## 0.3.4 - 2023-06-16
+
+* Update Scala 3 to 3.3.0;
+* Update build tooling and runtime dependencies;
+
+## 0.3.3 - 2023-03-11
+
+* Maintenance release with dependency updates and test fixes;
+
+## 0.3.2 - 2022-01-14
+
+* Fix release metadata and README release notes;
+* Update dependencies and CI configuration;
+
+## 0.3.1 - 2021-10-29
+
+* Add Scala 3 support;
+* Migrate CI to GitHub Actions;
+* Improve `ResultSet` construction;
+* Fix possible Netty `ByteBuf` leaks;
+
+## 0.3.1-M0 - 2021-10-28
+
+* Milestone release for Scala 3 support;
+
+## 0.3.0 - 2019-11-11
+
+* Cross-build for Scala 2.13;
+* Move build from the legacy project definition to `build.sbt`;
+* Fix PostgreSQL numeric prepared statement performance regression;
+* Fix several Netty buffer leaks;
+
+## 0.2.21 - 2017-01-09
+
+* Support Scala 2.12.1;
+* Add MySQL URL parsing;
+* Support encoding and decoding `java.net.InetAddress` values;
+* Fix MySQL `CLIENT_MULTI_RESULTS` constant value;
+* Wait until connections return to the pool in pool tests;
+
+## 0.2.20 - 2016-06-10
 
 * Building for Scala 2.12;
-* Fix SFL4J deprecation warning - #201 - @golem131;
+* Fix SLF4J deprecation warning - #201 - @golem131;
 
 ## 0.2.19 - 2016-03-17
 
@@ -114,7 +189,7 @@
 ## 0.2.7 - 2013-09-09
 
 * Upgrading Netty to 4.0.9
-* Removing direct dependency on `logback` and making it depend on SFL4J only, upgrading JodaTime - by @kxbmap
+* Removing direct dependency on `logback` and making it depend on SLF4J only, upgrading Joda-Time - by @kxbmap
 * MySQL doesn't set columnNames in QueryResult - #42
 * Timestamps with microseconds fail to be parsed on PostgreSQL - #41
 

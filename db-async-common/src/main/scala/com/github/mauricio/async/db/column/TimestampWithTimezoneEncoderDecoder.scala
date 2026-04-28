@@ -16,17 +16,26 @@
 
 package com.github.mauricio.async.db.column
 
-import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormat
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
+import java.time.temporal.ChronoField
 
 object TimestampWithTimezoneEncoderDecoder extends TimestampEncoderDecoder {
 
-  private val format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss.SSSSSSZ")
+  private val format: DateTimeFormatter = new DateTimeFormatterBuilder()
+    .appendPattern("yyyy-MM-dd HH:mm:ss")
+    .optionalStart()
+    .appendFraction(ChronoField.NANO_OF_SECOND, 1, 6, true)
+    .optionalEnd()
+    .appendPattern("[XXX][XX][X]")
+    .toFormatter()
 
   override def formatter = format
 
-  override def decode(value: String): Any = {
-    formatter.parseDateTime(value)
-  }
+  override def decode(value: String): Any =
+    JavaTimeSupport.normalizeToSystemZone(
+      OffsetDateTime.parse(value, formatter)
+    )
 
 }

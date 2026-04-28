@@ -17,14 +17,16 @@
 package com.github.mauricio.async.db.column
 
 import com.github.mauricio.async.db.exceptions.DateEncoderNotAvailableException
+import java.time.{Instant, LocalDateTime, OffsetDateTime, ZoneId}
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
+import java.time.temporal.ChronoField
 import java.sql.Timestamp
 import java.util.{Calendar, Date}
-import org.joda.time._
-import org.joda.time.format.DateTimeFormatterBuilder
 
 object TimestampEncoderDecoder {
   val BaseFormat   = "yyyy-MM-dd HH:mm:ss"
-  val MillisFormat = ".SSSSSS"
+  val FractionSize = 6
   val Instance     = new TimestampEncoderDecoder()
 }
 
@@ -32,42 +34,59 @@ class TimestampEncoderDecoder extends ColumnEncoderDecoder {
 
   import TimestampEncoderDecoder._
 
-  private val optional = new DateTimeFormatterBuilder()
-    .appendPattern(MillisFormat)
-    .toParser
-  private val optionalTimeZone = new DateTimeFormatterBuilder()
-    .appendPattern("Z")
-    .toParser
+  private val systemZone = ZoneId.systemDefault()
 
-  private val builder = new DateTimeFormatterBuilder()
+  private val format = new DateTimeFormatterBuilder()
     .appendPattern(BaseFormat)
-    .appendOptional(optional)
-    .appendOptional(optionalTimeZone)
+    .optionalStart()
+    .appendFraction(ChronoField.NANO_OF_SECOND, 1, FractionSize, true)
+    .optionalEnd()
+    .optionalStart()
+    .appendOffset("+HH:mm", "Z")
+    .optionalEnd()
+    .toFormatter()
 
-  private val timezonedPrinter = new DateTimeFormatterBuilder()
-    .appendPattern(s"${BaseFormat}${MillisFormat}Z")
-    .toFormatter
+  protected val timezonedPrinter: DateTimeFormatter =
+    new DateTimeFormatterBuilder()
+      .appendPattern(BaseFormat)
+      .appendFraction(
+        ChronoField.NANO_OF_SECOND,
+        FractionSize,
+        FractionSize,
+        true
+      )
+      .appendOffset("+HH:mm", "Z")
+      .toFormatter()
 
-  private val nonTimezonedPrinter = new DateTimeFormatterBuilder()
-    .appendPattern(s"${BaseFormat}${MillisFormat}")
-    .toFormatter
-
-  private val format = builder.toFormatter
+  protected val nonTimezonedPrinter: DateTimeFormatter =
+    new DateTimeFormatterBuilder()
+      .appendPattern(BaseFormat)
+      .appendFraction(
+        ChronoField.NANO_OF_SECOND,
+        FractionSize,
+        FractionSize,
+        true
+      )
+      .toFormatter()
 
   def formatter = format
 
   override def decode(value: String): Any = {
-    formatter.parseLocalDateTime(value)
+    LocalDateTime.parse(value, formatter)
   }
 
   override def encode(value: Any): String = {
     value match {
-      case t: Timestamp        => this.timezonedPrinter.print(new DateTime(t))
-      case t: Date             => this.timezonedPrinter.print(new DateTime(t))
-      case t: Calendar         => this.timezonedPrinter.print(new DateTime(t))
-      case t: LocalDateTime    => this.nonTimezonedPrinter.print(t)
-      case t: ReadableDateTime => this.timezonedPrinter.print(t)
-      case _ => throw new DateEncoderNotAvailableException(value)
+      case t: Timestamp =>
+        this.timezonedPrinter.format(t.toInstant.atZone(systemZone))
+      case t: Date =>
+        this.timezonedPrinter.format(t.toInstant.atZone(systemZone))
+      case t: Calendar =>
+        this.timezonedPrinter.format(t.toInstant.atZone(systemZone))
+      case t: LocalDateTime  => this.nonTimezonedPrinter.format(t)
+      case t: OffsetDateTime => this.timezonedPrinter.format(t)
+      case t: Instant => this.timezonedPrinter.format(t.atZone(systemZone))
+      case _          => throw new DateEncoderNotAvailableException(value)
     }
   }
 

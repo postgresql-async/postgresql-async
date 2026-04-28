@@ -17,31 +17,32 @@
 package com.github.mauricio.async.db.mysql.binary.encoder
 
 import io.netty.buffer.ByteBuf
+import java.time.LocalDateTime
 import com.github.mauricio.async.db.mysql.column.ColumnTypes
-import org.joda.time._
 
 object LocalDateTimeEncoder extends BinaryEncoder {
 
   def encode(value: Any, buffer: ByteBuf): Unit = {
     val instant = value.asInstanceOf[LocalDateTime]
 
-    val hasMillis = instant.getMillisOfSecond != 0
+    val micros    = instant.getNano / 1000
+    val hasMicros = micros != 0
 
-    if (hasMillis) {
+    if (hasMicros) {
       buffer.writeByte(11)
     } else {
       buffer.writeByte(7)
     }
 
     buffer.writeShort(instant.getYear)
-    buffer.writeByte(instant.getMonthOfYear)
+    buffer.writeByte(instant.getMonthValue)
     buffer.writeByte(instant.getDayOfMonth)
-    buffer.writeByte(instant.getHourOfDay)
-    buffer.writeByte(instant.getMinuteOfHour)
-    buffer.writeByte(instant.getSecondOfMinute)
+    buffer.writeByte(instant.getHour)
+    buffer.writeByte(instant.getMinute)
+    buffer.writeByte(instant.getSecond)
 
-    if (hasMillis) {
-      buffer.writeInt(instant.getMillisOfSecond * 1000)
+    if (hasMicros) {
+      buffer.writeInt(micros)
     }
 
   }

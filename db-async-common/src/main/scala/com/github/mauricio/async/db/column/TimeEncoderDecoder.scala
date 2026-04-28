@@ -16,8 +16,10 @@
 
 package com.github.mauricio.async.db.column
 
-import org.joda.time.LocalTime
-import org.joda.time.format.DateTimeFormatterBuilder
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
+import java.time.temporal.ChronoField
 
 object TimeEncoderDecoder {
   val Instance = new TimeEncoderDecoder()
@@ -25,25 +27,24 @@ object TimeEncoderDecoder {
 
 class TimeEncoderDecoder extends ColumnEncoderDecoder {
 
-  final private val optional = new DateTimeFormatterBuilder()
-    .appendPattern(".SSSSSS")
-    .toParser
-
-  final private val format = new DateTimeFormatterBuilder()
+  protected val format: DateTimeFormatter = new DateTimeFormatterBuilder()
     .appendPattern("HH:mm:ss")
-    .appendOptional(optional)
-    .toFormatter
+    .optionalStart()
+    .appendFraction(ChronoField.NANO_OF_SECOND, 1, 6, true)
+    .optionalEnd()
+    .toFormatter()
 
-  final private val printer = new DateTimeFormatterBuilder()
-    .appendPattern("HH:mm:ss.SSSSSS")
-    .toFormatter
+  protected val printer: DateTimeFormatter = new DateTimeFormatterBuilder()
+    .appendPattern("HH:mm:ss")
+    .appendFraction(ChronoField.NANO_OF_SECOND, 6, 6, true)
+    .toFormatter()
 
   def formatter = format
 
-  override def decode(value: String): LocalTime =
-    format.parseLocalTime(value)
+  override def decode(value: String): Any =
+    LocalTime.parse(value, formatter)
 
   override def encode(value: Any): String =
-    this.printer.print(value.asInstanceOf[LocalTime])
+    this.printer.format(value.asInstanceOf[LocalTime])
 
 }

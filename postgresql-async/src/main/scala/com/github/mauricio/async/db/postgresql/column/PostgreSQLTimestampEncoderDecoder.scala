@@ -21,71 +21,61 @@ import com.github.mauricio.async.db.exceptions.DateEncoderNotAvailableException
 import com.github.mauricio.async.db.general.ColumnData
 import com.github.mauricio.async.db.postgresql.messages.backend.PostgreSQLColumnData
 import com.github.mauricio.async.db.util.Log
+import com.github.mauricio.async.db.postgresql.util.DateTimeParserHelper
 import io.netty.buffer.ByteBuf
 import java.nio.charset.Charset
+import java.time.format.DateTimeFormatterBuilder
+import java.time.temporal.ChronoField
+import java.time.{Instant, LocalDateTime, OffsetDateTime, ZoneId}
 import java.sql.Timestamp
 import java.util.{Calendar, Date}
-import org.joda.time._
-import org.joda.time.format.DateTimeFormatterBuilder
 
 object PostgreSQLTimestampEncoderDecoder extends ColumnEncoderDecoder {
 
   private val log = Log.getByName(this.getClass.getName)
 
-  private val optionalTimeZone = new DateTimeFormatterBuilder()
-    .appendPattern("Z")
-    .toParser
+  private val systemZone = ZoneId.systemDefault()
 
-  private val internalFormatters = 1.until(6).inclusive.map { index =>
-    new DateTimeFormatterBuilder()
-      .appendPattern("yyyy-MM-dd HH:mm:ss")
-      .appendPattern("." + ("S" * index))
-      .appendOptional(optionalTimeZone)
-      .toFormatter
-  }
-
-  private val internalFormatterWithoutSeconds = new DateTimeFormatterBuilder()
+  val formatter = new DateTimeFormatterBuilder()
     .appendPattern("yyyy-MM-dd HH:mm:ss")
-    .appendOptional(optionalTimeZone)
-    .toFormatter
-
-  def formatter = internalFormatters(5)
+    .appendFraction(ChronoField.NANO_OF_SECOND, 6, 6, true)
+    .optionalStart()
+    .appendOffset("+HH:mm", "Z")
+    .optionalEnd()
+    .toFormatter()
 
   override def decode(
     kind: ColumnData,
     value: ByteBuf,
     charset: Charset
   ): Any = {
-    val bytes = new Array[Byte](value.readableBytes())
-    value.readBytes(bytes)
-
-    val text = new String(bytes, charset)
-
     val columnType = kind.asInstanceOf[PostgreSQLColumnData]
 
     columnType.dataType match {
-      case ColumnTypes.Timestamp | ColumnTypes.TimestampArray => {
-        selectFormatter(text).parseLocalDateTime(text)
-      }
-      case ColumnTypes.TimestampWithTimezoneArray => {
-        selectFormatter(text).parseDateTime(text)
-      }
-      case ColumnTypes.TimestampWithTimezone => {
-        if (columnType.dataTypeModifier > 0) {
-          internalFormatters(columnType.dataTypeModifier - 1)
-            .parseDateTime(text)
-        } else {
-          selectFormatter(text).parseDateTime(text)
+      case ColumnTypes.Timestamp | ColumnTypes.TimestampArray =>
+        DateTimeParserHelper.fastParseLocalDateTime(value, charset).getOrElse {
+          // Fallback to string parsing if ByteBuf parsing fails
+          val bytes = new Array[Byte](value.readableBytes())
+          value.readBytes(bytes)
+          val text = new String(bytes, charset)
+          DateTimeParserHelper.parseLocalDateTime(text)
         }
-      }
-    }
-  }
-
-  private def selectFormatter(text: String) = {
-    if (text.contains(".")) {
-      internalFormatters(5)
-    } else {
-      internalFormatterWithoutSeconds
+      case ColumnTypes.TimestampWithTimezoneArray =>
+        DateTimeParserHelper.fastParseOffsetDateTime(value).getOrElse {
+          // Fallback to string parsing if ByteBuf parsing fails
+          val bytes = new Array[Byte](value.readableBytes())
+          value.readBytes(bytes)
+          val text = new String(bytes, charset)
+          DateTimeParserHelper.parseOffsetDateTime(text)
+        }
+      case ColumnTypes.TimestampWithTimezone =>
+        DateTimeParserHelper.fastParseOffsetDateTime(value).getOrElse {
+          // Fallback to string parsing if ByteBuf parsing fails
+          val bytes = new Array[Byte](value.readableBytes())
+          value.readBytes(bytes)
+          val text = new String(bytes, charset)
+          DateTimeParserHelper.parseOffsetDateTime(text)
+        }
     }
   }
 
@@ -96,11 +86,12 @@ object PostgreSQLTimestampEncoderDecoder extends ColumnEncoderDecoder {
 
   override def encode(value: Any): String = {
     value match {
-      case t: Timestamp        => this.formatter.print(new DateTime(t))
-      case t: Date             => this.formatter.print(new DateTime(t))
-      case t: Calendar         => this.formatter.print(new DateTime(t))
-      case t: LocalDateTime    => this.formatter.print(t)
-      case t: ReadableDateTime => this.formatter.print(t)
+      case t: Timestamp => this.formatter.format(t.toInstant.atZone(systemZone))
+      case t: Date      => this.formatter.format(t.toInstant.atZone(systemZone))
+      case t: Calendar  => this.formatter.format(t.toInstant.atZone(systemZone))
+      case t: LocalDateTime  => this.formatter.format(t)
+      case t: OffsetDateTime => this.formatter.format(t)
+      case t: Instant        => this.formatter.format(t.atZone(systemZone))
       case _ => throw new DateEncoderNotAvailableException(value)
     }
   }

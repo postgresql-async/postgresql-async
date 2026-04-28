@@ -17,15 +17,17 @@
 package com.github.mauricio.async.db.mysql.binary.encoder
 
 import io.netty.buffer.ByteBuf
+import java.time.ZoneId
 import java.util.Calendar
-import org.joda.time.{LocalDateTime, DateTime}
 import com.github.mauricio.async.db.mysql.column.ColumnTypes
 
 object CalendarEncoder extends BinaryEncoder {
+  private val systemZone = ZoneId.systemDefault()
+
   def encode(value: Any, buffer: ByteBuf): Unit = {
     val calendar = value.asInstanceOf[Calendar]
     LocalDateTimeEncoder.encode(
-      new LocalDateTime(calendar.getTimeInMillis),
+      calendar.toInstant.atZone(systemZone).toLocalDateTime,
       buffer
     )
   }
