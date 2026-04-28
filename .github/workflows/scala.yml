@@ -52,7 +52,7 @@ jobs:
         with:
           java-version: 8
           distribution: 'zulu'
-
+      - uses: sbt/setup-sbt@v1
       - name: Configure PostgreSQL service
         run: |
           postgres_container="${{ job.services.postgres.id }}"
