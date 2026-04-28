@@ -11,8 +11,34 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PGUSER: postgres
-      MYSQLV: '5.7'
-      PGV: '10'
+      PG_HOST: 127.0.0.1
+      GITHUB_ACTIONS: true
+    services:
+      postgres:
+        image: postgres:10
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ''
+          POSTGRES_DB: postgres
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd "pg_isready -U postgres -d postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      mysql:
+        image: mysql:5.7
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+        options: >-
+          --health-cmd "mysqladmin ping -h 127.0.0.1 --silent"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     strategy:
      matrix:
        scala: [2.12.20, 2.13.18, 3.3.7]
@@ -27,10 +53,20 @@ jobs:
           java-version: 8
           distribution: 'zulu'
 
-      - name: Start postgresql & mysql
-        working-directory: build/server
-        run:
-          docker-compose up -d && docker-compose logs
+      - name: Configure PostgreSQL service
+        run: |
+          postgres_container="${{ job.services.postgres.id }}"
+          sed 's/127.0.0.1\/32/0.0.0.0\/0/g' build/server/conf/pg_hba.conf > /tmp/pg_hba.conf
+          docker cp /tmp/pg_hba.conf "${postgres_container}:/var/lib/postgresql/data/pg_hba.conf"
+          docker cp build/server/cert/server.crt "${postgres_container}:/var/lib/postgresql/data/server.crt"
+          docker cp build/server/cert/server.key "${postgres_container}:/var/lib/postgresql/data/server.key"
+          docker exec -u root "${postgres_container}" sh -c "chown postgres:postgres /var/lib/postgresql/data/server.crt /var/lib/postgresql/data/server.key && chmod 600 /var/lib/postgresql/data/server.key"
+          docker exec -u root "${postgres_container}" sh -c "printf '\nssl = on\nssl_cert_file = '\''/var/lib/postgresql/data/server.crt'\''\nssl_key_file = '\''/var/lib/postgresql/data/server.key'\''\n' >> /var/lib/postgresql/data/postgresql.conf"
+          docker restart "${postgres_container}"
+          until docker exec "${postgres_container}" pg_isready -U postgres -d postgres; do
+            sleep 1
+          done
+
       - name: Setup database
         run: bash build/prepare_build.sh
 
