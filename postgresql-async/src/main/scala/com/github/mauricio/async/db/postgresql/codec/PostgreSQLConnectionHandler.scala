@@ -181,11 +181,13 @@ class PostgreSQLConnectionHandler(
             configuration.host,
             configuration.port
           )
+          val sslParams = sslEngine.getSSLParameters()
           if (configuration.ssl.mode >= Mode.VerifyFull) {
-            val sslParams = sslEngine.getSSLParameters()
             sslParams.setEndpointIdentificationAlgorithm("HTTPS")
-            sslEngine.setSSLParameters(sslParams)
+          } else {
+            sslParams.setEndpointIdentificationAlgorithm(null)
           }
+          sslEngine.setSSLParameters(sslParams)
           val handler = new SslHandler(sslEngine)
           ctx.pipeline().addFirst(handler)
           handler.handshakeFuture.addListener(

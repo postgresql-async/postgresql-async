@@ -11,7 +11,7 @@ private[postgresql] trait ScramAuthSession {
 
 private[postgresql] object ScramAuthSession {
 
-  def apply(password: String, mechanisms: Array[String]) =
+  def apply(password: String, mechanisms: Array[String]): ScramAuthSession =
     new ScramAuthSession {
       private val _scramClient = ScramClient
         .builder()
