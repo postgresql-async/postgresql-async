@@ -62,11 +62,21 @@ jobs:
           sed 's/127.0.0.1\/32/0.0.0.0\/0/g' build/server/conf/pg_hba.conf > build/server/conf/pg_hba_actions.conf
           sudo install -m 644 -o root -g root build/server/cert/server.crt build/server/cert/server_actions.crt
           sudo install -m 600 -o root -g root build/server/cert/server.key build/server/cert/server_actions.key
+          docker exec -u root "${postgres_container}" sh -c "chown postgres:postgres /github/workspace/build/server/cert/server_actions.crt /github/workspace/build/server/cert/server_actions.key && chmod 600 /github/workspace/build/server/cert/server_actions.key"
           docker exec -u root "${postgres_container}" sh -c "printf '\nhba_file = '\''/github/workspace/build/server/conf/pg_hba_actions.conf'\''\nssl = on\nssl_cert_file = '\''/github/workspace/build/server/cert/server_actions.crt'\''\nssl_key_file = '\''/github/workspace/build/server/cert/server_actions.key'\''\n' >> /var/lib/postgresql/data/postgresql.conf"
           docker restart "${postgres_container}"
-          until docker exec "${postgres_container}" pg_isready -U postgres -d postgres; do
+          for _ in {1..30}; do
+            if docker exec "${postgres_container}" pg_isready -U postgres -d postgres; then
+              exit 0
+            fi
+            if [ "$(docker inspect -f '{{.State.Running}}' "${postgres_container}")" != "true" ]; then
+              docker logs "${postgres_container}"
+              exit 1
+            fi
             sleep 1
           done
+          docker logs "${postgres_container}"
+          exit 1
 
       - name: Setup database
         run: bash build/prepare_build.sh
