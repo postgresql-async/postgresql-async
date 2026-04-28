@@ -1,5 +1,3 @@
-import ReleaseTransformations._
-
 val commonName     = "db-async-common"
 val postgresqlName = "postgresql-async"
 val mysqlName      = "mysql-async"
@@ -128,18 +126,6 @@ lazy val publishSettings = Seq(
       url("https://github.com/postgresql-async/postgresql-async"),
       "git@github.com:postgresql-async/postgresql-async.git"
     )
-  ),
-  releaseProcess := Seq[
-    ReleaseStep
-  ]( // release was run by github action, just make a tag here
-    checkSnapshotDependencies,
-    inquireVersions,
-    setReleaseVersion,
-    commitReleaseVersion,
-    tagRelease,
-    setNextVersion,
-    commitNextVersion,
-    pushChanges
   ),
   developers += Developer(
     "jilen",
