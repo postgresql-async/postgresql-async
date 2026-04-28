@@ -3,7 +3,7 @@
 - [Database connections and encodings](#database-connections-and-encodings)
 - [Prepared statements gotcha](#prepared-statements-gotcha)
 - [What are the design goals?](#what-are-the-design-goals)
-- [What is missing?](#what-is-missing)
+- [Recently planned improvements](#recently-planned-improvements)
 - [How can you help?](#how-can-you-help)
 - [Main public interface](#main-public-interface)
   - [Connection](#connection)
@@ -23,11 +23,12 @@
 [![Maven](https://maven-badges.herokuapp.com/maven-central/com.github.postgresql-async/postgresql-async_2.13/badge.svg)](https://search.maven.org/artifact/com.github.postgresql-async/postgresql-async_2.13)
 
 
-This is a fork of the orginal `postgresal-async` lib.
+This is a fork of the original `postgresql-async` library.
 
-It currently cross compiled with `2.11` / `2.12` / `2.13` and `3.x`
+It is currently cross-compiled for Scala `2.12`, `2.13`, and `3.x`.
 
-This project uses the Java 8+ `java.time` API for date and time values.
+The current development branch uses the Java 8+ `java.time` API for date and time values. The latest stable release,
+`0.3.7`, still uses Joda-Time.
 
 For information specific to the drivers, check:
 - [PostgreSQL README](postgresql-async/README.md)
@@ -36,7 +37,8 @@ For information specific to the drivers, check:
 
 ## Include them as dependencies
 
-And if you're in a hurry, you can include them in your build like this, if you're using PostgreSQL:
+The latest stable release is `0.3.7`. If you're in a hurry, you can include it in your build like this, if you're using
+PostgreSQL:
 
 ```scala
 "com.github.postgresql-async" %% "postgresql-async" % "0.3.7"
@@ -114,27 +116,27 @@ So, prepared statements are awesome, but are not free. Use them judiciously.
 - easy to use, call a method, get a future or a callback and be happy
 - never, ever, block
 - all features covered by tests
-- less dependencies (it currently depends on Netty, scala-collection-compat and SFL4J only)
+- fewer dependencies (it currently depends on Netty, scala-collection-compat and SLF4J only)
 
-## Recently planned improvoments
+## Recently planned improvements
 
 - [x] CI/CD migration
 - [x] Scala 3 support
 - [x] `java.time` migration
-- [ ] Stablize api
+- [ ] Stabilize API
 - [ ] New pool implementation
 - [ ] PreparedStatement management
 - [ ] ColumnData caching
 - [ ] `PooledByteBufferAllocator` support
-- [ ] More netty customization option (inlcuding native transport)
-- [ ] Postgresql binary protocol
+- [ ] More Netty customization options (including native transport)
+- [ ] PostgreSQL binary protocol
 
 
 ## How can you help?
 
 - checkout the source code
 - find bugs, find places where performance can be improved
-- check the **What is missing** piece
+- check the **Recently planned improvements** section
 - check the [issues page](https://github.com/postgresql-async/postgresql-async/issues) for bugs or new features
 - send a pull request with specs
 
@@ -145,7 +147,7 @@ So, prepared statements are awesome, but are not free. Use them judiciously.
 Represents a connection to the database. This is the **root** object you will be using in your application. You will
 find three classes that implement this trait, `PostgreSQLConnection`, `MySQLConnection` and `ConnectionPool`.
 The difference between them is that `ConnectionPool` is, as the name implies, a pool of connections and you
-need to give it an connection factory so it can create connections and manage them.
+need to give it a connection factory so it can create connections and manage them.
 
 To create both you will need a `Configuration` object with your database details. You can create one manually or
 create one from a JDBC or Heroku database URL using the `URLParser` object.
@@ -245,7 +247,7 @@ object BasicExample {
     }
     )
 
-    val result = Await.result( mapResult, 5 seconds ) // Blocking here, used for demo, should be avoid in real application.
+    val result = Await.result( mapResult, 5 seconds ) // Blocking here, used for demo, should be avoided in real application.
 
     println(result)
 
@@ -280,8 +282,8 @@ notifications as such:
 
 ## Contributing
 
-Contributing to the project is simple, fork it on Github, hack on what you're insterested in seeing done or at the
-bug you want to fix and send a pull request back. If you thing the change is too big or requires architectural changes
+Contributing to the project is simple, fork it on GitHub, hack on what you're interested in seeing done or at the
+bug you want to fix and send a pull request back. If you think the change is too big or requires architectural changes
 please create an issue **before** you start working on it so we can discuss what you're trying to do.
 
 You should be easily able to build this project in your favorite IDE since it's built by [SBT](http://www.scala-sbt.org/)

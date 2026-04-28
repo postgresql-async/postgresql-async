@@ -2,14 +2,14 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
 
-- [postgresql-async - an async Netty based PostgreSQL driver written in Scala 2.10 and 2.11](#postgresql-async---an-async-netty-based-postgresql-driver-written-in-scala-210)
+- [postgresql-async - an async Netty based PostgreSQL driver written in Scala](#postgresql-async---an-async-netty-based-postgresql-driver-written-in-scala)
 	- [What can it do now?](#what-can-it-do-now)
 	- [What is missing?](#what-is-missing)
 	- [Supported Scala/Java types and their destination types on PostgreSQL](#supported-scalajava-types-and-their-destination-types-on-postgresql)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# postgresql-async - an async Netty based PostgreSQL driver written in Scala 2.10 and 2.11
+# postgresql-async - an async Netty based PostgreSQL driver written in Scala
 
 The main goal of this project is to implement a performant and fully functional async PostgreSQL driver. This project
 has no interest in JDBC, it's supposed to be a clean room implementation for people interested in talking directly
@@ -22,13 +22,13 @@ This driver contains Java code from the [JDBC PostgreSQL](http://jdbc.postgresql
 
 ## What can it do now?
 
-- connect to a database with or without authentication (supports MD5 and cleartext authentication methods)
+- connect to a database with or without authentication (supports cleartext, MD5, and SCRAM-SHA-256 authentication methods)
 - receive database parameters
 - receive database notices
 - execute direct queries (without portals/prepared statements)
 - portals/prepared statements
 - parses most of the basic PostgreSQL types, other types are parsed as string
-- date, time and timestamp types are handled with the Java 8+ `java.time` API instead of `java.util.Date`
+- date, time and timestamp types are handled with the Java 8+ `java.time` API instead of Joda-Time
 - all work is done using the new `scala.concurrent.Future` and `scala.concurrent.Promise` objects
 - support for Byte arrays if using PostgreSQL >= 9.0
 - support for LISTEN/NOTIFY operations (check [ListenNotifySpec](https://github.com/mauricio/postgresql-async/blob/master/postgresql-async/src/test/scala/com/github/mauricio/async/db/postgresql/ListenNotifySpec.scala) for an example on how to use it );
@@ -38,8 +38,7 @@ This driver contains Java code from the [JDBC PostgreSQL](http://jdbc.postgresql
 - more authentication mechanisms
 - benchmarks
 - more tests (run the `jacoco:cover` sbt task and see where you can improve)
-- timeout handler for initial handshare and queries
-- implement byte array support for PostgreSQL <= 8
+- timeout handler for initial handshake and queries
 
 ## Supported Scala/Java types and their destination types on PostgreSQL
 
@@ -63,6 +62,7 @@ timestamp_with_timezone | java.time.OffsetDateTime
 date | java.time.LocalDate
 time | java.time.LocalTime
 time_with_timezone | java.time.OffsetTime
+interval | String
 bytea | Array[Byte] (PostgreSQL 9.0 and above only)
 
 All other types are returned as String.
