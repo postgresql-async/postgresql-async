@@ -43,7 +43,7 @@ jobs:
           --health-retries 5
     strategy:
      matrix:
-       scala: [2.12.20, 2.13.18, 3.3.7]
+       scala: [2.12.21, 2.13.18, 3.3.7]
     timeout-minutes: 10
     steps:
       - name: Clone Repository
