@@ -7,7 +7,7 @@ def testDependency(scalaVersion: String) = {
   Seq(
     "org.scalatest" %% "scalatest"    % "3.2.19" % Test,
     "org.mockito"    % "mockito-core" % "4.8.1"  % Test,
-    "org.slf4j"      % "slf4j-simple" % "2.0.17" % Test
+    "org.slf4j"      % "slf4j-simple" % "2.0.18" % Test
   )
 }
 
