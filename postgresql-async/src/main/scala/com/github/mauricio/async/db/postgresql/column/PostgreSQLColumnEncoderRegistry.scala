@@ -133,7 +133,7 @@ class PostgreSQLColumnEncoderRegistry extends ColumnEncoderRegistry {
         case i: Iterable[_]           => encodeArray(i)
         case i: Array[_]              => encodeArray(i)
         case p: Product               => encodeComposite(p)
-        case _ => {
+        case _                        => {
           this.classesSequence
             .find(entry => entry._1.isAssignableFrom(value.getClass)) match {
             case Some(parent) => parent._2._1.encode(value)
@@ -203,7 +203,7 @@ class PostgreSQLColumnEncoderRegistry extends ColumnEncoderRegistry {
       value match {
         case Some(v)   => kindOf(v)
         case v: String => ColumnTypes.Untyped
-        case _ => {
+        case _         => {
           this.classes.get(value.getClass) match {
             case Some(entry) => entry._2
             case None        => ColumnTypes.Untyped

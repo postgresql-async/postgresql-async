@@ -55,14 +55,14 @@ class MessageEncoder(charset: Charset, encoderRegistry: ColumnEncoderRegistry)
       case SSLRequestMessage       => SSLMessageEncoder.encode()
       case message: StartupMessage => startupEncoder.encode(message)
       case message: ScramAuthMsg   => scramAuthMsgEncoder.encode(message)
-      case message: ClientMessage =>
+      case message: ClientMessage  =>
         val encoder = message.kind match {
           case ServerMessage.Close           => CloseMessageEncoder
           case ServerMessage.Execute         => this.executeEncoder
           case ServerMessage.Parse           => this.openEncoder
           case ServerMessage.Query           => this.queryEncoder
           case ServerMessage.PasswordMessage => this.credentialEncoder
-          case _ =>
+          case _                             =>
             throw new EncoderNotAvailableException(message)
         }
         encoder.encode(message)

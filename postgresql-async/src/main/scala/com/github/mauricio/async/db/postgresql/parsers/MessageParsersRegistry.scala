@@ -23,11 +23,11 @@ import io.netty.buffer.ByteBuf
 
 class MessageParsersRegistry(charset: Charset) {
 
-  private val commandCompleteParser = new CommandCompleteParser(charset)
-  private val errorParser           = new ErrorParser(charset)
-  private val noticeParser          = new NoticeParser(charset)
-  private val parameterStatusParser = new ParameterStatusParser(charset)
-  private val rowDescriptionParser  = new RowDescriptionParser(charset)
+  private val commandCompleteParser      = new CommandCompleteParser(charset)
+  private val errorParser                = new ErrorParser(charset)
+  private val noticeParser               = new NoticeParser(charset)
+  private val parameterStatusParser      = new ParameterStatusParser(charset)
+  private val rowDescriptionParser       = new RowDescriptionParser(charset)
   private val notificationResponseParser = new NotificationResponseParser(
     charset
   )
@@ -36,20 +36,20 @@ class MessageParsersRegistry(charset: Charset) {
     t match {
       case ServerMessage.Authentication => AuthenticationStartupParser
       case ServerMessage.BackendKeyData => BackendKeyDataParser
-      case ServerMessage.BindComplete =>
+      case ServerMessage.BindComplete   =>
         ReturningMessageParser.BindCompleteMessageParser
       case ServerMessage.CloseComplete =>
         ReturningMessageParser.CloseCompleteMessageParser
-      case ServerMessage.CommandComplete => this.commandCompleteParser
-      case ServerMessage.DataRow         => DataRowParser
-      case ServerMessage.Error           => this.errorParser
+      case ServerMessage.CommandComplete  => this.commandCompleteParser
+      case ServerMessage.DataRow          => DataRowParser
+      case ServerMessage.Error            => this.errorParser
       case ServerMessage.EmptyQueryString =>
         ReturningMessageParser.EmptyQueryStringMessageParser
       case ServerMessage.NoData => ReturningMessageParser.NoDataMessageParser
       case ServerMessage.Notice => this.noticeParser
       case ServerMessage.NotificationResponse => this.notificationResponseParser
       case ServerMessage.ParameterStatus      => this.parameterStatusParser
-      case ServerMessage.ParseComplete =>
+      case ServerMessage.ParseComplete        =>
         ReturningMessageParser.ParseCompleteMessageParser
       case ServerMessage.RowDescription => this.rowDescriptionParser
       case ServerMessage.ReadyForQuery  => ReadyForQueryParser
