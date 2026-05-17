@@ -120,7 +120,7 @@ class StoredProceduresSpec extends Spec with ConnectionHelper {
         createResult.get(0)("routine_name") === "remTest"
         val removeResult: Option[ResultSet] = awaitFuture(
           for (
-            drop <- connection.sendQuery("DROP PROCEDURE remTest;");
+            drop    <- connection.sendQuery("DROP PROCEDURE remTest;");
             routine <- connection.sendQuery(
               """
                   SELECT routine_name FROM INFORMATION_SCHEMA.ROUTINES WHERE routine_name="remTest"

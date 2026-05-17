@@ -32,7 +32,7 @@ class TimeoutSchedulerSpec extends Spec {
   "test timeout did not pass" in {
     val timeoutScheduler = new DummyTimeoutScheduler()
     val promise          = Promise[String]()
-    val scheduledFuture =
+    val scheduledFuture  =
       timeoutScheduler.addTimeout(promise, Some(Duration(1000, MILLISECONDS)))
     Thread.sleep(100);
     promise.isCompleted === false
@@ -47,7 +47,7 @@ class TimeoutSchedulerSpec extends Spec {
     val timeoutMillis    = 100
     val promise          = Promise[String]()
     val timeoutScheduler = new DummyTimeoutScheduler()
-    val scheduledFuture = timeoutScheduler.addTimeout(
+    val scheduledFuture  = timeoutScheduler.addTimeout(
       promise,
       Some(Duration(timeoutMillis, MILLISECONDS))
     )
