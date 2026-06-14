@@ -50,7 +50,7 @@ lazy val postgresql = (project in file("postgresql-async"))
   .settings(baseSettings: _*)
   .settings(
     name := postgresqlName,
-    libraryDependencies ++= Seq("com.ongres.scram" % "scram-client" % "3.2")
+    libraryDependencies ++= Seq("com.ongres.scram" % "scram-client" % "3.4")
   )
   .dependsOn(common % "compile->compile;test->test")
 
