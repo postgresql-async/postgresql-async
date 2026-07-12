@@ -163,7 +163,7 @@ class PostgreSQLConnectionHandler(
               val tmf = TrustManagerFactory.getInstance(
                 TrustManagerFactory.getDefaultAlgorithm()
               )
-              val ks = KeyStore.getInstance(KeyStore.getDefaultType())
+              val ks      = KeyStore.getInstance(KeyStore.getDefaultType())
               val cacerts = new FileInputStream(
                 System.getProperty("java.home") + "/lib/security/cacerts"
               )
@@ -228,7 +228,7 @@ class PostgreSQLConnectionHandler(
           case ServerMessage.BackendKeyData => {
             this.processData = m.asInstanceOf[ProcessData]
           }
-          case ServerMessage.BindComplete => {}
+          case ServerMessage.BindComplete   => {}
           case ServerMessage.Authentication => {
             log.debug("Authentication response received {}", m)
             connectionDelegate.onAuthenticationResponse(
@@ -241,7 +241,7 @@ class PostgreSQLConnectionHandler(
             )
           }
           case ServerMessage.CloseComplete => {}
-          case ServerMessage.DataRow => {
+          case ServerMessage.DataRow       => {
             connectionDelegate.onDataRow(m.asInstanceOf[DataRowMessage])
           }
           case ServerMessage.Error => {

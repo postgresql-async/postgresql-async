@@ -23,7 +23,7 @@ object SSLConfiguration {
 
   object Mode extends Enumeration {
     val Disable = Value("disable") // only try a non-SSL connection
-    val Prefer = Value(
+    val Prefer  = Value(
       "prefer"
     ) // first try an SSL connection; if that fails, try a non-SSL connection
     val Require = Value(

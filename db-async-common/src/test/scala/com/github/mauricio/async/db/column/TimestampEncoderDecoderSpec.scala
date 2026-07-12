@@ -25,17 +25,17 @@ import java.util.Calendar
 
 class TimestampEncoderDecoderSpec extends Spec {
 
-  val encoder = TimestampEncoderDecoder.Instance
+  val encoder  = TimestampEncoderDecoder.Instance
   val dateTime =
     OffsetDateTime.of(2013, 12, 27, 8, 40, 50, 800000000, ZoneOffset.UTC)
   val systemZone = ZoneId.systemDefault()
-  val formatter = new DateTimeFormatterBuilder()
+  val formatter  = new DateTimeFormatterBuilder()
     .appendPattern("yyyy-MM-dd HH:mm:ss")
     .appendFraction(ChronoField.NANO_OF_SECOND, 6, 6, true)
     .appendOffset("+HH:mm", "Z")
     .toFormatter()
 
-  val result = "2013-12-27 08:40:50.800000"
+  val result             = "2013-12-27 08:40:50.800000"
   val resultWithTimezone =
     formatter.format(dateTime.toInstant.atZone(systemZone))
   val resultOffsetDateTime = formatter.format(dateTime)

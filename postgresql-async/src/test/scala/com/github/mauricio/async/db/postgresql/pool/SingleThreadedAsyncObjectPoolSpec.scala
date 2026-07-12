@@ -59,7 +59,7 @@ abstract class SingleThreadedAsyncObjectPoolSpec
 
       withPool(
         { pool =>
-          val connection = get(pool)
+          val connection                                   = get(pool)
           val promises: List[Future[PostgreSQLConnection]] =
             List(pool.take, pool.take, pool.take)
 
@@ -191,7 +191,7 @@ abstract class SingleThreadedAsyncObjectPoolSpec
       validationInterval = validationInterval
     )
     val factory = new PostgreSQLConnectionFactory(this.defaultConfiguration)
-    val pool = new SingleThreadedAsyncObjectPool[PostgreSQLConnection](
+    val pool    = new SingleThreadedAsyncObjectPool[PostgreSQLConnection](
       factory,
       poolConfiguration
     )
