@@ -40,7 +40,7 @@ object AuthenticationStartupParser extends MessageParser {
     val authenticationType = b.readInt()
 
     authenticationType match {
-      case AuthenticationOk => AuthenticationOkMessage.Instance
+      case AuthenticationOk                => AuthenticationOkMessage.Instance
       case AuthenticationCleartextPassword =>
         AuthenticationChallengeCleartextMessage.Instance
       case AuthenticationMD5Password =>
