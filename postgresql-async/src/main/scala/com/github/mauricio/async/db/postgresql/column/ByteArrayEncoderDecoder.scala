@@ -45,7 +45,7 @@ object ByteArrayEncoderDecoder extends ColumnEncoderDecoder {
         ci.next() match {
           case '\\' =>
             getCharOrDie(ci) match {
-              case '\\' => buffer.put('\\'.toByte)
+              case '\\'       => buffer.put('\\'.toByte)
               case firstDigit =>
                 val secondDigit = getCharOrDie(ci)
                 val thirdDigit  = getCharOrDie(ci)

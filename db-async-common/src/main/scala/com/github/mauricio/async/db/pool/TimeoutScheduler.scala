@@ -20,8 +20,7 @@ trait TimeoutScheduler {
   /**
    * Implementors should decide here what they want to do when a timeout occur
    */
-  def onTimeout
-    : Unit // implementors should decide here what they want to do when a timeout occur
+  def onTimeout: Unit // implementors should decide here what they want to do when a timeout occur
 
   /**
    * We need this property as isClosed takes time to complete and we don't want

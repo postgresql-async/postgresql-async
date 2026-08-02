@@ -26,7 +26,7 @@ class BinaryColumnsSpec extends Spec with ConnectionHelper {
       val host = "127.0.0.1"
 
       val preparedInsert = "INSERT INTO t (uuid, address) VALUES (?, ?)"
-      val insert =
+      val insert         =
         s"INSERT INTO t (uuid, address) VALUES ('${uuid}', '${host}')"
       val select = "SELECT * FROM t"
 
