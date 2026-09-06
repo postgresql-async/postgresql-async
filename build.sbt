@@ -94,9 +94,9 @@ def scalacOpts(v: String): Seq[String] = {
 }
 
 val baseSettings = Seq(
-  crossScalaVersions := Seq("2.12.20", "2.13.18", "3.3.7"),
+  crossScalaVersions := Seq("2.12.20", "3.9.0", "3.3.7"),
   (Test / fork)      := true,
-  scalaVersion       := "2.13.18",
+  scalaVersion       := "3.9.0",
   scalacOptions      := scalacOpts(scalaVersion.value),
   (doc / scalacOptions) := Seq(
     s"-doc-external-doc:scala=https://www.scala-lang.org/files/archive/api/${scalaVersion.value}/"
