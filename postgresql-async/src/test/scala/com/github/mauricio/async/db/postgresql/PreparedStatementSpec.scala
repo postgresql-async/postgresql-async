@@ -25,7 +25,7 @@ import java.util.UUID
 import com.github.mauricio.async.db.postgresql.exceptions.GenericDatabaseException
 
 import scala.concurrent.Await
-import scala.concurrent.duration.{Duration, SECONDS}
+import scala.concurrent.duration._
 import scala.util.Random
 import scala.collection.compat.immutable.ArraySeq
 
@@ -55,6 +55,12 @@ class PreparedStatementSpec extends Spec with DatabaseTestHelper {
   val messagesSelectAll = "SELECT id, content, moment FROM messages"
   val messagesSelectEscaped =
     "SELECT id, content, moment FROM messages WHERE content LIKE '%??%' AND id > ?"
+
+  private def namedStatementCount(handler: PostgreSQLConnection): Int =
+    executeQuery(
+      handler,
+      "SELECT name FROM pg_prepared_statements"
+    ).rows.get.size
 
   "prepared statements" - {
 
@@ -493,6 +499,129 @@ class PreparedStatementSpec extends Spec with DatabaseTestHelper {
 
         preparedStatementTime must be < (plainQueryTime * 2)
       }
+    }
+
+    "promote prepared statements to named statements only after the execution threshold" in {
+      val configuration = defaultConfiguration.copy(
+        preparedStatementPrepareThreshold = 3,
+        preparedStatementExpireTime = 1.minute
+      )
+
+      withHandler(
+        configuration,
+        { handler =>
+          executeDdl(handler, messagesCreate)
+
+          val select = "SELECT id FROM messages WHERE id = ?"
+
+          executePreparedStatement(handler, select, Array(1))
+          executePreparedStatement(handler, select, Array(2))
+          namedStatementCount(handler) === 0
+
+          executePreparedStatement(handler, select, Array(3))
+          namedStatementCount(handler) === 1
+        }
+      )
+    }
+
+    "not promote prepared statements when the threshold is disabled" in {
+      val configuration = defaultConfiguration.copy(
+        preparedStatementPrepareThreshold = 0,
+        preparedStatementExpireTime = 1.minute
+      )
+
+      withHandler(
+        configuration,
+        { handler =>
+          executeDdl(handler, messagesCreate)
+
+          val select = "SELECT id FROM messages WHERE id = ?"
+
+          (1 to 5).foreach { id =>
+            executePreparedStatement(handler, select, Array(id))
+          }
+
+          namedStatementCount(handler) === 0
+        }
+      )
+    }
+
+    "promote prepared statements immediately when the threshold is one" in {
+      val configuration = defaultConfiguration.copy(
+        preparedStatementPrepareThreshold = 1,
+        preparedStatementExpireTime = 1.minute
+      )
+
+      withHandler(
+        configuration,
+        { handler =>
+          executeDdl(handler, messagesCreate)
+
+          executePreparedStatement(
+            handler,
+            "SELECT id FROM messages WHERE id = ?",
+            Array(1)
+          )
+
+          namedStatementCount(handler) === 1
+        }
+      )
+    }
+
+    "reset prepared statement promotion counts after the tracking window expires" in {
+      val configuration = defaultConfiguration.copy(
+        preparedStatementPrepareThreshold = 3,
+        preparedStatementExpireTime = 100.millis
+      )
+
+      withHandler(
+        configuration,
+        { handler =>
+          executeDdl(handler, messagesCreate)
+
+          val select = "SELECT id FROM messages WHERE id = ?"
+
+          executePreparedStatement(handler, select, Array(1))
+          executePreparedStatement(handler, select, Array(2))
+          namedStatementCount(handler) === 0
+
+          Thread.sleep(200)
+
+          executePreparedStatement(handler, select, Array(3))
+          namedStatementCount(handler) === 0
+          executePreparedStatement(handler, select, Array(4))
+          namedStatementCount(handler) === 0
+
+          executePreparedStatement(handler, select, Array(5))
+          namedStatementCount(handler) === 1
+        }
+      )
+    }
+
+    "reuse promoted named prepared statements without creating duplicates" in {
+      val configuration = defaultConfiguration.copy(
+        preparedStatementPrepareThreshold = 2,
+        preparedStatementExpireTime = 1.minute
+      )
+
+      withHandler(
+        configuration,
+        { handler =>
+          executeDdl(handler, messagesCreate)
+
+          val select = "SELECT id FROM messages WHERE id = ?"
+
+          executePreparedStatement(handler, select, Array(1))
+          namedStatementCount(handler) === 0
+
+          executePreparedStatement(handler, select, Array(2))
+          namedStatementCount(handler) === 1
+
+          executePreparedStatement(handler, select, Array(3))
+          executePreparedStatement(handler, select, Array(4))
+          namedStatementCount(handler) === 1
+        }
+      )
     }
   }
 

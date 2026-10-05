@@ -108,6 +108,18 @@ connection**.
 
 So, prepared statements are awesome, but are not free. Use them judiciously.
 
+To avoid paying the memory cost for queries that are executed only a few times, the PostgreSQL driver executes a query
+through an **unnamed** prepared statement first. The unnamed statement is replaced by the next unnamed execution, so it
+does not need an explicit deallocation. Only when the same query is executed often enough within a time window is it
+promoted to a named server-side prepared statement that is cached and reused.
+
+The promotion behavior is controlled by:
+
+* `preparedStatementPrepareThreshold` — the number of executions within the window before a query is promoted to a named
+  statement. The default is `5`; a value of `1` promotes immediately and a value less than or equal to `0` disables
+  promotion, so every execution uses an unnamed statement.
+* `preparedStatementExpireTime` — the sliding time window used to count executions. The default is `60.seconds`.
+
 ## What are the design goals?
 
 - fast, fast and faster

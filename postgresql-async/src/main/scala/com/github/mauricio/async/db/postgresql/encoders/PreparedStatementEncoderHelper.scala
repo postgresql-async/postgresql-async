@@ -31,6 +31,10 @@ trait PreparedStatementEncoderHelper {
 
   import PreparedStatementEncoderHelper.log
 
+  /**
+   * Writes a Bind/Describe/Execute/Sync sequence for a statement and portal
+   * that share the same name. A Close for the portal is always appended.
+   */
   def writeExecutePortal(
     statementIdBytes: Array[Byte],
     query: String,
@@ -38,6 +42,35 @@ trait PreparedStatementEncoderHelper {
     encoder: ColumnEncoderRegistry,
     charset: Charset,
     writeDescribe: Boolean = false
+  ): ByteBuf = writeExecutePortal(
+    statementIdBytes,
+    statementIdBytes,
+    query,
+    values,
+    encoder,
+    charset,
+    writeDescribe,
+    writeClose = true
+  )
+
+  /**
+   * Writes a Bind/Describe/Execute/Sync sequence using independent statement
+   * and portal names.
+   *
+   * Named prepared statements reuse the same bytes for both names and close the
+   * portal after execution. Unnamed prepared statements use empty names and
+   * skip the Close because the unnamed portal is replaced by the next
+   * execution.
+   */
+  def writeExecutePortal(
+    statementNameBytes: Array[Byte],
+    portalNameBytes: Array[Byte],
+    query: String,
+    values: Seq[Any],
+    encoder: ColumnEncoderRegistry,
+    charset: Charset,
+    writeDescribe: Boolean,
+    writeClose: Boolean
   ): ByteBuf = {
 
     if (log.isDebugEnabled) {
@@ -52,9 +85,9 @@ trait PreparedStatementEncoderHelper {
     bindBuffer.writeByte(ServerMessage.Bind)
     bindBuffer.writeInt(0)
 
-    bindBuffer.writeBytes(statementIdBytes)
+    bindBuffer.writeBytes(portalNameBytes)
     bindBuffer.writeByte(0)
-    bindBuffer.writeBytes(statementIdBytes)
+    bindBuffer.writeBytes(statementNameBytes)
     bindBuffer.writeByte(0)
 
     bindBuffer.writeShort(0)
@@ -94,7 +127,7 @@ trait PreparedStatementEncoderHelper {
 
     if (log.isDebugEnabled) {
       log.debug(
-        s"Executing portal - statement id (${statementIdBytes.mkString("-")}) - statement ($query) - encoded values (${decodedValues
+        s"Executing portal - statement id (${statementNameBytes.mkString("-")}) - statement ($query) - encoded values (${decodedValues
             .mkString(", ")}) - original values (${values.mkString(", ")})"
       )
     }
@@ -104,36 +137,40 @@ trait PreparedStatementEncoderHelper {
     ByteBufferUtils.writeLength(bindBuffer)
 
     if (writeDescribe) {
-      val describeLength = 1 + 4 + 1 + statementIdBytes.length + 1
+      val describeLength = 1 + 4 + 1 + portalNameBytes.length + 1
       val describeBuffer = bindBuffer
       describeBuffer.writeByte(ServerMessage.Describe)
       describeBuffer.writeInt(describeLength - 1)
       describeBuffer.writeByte('P')
-      describeBuffer.writeBytes(statementIdBytes)
+      describeBuffer.writeBytes(portalNameBytes)
       describeBuffer.writeByte(0)
     }
 
-    val executeLength = 1 + 4 + statementIdBytes.length + 1 + 4
+    val executeLength = 1 + 4 + portalNameBytes.length + 1 + 4
     val executeBuffer = Unpooled.buffer(executeLength)
     executeBuffer.writeByte(ServerMessage.Execute)
     executeBuffer.writeInt(executeLength - 1)
-    executeBuffer.writeBytes(statementIdBytes)
+    executeBuffer.writeBytes(portalNameBytes)
     executeBuffer.writeByte(0)
     executeBuffer.writeInt(0)
-
-    val closeLength = 1 + 4 + 1 + statementIdBytes.length + 1
-    val closeBuffer = Unpooled.buffer(closeLength)
-    closeBuffer.writeByte(ServerMessage.CloseStatementOrPortal)
-    closeBuffer.writeInt(closeLength - 1)
-    closeBuffer.writeByte('P')
-    closeBuffer.writeBytes(statementIdBytes)
-    closeBuffer.writeByte(0)
 
     val syncBuffer = Unpooled.buffer(5)
     syncBuffer.writeByte(ServerMessage.Sync)
     syncBuffer.writeInt(4)
 
-    Unpooled.wrappedBuffer(bindBuffer, executeBuffer, syncBuffer, closeBuffer)
+    if (writeClose) {
+      val closeLength = 1 + 4 + 1 + portalNameBytes.length + 1
+      val closeBuffer = Unpooled.buffer(closeLength)
+      closeBuffer.writeByte(ServerMessage.CloseStatementOrPortal)
+      closeBuffer.writeInt(closeLength - 1)
+      closeBuffer.writeByte('P')
+      closeBuffer.writeBytes(portalNameBytes)
+      closeBuffer.writeByte(0)
+
+      Unpooled.wrappedBuffer(bindBuffer, executeBuffer, syncBuffer, closeBuffer)
+    } else {
+      Unpooled.wrappedBuffer(bindBuffer, executeBuffer, syncBuffer)
+    }
 
   }
 

@@ -64,6 +64,13 @@ object Configuration {
  *   the timeout for connection tests performed by pools
  * @param queryTimeout
  *   the optional query timeout
+ * @param preparedStatementExpireTime
+ *   the sliding time window used to count executions of a query before it is
+ *   promoted to a named server-side prepared statement
+ * @param preparedStatementPrepareThreshold
+ *   the number of executions within preparedStatementExpireTime before a query
+ *   is promoted to a named server-side prepared statement. A value less than or
+ *   equal to zero disables promotion.
  */
 case class Configuration(
   username: String,
@@ -77,5 +84,7 @@ case class Configuration(
   allocator: ByteBufAllocator = PooledByteBufAllocator.DEFAULT,
   connectTimeout: Duration = 5.seconds,
   testTimeout: Duration = 5.seconds,
-  queryTimeout: Option[Duration] = None
+  queryTimeout: Option[Duration] = None,
+  preparedStatementExpireTime: Duration = 60.seconds,
+  preparedStatementPrepareThreshold: Int = 5
 )
