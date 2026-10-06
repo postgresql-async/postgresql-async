@@ -31,13 +31,13 @@ object PostgreSQLColumnDecoderRegistry {
 class PostgreSQLColumnDecoderRegistry(charset: Charset = CharsetUtil.UTF_8)
     extends ColumnDecoderRegistry {
 
-  private final val stringArrayDecoder = new ArrayDecoder(StringEncoderDecoder)
+  private final val stringArrayDecoder  = new ArrayDecoder(StringEncoderDecoder)
   private final val booleanArrayDecoder = new ArrayDecoder(
     BooleanEncoderDecoder
   )
-  private final val charArrayDecoder  = new ArrayDecoder(CharEncoderDecoder)
-  private final val longArrayDecoder  = new ArrayDecoder(LongEncoderDecoder)
-  private final val shortArrayDecoder = new ArrayDecoder(ShortEncoderDecoder)
+  private final val charArrayDecoder    = new ArrayDecoder(CharEncoderDecoder)
+  private final val longArrayDecoder    = new ArrayDecoder(LongEncoderDecoder)
+  private final val shortArrayDecoder   = new ArrayDecoder(ShortEncoderDecoder)
   private final val integerArrayDecoder = new ArrayDecoder(
     IntegerEncoderDecoder
   )

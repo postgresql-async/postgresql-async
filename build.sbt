@@ -94,10 +94,10 @@ def scalacOpts(v: String): Seq[String] = {
 }
 
 val baseSettings = Seq(
-  crossScalaVersions := Seq("2.12.20", "2.13.18", "3.3.7"),
-  (Test / fork)      := true,
-  scalaVersion       := "2.13.18",
-  scalacOptions      := scalacOpts(scalaVersion.value),
+  crossScalaVersions    := Seq("2.12.20", "2.13.18", "3.3.7"),
+  (Test / fork)         := true,
+  scalaVersion          := "2.13.18",
+  scalacOptions         := scalacOpts(scalaVersion.value),
   (doc / scalacOptions) := Seq(
     s"-doc-external-doc:scala=https://www.scala-lang.org/files/archive/api/${scalaVersion.value}/"
   ),
@@ -138,6 +138,6 @@ lazy val publishSettings = Seq(
 )
 
 (ThisBuild / scalafmtOnCompile) := true
-(Compile / compile) := {
+(Compile / compile)             := {
   (Compile / compile).dependsOn(Compile / scalafmtSbt).value
 }
