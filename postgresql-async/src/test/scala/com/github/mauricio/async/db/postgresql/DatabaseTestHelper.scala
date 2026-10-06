@@ -35,6 +35,11 @@ trait DatabaseTestHelper {
 
   def databasePort = 5432
 
+  // Port of the PostgreSQL service configured with SSL (and client cert auth);
+  // in CI this is the dedicated postgres-ssl service, locally it usually runs
+  // on the same server with SSL enabled.
+  def sslDatabasePort = sys.env.getOrElse("PGSSL_PORT", "5432").toInt
+
   def defaultConfiguration =
     new Configuration(
       port = databasePort,
@@ -67,7 +72,7 @@ trait DatabaseTestHelper {
   )(fn: (PostgreSQLConnection) => T): T = {
     val config = new Configuration(
       host = host,
-      port = databasePort,
+      port = sslDatabasePort,
       username = username,
       password = password,
       database = databaseName,
