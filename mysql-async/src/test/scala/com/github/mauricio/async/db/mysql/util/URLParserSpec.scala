@@ -18,7 +18,7 @@ package com.github.mauricio.async.db.mysql.util
 
 import java.nio.charset.Charset
 
-import com.github.mauricio.async.db.{Configuration, SSLConfiguration}
+import com.github.mauricio.async.db.Configuration
 import com.github.mauricio.async.db.exceptions.UnableToParseURLException
 import io.netty.buffer.{ByteBufAllocator, PooledByteBufAllocator}
 import com.github.mauricio.async.db.Spec

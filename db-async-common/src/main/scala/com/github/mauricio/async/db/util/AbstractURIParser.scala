@@ -19,7 +19,7 @@ import java.net.{URI, URISyntaxException, URLDecoder}
 import java.nio.charset.Charset
 
 import com.github.mauricio.async.db.exceptions.UnableToParseURLException
-import com.github.mauricio.async.db.{Configuration, SSLConfiguration}
+import com.github.mauricio.async.db.{Configuration, SslContexts}
 import org.slf4j.LoggerFactory
 
 import scala.util.matching.Regex
@@ -128,7 +128,7 @@ abstract class AbstractURIParser {
       database = properties.get(DBNAME),
       host = properties.getOrElse(HOST, DEFAULT.host),
       port = properties.get(PORT).map(_.toInt).getOrElse(DEFAULT.port),
-      ssl = SSLConfiguration(properties),
+      ssl = SslContexts.fromProperties(properties),
       charset = charset
     )
   }

@@ -21,6 +21,7 @@ main () {
     add_pg_opt "-c ssl=on"
     add_pg_opt "-c ssl_cert_file=/home/cert/server.crt"
     add_pg_opt "-c ssl_key_file=/home/cert/server.key"
+    add_pg_opt "-c ssl_ca_file=/home/cert/ca.crt"
 
     echo "Starting postgres version $PG_MAJOR with options: ${pg_opts} $@"
 

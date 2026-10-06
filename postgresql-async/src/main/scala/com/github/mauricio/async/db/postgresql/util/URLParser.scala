@@ -5,7 +5,7 @@ package com.github.mauricio.async.db.postgresql.util
 import java.net.URI
 import java.nio.charset.Charset
 
-import com.github.mauricio.async.db.{Configuration, SSLConfiguration}
+import com.github.mauricio.async.db.{Configuration, SslContexts}
 import com.github.mauricio.async.db.util.AbstractURIParser
 
 /**
@@ -60,7 +60,7 @@ object URLParser extends AbstractURIParser {
     port = 5432,
     password = None,
     database = None,
-    ssl = SSLConfiguration()
+    ssl = None
   )
 
   override protected val SCHEME = "^postgres(?:ql)?$".r
@@ -91,7 +91,7 @@ object URLParser extends AbstractURIParser {
     super
       .assembleConfiguration(properties, charset)
       .copy(
-        ssl = SSLConfiguration(properties)
+        ssl = SslContexts.fromProperties(properties)
       )
   }
 }

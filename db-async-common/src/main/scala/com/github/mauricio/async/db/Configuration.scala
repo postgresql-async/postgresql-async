@@ -47,7 +47,10 @@ object Configuration {
  * @param database
  *   database name, defaults to no database
  * @param ssl
- *   ssl configuration
+ *   an optional Netty [[io.netty.handler.ssl.SslContext]]. When None no SSL is
+ *   negotiated; when defined, SSL is required and the context carries the trust
+ *   roots / client credentials / endpoint identification settings. See
+ *   [[SslContexts]] for builders.
  * @param charset
  *   charset for the connection, defaults to UTF-8, make sure you know what you
  *   are doing if you change this
@@ -78,7 +81,7 @@ case class Configuration(
   port: Int = 5432,
   password: Option[String] = None,
   database: Option[String] = None,
-  ssl: SSLConfiguration = SSLConfiguration(),
+  ssl: Option[io.netty.handler.ssl.SslContext] = None,
   charset: Charset = Configuration.DefaultCharset,
   maximumMessageSize: Int = 16777216,
   allocator: ByteBufAllocator = PooledByteBufAllocator.DEFAULT,

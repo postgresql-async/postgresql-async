@@ -1,4 +1,4 @@
-name: build
+name: ssl
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
       - master
 
 jobs:
-  build:
+  ssl:
     runs-on: ubuntu-latest
     env:
       PGUSER: postgres
@@ -15,7 +15,7 @@ jobs:
       GITHUB_ACTIONS: true
     services:
       postgres:
-        image: postgres:10
+        image: postgres:16
         ports:
           - 5432:5432
         volumes:
@@ -30,20 +30,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-      mysql:
-        image: mysql:5.7
-        ports:
-          - 3306:3306
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-        options: >-
-          --health-cmd "mysqladmin ping -h 127.0.0.1 --silent"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-    strategy:
-     matrix:
-       scala: [2.12.20, 2.13.18, 3.3.7]
     timeout-minutes: 10
     steps:
       - name: Clone Repository
@@ -63,7 +49,7 @@ jobs:
           sudo install -m 644 -o root -g root build/server/cert/server.crt build/server/cert/server_actions.crt
           sudo install -m 600 -o root -g root build/server/cert/server.key build/server/cert/server_actions.key
           docker exec -u root "${postgres_container}" sh -c "chown postgres:postgres /github/workspace/build/server/cert/server_actions.crt /github/workspace/build/server/cert/server_actions.key && chmod 600 /github/workspace/build/server/cert/server_actions.key"
-          docker exec -u root "${postgres_container}" sh -c "printf '\nhba_file = '\''/github/workspace/build/server/conf/pg_hba_actions.conf'\''\nssl = on\nssl_cert_file = '\''/github/workspace/build/server/cert/server_actions.crt'\''\nssl_key_file = '\''/github/workspace/build/server/cert/server_actions.key'\''\"\nssl_ca_file = '\''/github/workspace/build/server/cert/ca.crt'\''\n' >> /var/lib/postgresql/data/postgresql.conf"
+          docker exec -u root "${postgres_container}" sh -c "printf '\nhba_file = '\''/github/workspace/build/server/conf/pg_hba_actions.conf'\''\nssl = on\nssl_cert_file = '\''/github/workspace/build/server/cert/server_actions.crt'\''\nssl_key_file = '\''/github/workspace/build/server/cert/server_actions.key'\''\nssl_ca_file = '\''/github/workspace/build/server/cert/ca.crt'\''\n' >> /var/lib/postgresql/data/postgresql.conf"
           docker restart "${postgres_container}"
           for _ in {1..30}; do
             if docker exec "${postgres_container}" pg_isready -U postgres -d postgres; then
@@ -79,16 +65,7 @@ jobs:
           exit 1
 
       - name: Setup database
-        run: bash build/prepare_build.sh
+        run: bash build/prepare_pg.sh
 
-      - name: Tests
-        run: sbt ++${{matrix.scala}} test
-        if: ${{ !startsWith(matrix.scala, '2.13') }}
-
-      - name: Tests with Coverage
-        run: sbt ++${{matrix.scala}} coverage test coverageAggregate
-        if: ${{ startsWith(matrix.scala, '2.13') }}
-
-      - name: Upload codecov
-        if: ${{ startsWith(matrix.scala, '2.13') }}
-        uses: codecov/codecov-action@v1
+      - name: SSL tests
+        run: sbt 'postgresql / Test / testOnly com.github.mauricio.async.db.postgresql.PostgreSQLSSLConnectionSpec'

@@ -22,8 +22,6 @@ import java.io.File
 import java.util.concurrent.{TimeoutException, TimeUnit}
 import scala.concurrent.duration._
 import scala.concurrent.{Future, Await}
-import com.github.mauricio.async.db.SSLConfiguration
-import com.github.mauricio.async.db.SSLConfiguration.Mode
 
 object DatabaseTestHelper {
   val log = Log.get[DatabaseTestHelper]
@@ -59,18 +57,21 @@ trait DatabaseTestHelper {
     withHandler(this.timeTestConfiguration, fn)
   }
 
+  val serverCert = new File("../build/server/cert/server.crt")
+
   def withSSLHandler[T](
-    mode: SSLConfiguration.Mode.Value,
+    username: String = "postgres_md5",
+    password: Option[String] = Some("postgres_md5"),
     host: String = "localhost",
-    rootCert: Option[File] = Some(new File("../build/server/cert/server.crt"))
+    sslContext: Option[io.netty.handler.ssl.SslContext] = None
   )(fn: (PostgreSQLConnection) => T): T = {
     val config = new Configuration(
       host = host,
       port = databasePort,
-      username = "postgres_md5",
-      password = Some("postgres_md5"),
+      username = username,
+      password = password,
       database = databaseName,
-      ssl = SSLConfiguration(mode = mode, rootCert = rootCert)
+      ssl = sslContext
     )
     withHandler(config, fn)
   }
