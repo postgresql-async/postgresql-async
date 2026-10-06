@@ -45,6 +45,8 @@ import messages.backend._
 import messages.frontend._
 
 import scala.concurrent._
+import scala.concurrent.duration.FiniteDuration
+import scala.util.hashing.MurmurHash3
 import io.netty.channel.EventLoopGroup
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -55,6 +57,15 @@ object PostgreSQLConnection {
   final val Counter          = new AtomicLong()
   final val ServerVersionKey = "server_version"
   final val log              = Log.get[PostgreSQLConnection]
+
+  /**
+   * Mutable execution counter used to decide when a query should be promoted
+   * from an unnamed to a named server-side prepared statement.
+   */
+  private final class PreparedStatementExecutionCount(
+    var windowStartedAtNanos: Long,
+    var count: Int
+  )
 }
 
 class PostgreSQLConnection(
@@ -88,6 +99,16 @@ class PostgreSQLConnection(
     new scala.collection.mutable.HashMap[String, String]()
   private val parsedStatements =
     new scala.collection.mutable.HashMap[String, PreparedStatementHolder]()
+  private val preparedStatementExecutions =
+    new scala.collection.mutable.HashMap[
+      String,
+      PreparedStatementExecutionCount
+    ]()
+  private final val preparedStatementExecutionWindowNanos =
+    configuration.preparedStatementExpireTime match {
+      case duration: FiniteDuration => duration.toNanos
+      case _                        => Long.MaxValue
+    }
   private var authenticated = false
 
   private val connectionFuture = Promise[Connection]()
@@ -145,32 +166,79 @@ class PostgreSQLConnection(
     val promise = Promise[QueryResult]()
     this.setQueryPromise(promise)
 
-    val holder = this.parsedStatements.getOrElseUpdate(
-      query,
-      new PreparedStatementHolder(
-        query,
-        preparedStatementsCounter.incrementAndGet
-      )
-    )
+    val namedCacheKey = query
 
-    if (holder.paramsCount != values.length) {
-      this.clearQueryPromise
-      throw new InsufficientParametersException(holder.paramsCount, values)
+    this.parsedStatements.get(namedCacheKey) match {
+      case Some(holder) =>
+        validatePreparedStatementParameters(holder.paramsCount, values)
+        executeNamedPreparedStatement(holder, values)
+      case None =>
+        // Build a throwaway holder to normalize the query and count its
+        // parameters without touching the named statement cache.
+        val parsedStatement = new PreparedStatementHolder(query, 0)
+        validatePreparedStatementParameters(parsedStatement.paramsCount, values)
+
+        val trackingKey =
+          preparedStatementTrackingKey(query, parsedStatement.paramsCount)
+        if (shouldPromotePreparedStatement(trackingKey)) {
+          executeNamedPreparedStatement(
+            prepareNamedStatementHolder(namedCacheKey, query),
+            values
+          )
+        } else {
+          executeUnnamedPreparedStatement(parsedStatement.realQuery, values)
+        }
     }
 
+    addTimeout(promise, configuration.queryTimeout)
+    promise.future
+  }
+
+  private def validatePreparedStatementParameters(
+    expectedParamsCount: Int,
+    values: Seq[Any]
+  ): Unit =
+    if (expectedParamsCount != values.length) {
+      this.clearQueryPromise
+      throw new InsufficientParametersException(expectedParamsCount, values)
+    }
+
+  /**
+   * Executes a query through an unnamed prepared statement. No named statement
+   * is cached, so the statement is only parsed and executed once by the server.
+   */
+  private def executeUnnamedPreparedStatement(
+    query: String,
+    values: Seq[Any]
+  ): Unit = {
+    this.currentPreparedStatement = None
+    this.currentQuery = Some(new ResultSetBuilder(ArraySeq.empty))
+    write(
+      new UnnamedPreparedStatementMessage(
+        query,
+        values,
+        this.encoderRegistry
+      )
+    )
+  }
+
+  private def executeNamedPreparedStatement(
+    holder: PreparedStatementHolder,
+    values: Seq[Any]
+  ): Unit = {
     this.currentPreparedStatement = Some(holder)
     this.currentQuery = Some(
       new ResultSetBuilder(ArraySeq.unsafeWrapArray(holder.columnDatas))
     )
     write(
-      if (holder.prepared)
+      if (holder.prepared) {
         new PreparedStatementExecuteMessage(
           holder.statementId,
           holder.realQuery,
           values,
           this.encoderRegistry
         )
-      else {
+      } else {
         holder.prepared = true
         new PreparedStatementOpeningMessage(
           holder.statementId,
@@ -180,9 +248,71 @@ class PostgreSQLConnection(
         )
       }
     )
-    addTimeout(promise, configuration.queryTimeout)
-    promise.future
   }
+
+  private def prepareNamedStatementHolder(
+    cacheKey: String,
+    query: String
+  ): PreparedStatementHolder = {
+    val holder = new PreparedStatementHolder(
+      query,
+      preparedStatementsCounter.incrementAndGet
+    )
+    this.parsedStatements.put(cacheKey, holder)
+    holder
+  }
+
+  /**
+   * Builds a compact key that identifies a query and its parameter count
+   * without retaining the full query string.
+   */
+  private def preparedStatementTrackingKey(
+    query: String,
+    paramsCount: Int
+  ): String = {
+    val firstChar = if (query.isEmpty) 0 else query.charAt(0).toInt
+    val lastChar =
+      if (query.isEmpty) 0 else query.charAt(query.length - 1).toInt
+    s"${MurmurHash3.stringHash(query)}:${query.length}:${paramsCount}:${firstChar}:${lastChar}"
+  }
+
+  /**
+   * Counts executions within a sliding time window and returns true once the
+   * configured threshold is reached, promoting the query to a named statement.
+   */
+  private def shouldPromotePreparedStatement(trackingKey: String): Boolean = {
+    val threshold = configuration.preparedStatementPrepareThreshold
+    if (threshold <= 0) {
+      false
+    } else if (threshold == 1) {
+      true
+    } else {
+      val now = System.nanoTime()
+      val usage = this.preparedStatementExecutions.get(trackingKey) match {
+        case Some(existing) => existing
+        case None =>
+          val created = new PreparedStatementExecutionCount(now, 0)
+          this.preparedStatementExecutions.put(trackingKey, created)
+          created
+      }
+
+      if (isPreparedStatementExecutionWindowExpired(usage, now)) {
+        usage.windowStartedAtNanos = now
+        usage.count = 1
+      } else {
+        usage.count += 1
+      }
+
+      usage.count >= threshold
+    }
+  }
+
+  private def isPreparedStatementExecutionWindowExpired(
+    usage: PreparedStatementExecutionCount,
+    now: Long
+  ): Boolean =
+    preparedStatementExecutionWindowNanos <= 0 ||
+      now - usage.windowStartedAtNanos >= preparedStatementExecutionWindowNanos
 
   override def onError(exception: Throwable): Unit = {
     this.setErrorOnFutures(exception)

@@ -3,6 +3,8 @@
 ## 0.4.0
 
 * Remove Joda-Time dependencies and migrate driver date/time handling to Java 8+ `java.time`;
+* PostgreSQL prepared statements now start as unnamed statements and are only promoted to named
+  server-side prepared statements after being executed often enough within a time window;
 * Upgrade to netty 4.2
 * Upgrade scram-client
 
